@@ -298,7 +298,7 @@
                 <th>Model Name</th>
                 <th>Category</th>
                 <th>Specifications</th>
-                <th>Price (USD)</th>
+                <th>Price (GH₵)</th>
                 <th>Stock</th>
                 <th style="text-align: right; width: 140px;">Actions</th>
               </tr>
@@ -495,27 +495,27 @@
             <form id="form-site-settings" class="admin-form">
               <div class="form-group">
                 <label for="set-whatsapp">WhatsApp Dispatch Number (International format, no + or spaces)</label>
-                <input type="text" id="set-whatsapp" value="2348000000000" class="form-input" required>
-                <small style="color: var(--text-muted);">Used for instant order & booking WhatsApp links (e.g. 2348012345678)</small>
+                <input type="text" id="set-whatsapp" value="233599360626" class="form-input" required>
+                <small style="color: var(--text-muted);">Used for instant order & booking WhatsApp links (e.g. 233599360626)</small>
               </div>
 
-              <h4 style="margin: 16px 0 10px; font-size: 0.95rem; color: var(--accent-cyan);">Currency Exchange Rates (Base: 1 USD)</h4>
+              <h4 style="margin: 16px 0 10px; font-size: 0.95rem; color: var(--accent-cyan);">Currency Exchange Rates (Base: 1 GHS)</h4>
               <div class="form-grid-2col">
                 <div class="form-group">
-                  <label for="curr-ngn">Nigerian Naira (NGN ₦)</label>
-                  <input type="number" id="curr-ngn" step="1" value="1550" class="form-input" required>
+                  <label for="curr-usd">US Dollar (USD $)</label>
+                  <input type="number" id="curr-usd" step="0.001" value="0.065" class="form-input" required>
                 </div>
                 <div class="form-group">
-                  <label for="curr-ghs">Ghana Cedi (GHS ₵)</label>
-                  <input type="number" id="curr-ghs" step="0.1" value="15.5" class="form-input" required>
+                  <label for="curr-ngn">Nigerian Naira (NGN ₦)</label>
+                  <input type="number" id="curr-ngn" step="1" value="100" class="form-input" required>
                 </div>
                 <div class="form-group">
                   <label for="curr-gbp">British Pound (GBP £)</label>
-                  <input type="number" id="curr-gbp" step="0.01" value="0.79" class="form-input" required>
+                  <input type="number" id="curr-gbp" step="0.001" value="0.051" class="form-input" required>
                 </div>
                 <div class="form-group">
                   <label for="curr-eur">Euro (EUR €)</label>
-                  <input type="number" id="curr-eur" step="0.01" value="0.92" class="form-input" required>
+                  <input type="number" id="curr-eur" step="0.001" value="0.059" class="form-input" required>
                 </div>
               </div>
 
@@ -561,8 +561,8 @@
 
         <div class="form-grid-2col">
           <div class="form-group">
-            <label for="hw-price">Price in USD ($) *</label>
-            <input type="number" id="hw-price" step="1" min="1" required placeholder="e.g. 1150" class="form-input">
+            <label for="hw-price">Price in Ghana Cedis (GH₵) *</label>
+            <input type="number" id="hw-price" step="1" min="1" required placeholder="e.g. 17800" class="form-input">
           </div>
 
           <div class="form-group">

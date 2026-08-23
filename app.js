@@ -159,7 +159,7 @@ let HARDWARE_CATALOG = [
       gpu: "NVIDIA RTX 3050 Ti 4GB",
       battery: "86Wh (Excellent Health)"
     },
-    priceUsd: 1150,
+    priceUsd: 17800,
     warranty: "1 Year Coratech Warranty"
   },
   {
@@ -178,7 +178,7 @@ let HARDWARE_CATALOG = [
       gpu: "Integrated AMD Radeon 680M",
       battery: "57Wh (Rapid Charge)"
     },
-    priceUsd: 890,
+    priceUsd: 13800,
     warranty: "1 Year Official Warranty"
   },
   {
@@ -197,7 +197,7 @@ let HARDWARE_CATALOG = [
       gpu: "16-Core Neural GPU Engine",
       battery: "100% Battery Cycle"
     },
-    priceUsd: 1450,
+    priceUsd: 22500,
     warranty: "6 Months Coratech Warranty"
   },
   {
@@ -216,7 +216,7 @@ let HARDWARE_CATALOG = [
       gpu: "Intel Iris Xe Graphics",
       battery: "Long Life 3-cell 53Wh"
     },
-    priceUsd: 580,
+    priceUsd: 8900,
     warranty: "6 Months Coratech Warranty"
   },
   {
@@ -235,7 +235,7 @@ let HARDWARE_CATALOG = [
       gpu: "Dual DisplayPort & HDMI",
       battery: "Built-in KVM Switch"
     },
-    priceUsd: 420,
+    priceUsd: 6500,
     warranty: "1 Year Official Warranty"
   },
   {
@@ -254,7 +254,7 @@ let HARDWARE_CATALOG = [
       gpu: "PS5 & PC Compatible",
       battery: "Includes Free Installation"
     },
-    priceUsd: 195,
+    priceUsd: 2900,
     warranty: "3 Years Manufacturer Warranty"
   }
 ];
@@ -323,11 +323,11 @@ let PORTFOLIO_DATA = [
 ];
 
 let CURRENCY_RATES = {
-  USD: { symbol: "$", rate: 1.0 },
-  NGN: { symbol: "₦", rate: 1550 },
-  GHS: { symbol: "₵", rate: 15.5 },
-  GBP: { symbol: "£", rate: 0.79 },
-  EUR: { symbol: "€", rate: 0.92 }
+  GHS: { symbol: "GH₵", rate: 1.0 },
+  USD: { symbol: "$", rate: 0.065 },
+  NGN: { symbol: "₦", rate: 100 },
+  GBP: { symbol: "£", rate: 0.051 },
+  EUR: { symbol: "€", rate: 0.059 }
 };
 
 // Initial Demo Tickets in LocalStorage
@@ -362,15 +362,15 @@ const INITIAL_DEMO_TICKETS = {
 
 const state = {
   theme: localStorage.getItem("coratech_theme") || "dark",
-  currency: "USD",
+  currency: "GHS",
   calculator: {
     service: "web",
-    baseCost: 650,
+    baseCost: 4500,
     tier: "pro",
     multiplier: 1.75,
     addons: [
-      { id: "urgent", cost: 200, name: "Priority Express Delivery" },
-      { id: "sla", cost: 150, name: "24/7 Managed SLA & Maintenance" }
+      { id: "urgent", cost: 1200, name: "Priority Express Delivery" },
+      { id: "sla", cost: 1500, name: "24/7 Managed SLA & Maintenance" }
     ]
   },
   hardwareFilter: "all",
@@ -761,7 +761,7 @@ function renderHardwareCatalog() {
               <button class="btn btn-secondary btn-sm btn-hw-details" data-id="${item.id}" title="Full Specs">
                 <i class="fa-solid fa-list-check"></i>
               </button>
-              <a href="https://wa.me/2348000000000?text=${encodeURIComponent(`Hello Coratech Global, I am interested in purchasing: ${item.model} (${priceFormatted})`)}" target="_blank" class="btn btn-whatsapp btn-sm">
+              <a href="https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I am interested in purchasing: ${item.model} (${priceFormatted})`)}" target="_blank" class="btn btn-whatsapp btn-sm">
                 <i class="fa-brands fa-whatsapp"></i> Buy / Inquire
               </a>
             </div>
@@ -839,7 +839,7 @@ function openHardwareSpecModal(hwId) {
   modalActionBtn.innerHTML = `<i class="fa-brands fa-whatsapp"></i> Inquire / Order on WhatsApp`;
   modalActionBtn.className = "btn btn-whatsapp";
   modalActionBtn.onclick = () => {
-    window.open(`https://wa.me/2348000000000?text=${encodeURIComponent(`Hello Coratech Global, I am ready to order: ${item.model} (${formatCurrency(item.priceUsd)})`)}`, "_blank");
+    window.open(`https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I am ready to order: ${item.model} (${formatCurrency(item.priceUsd)})`)}`, "_blank");
   };
 
   openModal();
@@ -961,7 +961,7 @@ function openCaseStudyModal(projId) {
   modalActionBtn.className = "btn btn-primary";
   modalActionBtn.onclick = () => {
     closeModal();
-    window.open(`https://wa.me/2348000000000?text=${encodeURIComponent(`Hello Coratech Global, I reviewed your case study on "${proj.title}" and want to discuss a similar solution.`)}`, "_blank");
+    window.open(`https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I reviewed your case study on "${proj.title}" and want to discuss a similar solution.`)}`, "_blank");
   };
 
   openModal();
@@ -1030,7 +1030,7 @@ function initCostEstimator() {
     waBtn.addEventListener("click", () => {
       const quoteSummary = generateQuoteSummaryText();
       const encodedMsg = encodeURIComponent(`Hello Coratech Global, I generated an instant estimate on your platform:\n\n${quoteSummary}\n\nPlease share the formal kickoff proposal.`);
-      window.open(`https://wa.me/2348000000000?text=${encodedMsg}`, "_blank");
+      window.open(`https://wa.me/233599360626?text=${encodedMsg}`, "_blank");
     });
   }
 
@@ -1118,20 +1118,22 @@ function generateQuoteSummaryText() {
   return msg;
 }
 
-function formatCurrency(amountInUsd) {
-  const curr = CURRENCY_RATES[state.currency] || CURRENCY_RATES.USD;
-  const converted = amountInUsd * curr.rate;
+function formatCurrency(amountInGhs) {
+  const curr = CURRENCY_RATES[state.currency] || CURRENCY_RATES.GHS;
+  const converted = amountInGhs * curr.rate;
 
-  if (state.currency === "NGN") {
-    return `${curr.symbol}${converted.toLocaleString("en-NG", { maximumFractionDigits: 0 })}`;
-  } else if (state.currency === "GHS") {
-    return `${curr.symbol}${converted.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (state.currency === "GHS") {
+    return `GH₵ ${converted.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  } else if (state.currency === "USD") {
+    return `$${converted.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  } else if (state.currency === "NGN") {
+    return `₦${converted.toLocaleString("en-NG", { maximumFractionDigits: 0 })}`;
   } else if (state.currency === "GBP") {
-    return `${curr.symbol}${converted.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `£${converted.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   } else if (state.currency === "EUR") {
-    return `${curr.symbol}${converted.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `€${converted.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
-  return `${curr.symbol}${converted.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `GH₵ ${converted.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 // =========================================================================
@@ -1342,7 +1344,7 @@ function initAppointmentBooking() {
       const waMsg = encodeURIComponent(
         `*NEW IT APPOINTMENT BOOKING*\n• Name: ${name}\n• Phone: ${phone}\n• Focus: ${service}\n• Format: ${type}\n• Date: ${date}\n• Time: ${selectedSlot}`
       );
-      window.open(`https://wa.me/2348000000000?text=${waMsg}`, "_blank");
+      window.open(`https://wa.me/233599360626?text=${waMsg}`, "_blank");
       form.reset();
     });
   }

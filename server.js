@@ -734,6 +734,18 @@ app.put("/api/settings", authenticateToken, (req, res) => {
 
 const ADMIN_ROUTE = process.env.ADMIN_ROUTE || "/admin";
 
+// If a custom secret ADMIN_ROUTE is set, strictly block /admin from ever responding
+if (ADMIN_ROUTE !== "/admin") {
+  app.use((req, res, next) => {
+    const p = req.path.toLowerCase();
+    if (p === "/admin" || p.startsWith("/admin/") || p.startsWith("/admin")) {
+      return res.status(404).send("<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1><p>The requested resource was not found.</p></body></html>");
+    }
+    next();
+  });
+}
+
+// Serve Admin CMS ONLY on the configured secret ADMIN_ROUTE
 app.use(ADMIN_ROUTE, express.static(path.join(__dirname, "admin")));
 app.get(`${ADMIN_ROUTE}*`, (req, res) => {
   res.sendFile(path.join(__dirname, "admin", "index.html"));

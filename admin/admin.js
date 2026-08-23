@@ -379,7 +379,7 @@ function renderHardwareTable() {
         ${item.specs.cpu ? `${item.specs.cpu} • ` : ""}${item.specs.ram || ""} • ${item.specs.storage || ""}
       </td>
       <td>
-        <strong style="color: var(--accent-cyan); font-size: 1rem;">$${item.priceUsd.toLocaleString()}</strong>
+        <strong style="color: var(--accent-cyan); font-size: 1rem;">GH₵ ${item.priceUsd.toLocaleString()}</strong>
       </td>
       <td>
         ${item.inStock !== false
@@ -874,8 +874,8 @@ function populateSettingsForm() {
 
   const rates = adminState.settings.currencyRates;
   if (rates) {
+    if (rates.USD) document.getElementById("curr-usd").value = rates.USD.rate;
     if (rates.NGN) document.getElementById("curr-ngn").value = rates.NGN.rate;
-    if (rates.GHS) document.getElementById("curr-ghs").value = rates.GHS.rate;
     if (rates.GBP) document.getElementById("curr-gbp").value = rates.GBP.rate;
     if (rates.EUR) document.getElementById("curr-eur").value = rates.EUR.rate;
   }
@@ -1081,15 +1081,15 @@ function initFormSubmissions() {
     setForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const whatsappNumber = document.getElementById("set-whatsapp").value.trim();
+      const usdRate = parseFloat(document.getElementById("curr-usd").value);
       const ngnRate = parseFloat(document.getElementById("curr-ngn").value);
-      const ghsRate = parseFloat(document.getElementById("curr-ghs").value);
       const gbpRate = parseFloat(document.getElementById("curr-gbp").value);
       const eurRate = parseFloat(document.getElementById("curr-eur").value);
 
       const currencyRates = {
-        USD: { symbol: "$", rate: 1.0 },
+        GHS: { symbol: "GH₵", rate: 1.0 },
+        USD: { symbol: "$", rate: usdRate },
         NGN: { symbol: "₦", rate: ngnRate },
-        GHS: { symbol: "₵", rate: ghsRate },
         GBP: { symbol: "£", rate: gbpRate },
         EUR: { symbol: "€", rate: eurRate }
       };

@@ -51,17 +51,24 @@ function writeDatabase(data) {
   }
 }
 
-// Initialize and ensure Admin Password Hash
+// Initialize and ensure Admin Password Hash & Environment Overrides
 function initDatabaseSecurity() {
   const db = readDatabase();
   if (db && db.admin) {
-    // If password is not hashed (e.g. plaintext 'admin1234')
-    if (!db.admin.password.startsWith("$2a$") && !db.admin.password.startsWith("$2b$")) {
+    // Check if custom ADMIN_EMAIL or ADMIN_PASSWORD are set via environment variables
+    if (process.env.ADMIN_EMAIL && process.env.ADMIN_EMAIL.trim()) {
+      db.admin.email = process.env.ADMIN_EMAIL.trim();
+    }
+    if (process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.trim()) {
+      const salt = bcrypt.genSaltSync(10);
+      db.admin.password = bcrypt.hashSync(process.env.ADMIN_PASSWORD.trim(), salt);
+      console.log(`Admin password initialized securely from environment variable for ${db.admin.email}.`);
+    } else if (!db.admin.password.startsWith("$2a$") && !db.admin.password.startsWith("$2b$")) {
       const salt = bcrypt.genSaltSync(10);
       db.admin.password = bcrypt.hashSync(db.admin.password, salt);
-      writeDatabase(db);
       console.log("Admin password successfully secured and hashed.");
     }
+    writeDatabase(db);
   }
 }
 initDatabaseSecurity();
@@ -722,10 +729,13 @@ app.put("/api/settings", authenticateToken, (req, res) => {
 });
 
 // =========================================================================
-// 10. ADMIN DASHBOARD ROUTE FALLBACK
+// 10. ADMIN DASHBOARD ROUTE FALLBACK (Configurable & Hidden)
 // =========================================================================
 
-app.get("/admin*", (req, res) => {
+const ADMIN_ROUTE = process.env.ADMIN_ROUTE || "/admin";
+
+app.use(ADMIN_ROUTE, express.static(path.join(__dirname, "admin")));
+app.get(`${ADMIN_ROUTE}*`, (req, res) => {
   res.sendFile(path.join(__dirname, "admin", "index.html"));
 });
 
@@ -734,7 +744,7 @@ app.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(` CORATECH GLOBAL FULL-STACK PLATFORM RUNNING`);
   console.log(` Web Portal:  http://localhost:${PORT}`);
-  console.log(` Admin Panel: http://localhost:${PORT}/admin`);
+  console.log(` Admin Panel: http://localhost:${PORT}${ADMIN_ROUTE}`);
   console.log(` REST API:    http://localhost:${PORT}/api/hardware`);
   console.log(`====================================================`);
 });

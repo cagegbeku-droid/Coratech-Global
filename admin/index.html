@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coratech Global | Admin CMS Portal</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="admin-toast-container" class="admin-toast-container"></div>
+
+  <!-- =========================================================================
+       1. AUTHENTICATION LOGIN VIEW
+       ========================================================================= -->
+  <div id="login-view" class="login-view-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo-box">
+          <img src="../assets/logo.svg" alt="Coratech Global" class="login-logo-img">
+        </div>
+        <h1 class="login-title">Coratech Admin CMS</h1>
+        <p class="login-subtitle">Sign in to manage inventory, case studies, support tickets, and live website operations.</p>
+      </div>
+
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="login-email">Admin Email Address</label>
+          <div class="input-icon-group">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="login-email" required placeholder="admin@coratechglobal.com" value="admin@coratechglobal.com" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-icon-group">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="login-password" required placeholder="••••••••" value="admin1234" autocomplete="current-password">
+            <button type="button" class="btn-toggle-pwd" id="toggle-pwd-btn" title="Show/Hide password">
+              <i class="fa-solid fa-eye" id="pwd-eye-icon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-login-submit" id="btn-login-submit">
+          <i class="fa-solid fa-right-to-bracket"></i> Secure Admin Access
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p><i class="fa-solid fa-shield-halved text-cyan"></i> 256-Bit Encrypted Session • Authorized Personnel Only</p>
+        <a href="../index.html" class="back-to-site-link"><i class="fa-solid fa-arrow-left"></i> Return to Main Website</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       2. MAIN ADMIN DASHBOARD INTERFACE
+       ========================================================================= -->
+  <div id="dashboard-view" class="admin-app-layout" style="display: none;">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="sidebar-header">
+        <a href="../index.html" target="_blank" class="sidebar-brand">
+          <img src="../assets/logo.svg" alt="Coratech Global" class="sidebar-logo">
+          <div class="sidebar-brand-text">
+            <strong>CORATECH</strong>
+            <span>GLOBAL CMS</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">MANAGEMENT</div>
+        <button class="nav-tab-btn active" data-tab="overview">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Overview</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="hardware">
+          <i class="fa-solid fa-laptop-code"></i>
+          <span>Laptops & Store</span>
+          <span class="nav-badge" id="badge-count-hardware">0</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="portfolio">
+          <i class="fa-solid fa-diagram-project"></i>
+          <span>Portfolio Projects</span>
+          <span class="nav-badge" id="badge-count-portfolio">0</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="services">
+          <i class="fa-solid fa-cubes-stacked"></i>
+          <span>Services & Scopes</span>
+        </button>
+
+        <div class="nav-section-label">OPERATIONS & CLIENTS</div>
+        <button class="nav-tab-btn" data-tab="tickets">
+          <i class="fa-solid fa-ticket-simple"></i>
+          <span>Support Tickets</span>
+          <span class="nav-badge alert" id="badge-count-tickets">0</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="appointments">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span>Bookings & Leads</span>
+          <span class="nav-badge" id="badge-count-appointments">0</span>
+        </button>
+
+        <div class="nav-section-label">SYSTEM</div>
+        <button class="nav-tab-btn" data-tab="settings">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Settings & Security</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-user-info">
+          <div class="user-avatar"><i class="fa-solid fa-user-shield"></i></div>
+          <div class="user-details">
+            <span class="user-name" id="sidebar-user-name">Administrator</span>
+            <span class="user-role" id="sidebar-user-role">Super Admin</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" title="Sign Out">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main-content">
+      
+      <!-- Top Navbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h2 class="page-title" id="page-title">Dashboard Overview</h2>
+        </div>
+
+        <div class="topbar-right">
+          <a href="../index.html" target="_blank" class="btn btn-outline-cyan btn-sm">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> View Live Site
+          </a>
+          <button class="btn-icon" id="admin-theme-toggle" title="Toggle Theme">
+            <i class="fa-solid fa-sun" id="admin-theme-icon"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" id="topbar-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: OVERVIEW -->
+      <section class="admin-tab-pane active" id="tab-overview">
+        <!-- KPI Metrics Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card" data-card="hardware">
+            <div class="kpi-icon-box bg-cyan-glass">
+              <i class="fa-solid fa-laptop-code text-cyan"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Active Laptops & Products</span>
+              <h3 class="kpi-value" id="kpi-hardware-count">0</h3>
+            </div>
+            <div class="kpi-action">
+              <button class="btn-text" onclick="switchTab('hardware')">Manage <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-card="portfolio">
+            <div class="kpi-icon-box bg-purple-glass">
+              <i class="fa-solid fa-diagram-project text-purple"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Portfolio Case Studies</span>
+              <h3 class="kpi-value" id="kpi-portfolio-count">0</h3>
+            </div>
+            <div class="kpi-action">
+              <button class="btn-text" onclick="switchTab('portfolio')">Manage <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-card="tickets">
+            <div class="kpi-icon-box bg-amber-glass">
+              <i class="fa-solid fa-ticket-simple text-amber"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Total Support Tickets</span>
+              <h3 class="kpi-value" id="kpi-tickets-count">0</h3>
+            </div>
+            <div class="kpi-action">
+              <button class="btn-text" onclick="switchTab('tickets')">View Desk <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-card="appointments">
+            <div class="kpi-icon-box bg-emerald-glass">
+              <i class="fa-solid fa-calendar-check text-emerald"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Booked Consultations</span>
+              <h3 class="kpi-value" id="kpi-appointments-count">0</h3>
+            </div>
+            <div class="kpi-action">
+              <button class="btn-text" onclick="switchTab('appointments')">View Schedule <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overview Quick Actions & Health Card -->
+        <div class="dashboard-grid-2col">
+          <div class="content-box">
+            <div class="box-header">
+              <h3><i class="fa-solid fa-bolt text-cyan"></i> Quick Launch Actions</h3>
+            </div>
+            <div class="quick-actions-list">
+              <button class="quick-action-btn" onclick="openCreateHardwareModal()">
+                <i class="fa-solid fa-plus-circle text-cyan"></i>
+                <div>
+                  <strong>Add New Laptop to Store</strong>
+                  <p>Upload photo, specs, pricing, and warranty details</p>
+                </div>
+              </button>
+              <button class="quick-action-btn" onclick="openCreatePortfolioModal()">
+                <i class="fa-solid fa-folder-plus text-purple"></i>
+                <div>
+                  <strong>Post New Case Study</strong>
+                  <p>Highlight architectural solutions, tech stacks & results</p>
+                </div>
+              </button>
+              <button class="quick-action-btn" onclick="switchTab('tickets')">
+                <i class="fa-solid fa-headset text-amber"></i>
+                <div>
+                  <strong>Check HelpDesk Tickets</strong>
+                  <p>Triage client incident reports and update SLA steps</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="content-box">
+            <div class="box-header">
+              <h3><i class="fa-solid fa-server text-emerald"></i> Infrastructure & Server Status</h3>
+            </div>
+            <div class="server-status-list">
+              <div class="status-row">
+                <span>API Status:</span>
+                <span class="badge badge-success"><i class="fa-solid fa-circle-dot"></i> Operational (Node.js/Express)</span>
+              </div>
+              <div class="status-row">
+                <span>Data Storage:</span>
+                <span class="badge badge-cyan"><i class="fa-solid fa-database"></i> JSON Datastore (Persistent)</span>
+              </div>
+              <div class="status-row">
+                <span>Media Upload Storage:</span>
+                <span class="badge badge-purple"><i class="fa-solid fa-images"></i> /uploads (Local & Scalable)</span>
+              </div>
+              <div class="status-row">
+                <span>Domain Readiness:</span>
+                <span class="badge badge-outline"><i class="fa-solid fa-globe"></i> coratechglobal.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: LAPTOPS & HARDWARE STORE -->
+      <section class="admin-tab-pane" id="tab-hardware">
+        <div class="section-toolbar">
+          <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="admin-hw-search" placeholder="Search laptops by model, CPU, RAM, or specs...">
+          </div>
+
+          <div class="toolbar-actions">
+            <select id="admin-hw-filter" class="form-select-sm">
+              <option value="all">All Categories</option>
+              <option value="developer">Developer Workstations</option>
+              <option value="business">Business Executive Laptops</option>
+              <option value="accessories">Peripherals & Upgrades</option>
+            </select>
+            <button class="btn btn-primary" onclick="openCreateHardwareModal()">
+              <i class="fa-solid fa-plus"></i> Add New Laptop
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="admin-data-table" id="hardware-table">
+            <thead>
+              <tr>
+                <th style="width: 70px;">Image</th>
+                <th>Model Name</th>
+                <th>Category</th>
+                <th>Specifications</th>
+                <th>Price (USD)</th>
+                <th>Stock</th>
+                <th style="text-align: right; width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="hardware-table-body">
+              <!-- Loaded dynamically via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: PORTFOLIO PROJECTS -->
+      <section class="admin-tab-pane" id="tab-portfolio">
+        <div class="section-toolbar">
+          <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="admin-port-search" placeholder="Search projects by title, stack, or category...">
+          </div>
+
+          <div class="toolbar-actions">
+            <select id="admin-port-filter" class="form-select-sm">
+              <option value="all">All Categories</option>
+              <option value="web">Web & SaaS Architecture</option>
+              <option value="it">Enterprise IT Deployment</option>
+              <option value="cloud">Cloud & DevOps</option>
+              <option value="mobile">Mobile Applications</option>
+            </select>
+            <button class="btn btn-primary" onclick="openCreatePortfolioModal()">
+              <i class="fa-solid fa-plus"></i> Add Case Study
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="admin-data-table" id="portfolio-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Thumbnail</th>
+                <th>Project Title</th>
+                <th>Category</th>
+                <th>Key Metric / Result</th>
+                <th>Tech Stack</th>
+                <th style="text-align: right; width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="portfolio-table-body">
+              <!-- Loaded dynamically via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: SERVICES & SCOPES -->
+      <section class="admin-tab-pane" id="tab-services">
+        <div class="content-box">
+          <div class="box-header">
+            <h3><i class="fa-solid fa-cubes-stacked text-cyan"></i> Services Catalog & Scope Manager</h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem;">Edit core service scopes, deliverables, and tech stack tags displayed to clients.</p>
+          </div>
+          <div id="services-admin-grid" class="services-admin-grid">
+            <!-- Loaded dynamically via admin.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: SUPPORT TICKETS DESK -->
+      <section class="admin-tab-pane" id="tab-tickets">
+        <div class="section-toolbar">
+          <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="admin-ticket-search" placeholder="Search by Ticket ID (e.g. CG-TICK-1042), Client Name, or Email...">
+          </div>
+
+          <div class="toolbar-actions">
+            <select id="admin-ticket-filter" class="form-select-sm">
+              <option value="all">All Statuses</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Urgent Dispatch">Urgent Dispatch</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="admin-data-table" id="tickets-table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Client Name & Email</th>
+                <th>Category & Issue</th>
+                <th>Priority</th>
+                <th>Current Status & Step</th>
+                <th>Date</th>
+                <th style="text-align: right; width: 160px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tickets-table-body">
+              <!-- Loaded dynamically via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 6: APPOINTMENTS & INQUIRIES -->
+      <section class="admin-tab-pane" id="tab-appointments">
+        
+        <div class="content-box" style="margin-bottom: 24px;">
+          <div class="box-header">
+            <h3><i class="fa-solid fa-calendar-check text-emerald"></i> Client Consultation Bookings</h3>
+          </div>
+          <div class="table-responsive-wrapper">
+            <table class="admin-data-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Client Name</th>
+                  <th>Phone Number</th>
+                  <th>Service Focus</th>
+                  <th>Format</th>
+                  <th>Scheduled Date & Time</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="appointments-table-body">
+                <!-- Loaded dynamically via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-2col">
+          <div class="content-box">
+            <div class="box-header">
+              <h3><i class="fa-solid fa-envelope-open-text text-cyan"></i> Direct Contact Messages</h3>
+            </div>
+            <div id="contacts-list-container" class="contacts-list-container">
+              <!-- Loaded dynamically via admin.js -->
+            </div>
+          </div>
+
+          <div class="content-box">
+            <div class="box-header">
+              <h3><i class="fa-solid fa-newspaper text-purple"></i> Newsletter Subscribers</h3>
+              <button class="btn btn-outline-cyan btn-sm" onclick="exportNewsletterCsv()">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+              </button>
+            </div>
+            <div id="newsletter-list-container" class="newsletter-list-container">
+              <!-- Loaded dynamically via admin.js -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 7: SETTINGS & SECURITY -->
+      <section class="admin-tab-pane" id="tab-settings">
+        <div class="dashboard-grid-2col">
+          
+          <!-- Admin Security Box -->
+          <div class="content-box">
+            <div class="box-header">
+              <h3><i class="fa-solid fa-user-lock text-cyan"></i> Admin Account & Password</h3>
+            </div>
+            <form id="form-change-password" class="admin-form">
+              <div class="form-group">
+                <label for="set-admin-name">Admin Display Name</label>
+                <input type="text" id="set-admin-name" value="Coratech Administrator" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="set-admin-email">Admin Login Email</label>
+                <input type="email" id="set-admin-email" value="admin@coratechglobal.com" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="set-current-pwd">Current Password (Required for confirmation)</label>
+                <input type="password" id="set-current-pwd" placeholder="Enter current password" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="set-new-pwd">New Password (Min 6 characters)</label>
+                <input type="password" id="set-new-pwd" placeholder="Enter new password" class="form-input">
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-shield-check"></i> Save Profile & Security
+              </button>
+            </form>
+          </div>
+
+          <!-- Currency Exchange & Contact Settings -->
+          <div class="content-box">
+            <div class="box-header">
+              <h3><i class="fa-solid fa-coins text-amber"></i> Live Currency Rates & WhatsApp Contact</h3>
+            </div>
+            <form id="form-site-settings" class="admin-form">
+              <div class="form-group">
+                <label for="set-whatsapp">WhatsApp Dispatch Number (International format, no + or spaces)</label>
+                <input type="text" id="set-whatsapp" value="2348000000000" class="form-input" required>
+                <small style="color: var(--text-muted);">Used for instant order & booking WhatsApp links (e.g. 2348012345678)</small>
+              </div>
+
+              <h4 style="margin: 16px 0 10px; font-size: 0.95rem; color: var(--accent-cyan);">Currency Exchange Rates (Base: 1 USD)</h4>
+              <div class="form-grid-2col">
+                <div class="form-group">
+                  <label for="curr-ngn">Nigerian Naira (NGN ₦)</label>
+                  <input type="number" id="curr-ngn" step="1" value="1550" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="curr-ghs">Ghana Cedi (GHS ₵)</label>
+                  <input type="number" id="curr-ghs" step="0.1" value="15.5" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="curr-gbp">British Pound (GBP £)</label>
+                  <input type="number" id="curr-gbp" step="0.01" value="0.79" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="curr-eur">Euro (EUR €)</label>
+                  <input type="number" id="curr-eur" step="0.01" value="0.92" class="form-input" required>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> Update Global Settings
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       3. MODAL: ADD / EDIT HARDWARE LAPTOP
+       ========================================================================= -->
+  <div class="admin-modal-overlay" id="modal-hardware">
+    <div class="admin-modal-dialog">
+      <div class="admin-modal-header">
+        <h3 id="hw-modal-title"><i class="fa-solid fa-laptop-code text-cyan"></i> Add New Laptop / Hardware</h3>
+        <button class="modal-close-btn" onclick="closeHardwareModal()">&times;</button>
+      </div>
+      <form id="form-hardware" class="admin-modal-body">
+        <input type="hidden" id="hw-edit-id">
+
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="hw-model">Model Name *</label>
+            <input type="text" id="hw-model" required placeholder="e.g. Dell XPS 15 (9520) Developer Edition" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="hw-category">Category *</label>
+            <select id="hw-category" class="form-input" required>
+              <option value="developer">Developer Workstation</option>
+              <option value="business">Business Executive Laptop</option>
+              <option value="accessories">Peripherals & Accessories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="hw-price">Price in USD ($) *</label>
+            <input type="number" id="hw-price" step="1" min="1" required placeholder="e.g. 1150" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="hw-condition">Condition *</label>
+            <select id="hw-condition" class="form-input" required>
+              <option value="Brand New Sealed">Brand New Sealed</option>
+              <option value="Grade A+ Refurbished">Grade A+ Refurbished</option>
+              <option value="Grade A Refurbished">Grade A Refurbished</option>
+              <option value="Open Box / Like New">Open Box / Like New</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="hw-cert">Certification Badge *</label>
+            <input type="text" id="hw-cert" required placeholder="e.g. 35-POINT CERTIFIED" value="35-POINT CERTIFIED" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="hw-warranty">Official Warranty *</label>
+            <input type="text" id="hw-warranty" required placeholder="e.g. 1 Year Coratech Warranty" value="1 Year Coratech Warranty" class="form-input">
+          </div>
+        </div>
+
+        <!-- Image Upload Field -->
+        <div class="form-group">
+          <label>Device Image *</label>
+          <div class="image-upload-dropzone" id="hw-dropzone">
+            <input type="file" id="hw-file-input" accept="image/*" style="display: none;">
+            <div class="dropzone-content" id="hw-dropzone-content">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Drag & drop photo here or <strong>browse file</strong></span>
+              <small>Accepts JPG, PNG, WEBP, SVG</small>
+            </div>
+            <div class="dropzone-preview" id="hw-dropzone-preview" style="display: none;">
+              <img src="" id="hw-preview-img" alt="Preview">
+              <button type="button" class="btn-remove-preview" id="hw-remove-img">&times;</button>
+            </div>
+          </div>
+          <input type="hidden" id="hw-image-url" value="assets/hardware_laptop.jpg">
+        </div>
+
+        <!-- Technical Specifications Sub-Grid -->
+        <h4 style="font-size: 0.95rem; color: var(--accent-cyan); margin: 15px 0 10px;">Hardware Specifications</h4>
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="hw-spec-cpu">Processor (CPU)</label>
+            <input type="text" id="hw-spec-cpu" placeholder="e.g. Intel Core i7-12700H (14-Core)" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="hw-spec-ram">RAM Memory</label>
+            <input type="text" id="hw-spec-ram" placeholder="e.g. 32GB DDR5 4800MHz" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="hw-spec-storage">Storage Drive</label>
+            <input type="text" id="hw-spec-storage" placeholder="e.g. 1TB PCIe NVMe SSD" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="hw-spec-display">Display Screen</label>
+            <input type="text" id="hw-spec-display" placeholder="e.g. 15.6&quot; OLED 3.5K Touch" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="hw-spec-gpu">Graphics (GPU)</label>
+            <input type="text" id="hw-spec-gpu" placeholder="e.g. NVIDIA RTX 3050 Ti 4GB" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="hw-spec-battery">Battery Condition</label>
+            <input type="text" id="hw-spec-battery" placeholder="e.g. 86Wh (Excellent Health)" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-grid-2col" style="margin-top: 10px;">
+          <label class="admin-checkbox-label">
+            <input type="checkbox" id="hw-instock" checked>
+            <span>Mark as In-Stock on Live Website</span>
+          </label>
+          <label class="admin-checkbox-label">
+            <input type="checkbox" id="hw-featured">
+            <span>Feature on Homepage Highlights</span>
+          </label>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeHardwareModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="hw-save-btn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Device
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       4. MODAL: ADD / EDIT PORTFOLIO CASE STUDY
+       ========================================================================= -->
+  <div class="admin-modal-overlay" id="modal-portfolio">
+    <div class="admin-modal-dialog">
+      <div class="admin-modal-header">
+        <h3 id="port-modal-title"><i class="fa-solid fa-diagram-project text-purple"></i> Add Case Study</h3>
+        <button class="modal-close-btn" onclick="closePortfolioModal()">&times;</button>
+      </div>
+      <form id="form-portfolio" class="admin-modal-body">
+        <input type="hidden" id="port-edit-id">
+
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="port-title">Project Title *</label>
+            <input type="text" id="port-title" required placeholder="e.g. ApexFlow - Multi-Currency SaaS Platform" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="port-category">Category *</label>
+            <select id="port-category" class="form-input" required>
+              <option value="web">Web & SaaS Architecture</option>
+              <option value="it">Enterprise IT Deployment</option>
+              <option value="cloud">Cloud & DevOps</option>
+              <option value="mobile">Mobile Application</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="port-metric">Key Metric / Result Badge *</label>
+            <input type="text" id="port-metric" required placeholder="e.g. +340% Processing Volume Surge" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="port-techstack">Tech Stack (Comma-separated) *</label>
+            <input type="text" id="port-techstack" required placeholder="e.g. Next.js, TypeScript, PostgreSQL, Docker" class="form-input">
+          </div>
+        </div>
+
+        <!-- Project Image Upload -->
+        <div class="form-group">
+          <label>Project Cover Image *</label>
+          <div class="image-upload-dropzone" id="port-dropzone">
+            <input type="file" id="port-file-input" accept="image/*" style="display: none;">
+            <div class="dropzone-content" id="port-dropzone-content">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Drag & drop project photo or <strong>browse file</strong></span>
+            </div>
+            <div class="dropzone-preview" id="port-dropzone-preview" style="display: none;">
+              <img src="" id="port-preview-img" alt="Preview">
+              <button type="button" class="btn-remove-preview" id="port-remove-img">&times;</button>
+            </div>
+          </div>
+          <input type="hidden" id="port-image-url" value="assets/cloud_infra.jpg">
+        </div>
+
+        <div class="form-group">
+          <label for="port-description">Project Brief Summary *</label>
+          <textarea id="port-description" rows="2" class="form-input" required placeholder="Brief description of the solution delivered..."></textarea>
+        </div>
+
+        <h4 style="font-size: 0.95rem; color: var(--accent-purple); margin: 15px 0 10px;">In-Depth Case Study</h4>
+        <div class="form-group">
+          <label for="port-problem">The Client Challenge / Problem *</label>
+          <textarea id="port-problem" rows="2" class="form-input" required placeholder="What operational bottleneck or breakdown did the client experience?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="port-solution">Our Technical Solution *</label>
+          <textarea id="port-solution" rows="2" class="form-input" required placeholder="How did Coratech engineer and implement the fix or platform?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="port-outcome">Measurable Business Outcome *</label>
+          <textarea id="port-outcome" rows="2" class="form-input" required placeholder="What were the quantifiable deliverables and revenue/speed improvements?"></textarea>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePortfolioModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="port-save-btn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Case Study
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       5. MODAL: EDIT SERVICE DETAILS
+       ========================================================================= -->
+  <div class="admin-modal-overlay" id="modal-service">
+    <div class="admin-modal-dialog">
+      <div class="admin-modal-header">
+        <h3 id="srv-modal-title"><i class="fa-solid fa-screwdriver-wrench text-cyan"></i> Edit Service Scope</h3>
+        <button class="modal-close-btn" onclick="closeServiceModal()">&times;</button>
+      </div>
+      <form id="form-service" class="admin-modal-body">
+        <input type="hidden" id="srv-edit-id">
+
+        <div class="form-group">
+          <label for="srv-title">Service Title</label>
+          <input type="text" id="srv-title" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label for="srv-summary">Summary</label>
+          <textarea id="srv-summary" rows="2" class="form-input" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="srv-scope">Full Scope Details</label>
+          <textarea id="srv-scope" rows="3" class="form-input" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="srv-techstack">Tech Stack & Tools Employed</label>
+          <input type="text" id="srv-techstack" class="form-input" required>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeServiceModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Update Service
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       6. MODAL: TICKET STEP & STATUS UPDATE
+       ========================================================================= -->
+  <div class="admin-modal-overlay" id="modal-ticket">
+    <div class="admin-modal-dialog" style="max-width: 550px;">
+      <div class="admin-modal-header">
+        <h3><i class="fa-solid fa-ticket text-amber"></i> Update Ticket Status</h3>
+        <button class="modal-close-btn" onclick="closeTicketModal()">&times;</button>
+      </div>
+      <form id="form-ticket-update" class="admin-modal-body">
+        <input type="hidden" id="ticket-update-id">
+
+        <div style="background: var(--bg-tertiary); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <strong id="ticket-diag-id" class="text-cyan" style="font-size: 1.05rem;">CG-TICK-XXXX</strong>
+          <div id="ticket-diag-client" style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 4px;"></div>
+          <div id="ticket-diag-issue" style="font-size: 0.85rem; color: var(--text-primary); margin-top: 6px; line-height: 1.4;"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-status-select">Status Badge</label>
+          <select id="ticket-status-select" class="form-input">
+            <option value="In Progress">In Progress</option>
+            <option value="Urgent Dispatch">Urgent Dispatch</option>
+            <option value="Diagnostic Assigned">Diagnostic Assigned</option>
+            <option value="Completed">Completed / Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-step-select">Live Customer Timeline Step</label>
+          <select id="ticket-step-select" class="form-input">
+            <option value="1">Step 1: Ticket Logged & Triaged</option>
+            <option value="2">Step 2: Engineering Diagnostic & Remediation</option>
+            <option value="3">Step 3: Quality Check & Closeout (Resolved)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-notes">Internal Diagnostic Notes</label>
+          <textarea id="ticket-notes" rows="3" class="form-input" placeholder="Enter engineering notes or resolution summary..."></textarea>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeTicketModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Save Ticket Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

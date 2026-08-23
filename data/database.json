@@ -1,0 +1,473 @@
+{
+  "admin": {
+    "email": "admin@coratechglobal.com",
+    "password": "$2a$10$WjJvqMisIORwBY2ymtUEAecp6n3q/e4aGUYyjgo7gGdsbyaJOit82",
+    "name": "Coratech Administrator",
+    "role": "Super Admin"
+  },
+  "settings": {
+    "siteName": "Coratech Global",
+    "whatsappNumber": "2348000000000",
+    "contactEmail": "info@coratechglobal.com",
+    "currencyRates": {
+      "USD": {
+        "symbol": "$",
+        "rate": 1
+      },
+      "NGN": {
+        "symbol": "₦",
+        "rate": 1550
+      },
+      "GHS": {
+        "symbol": "₵",
+        "rate": 15.5
+      },
+      "GBP": {
+        "symbol": "£",
+        "rate": 0.79
+      },
+      "EUR": {
+        "symbol": "€",
+        "rate": 0.92
+      }
+    }
+  },
+  "hardware": [
+    {
+      "id": "hw-1",
+      "model": "Dell XPS 15 (9520) Developer Edition",
+      "category": "developer",
+      "categoryLabel": "Developer Workstation",
+      "image": "assets/hardware_laptop.jpg",
+      "condition": "Grade A+ Refurbished",
+      "badgeCert": "35-POINT CERTIFIED",
+      "specs": {
+        "cpu": "Intel Core i7-12700H (14-Core)",
+        "ram": "32GB DDR5 4800MHz",
+        "storage": "1TB PCIe NVMe SSD",
+        "display": "15.6\" OLED 3.5K Touch Screen",
+        "gpu": "NVIDIA RTX 3050 Ti 4GB",
+        "battery": "86Wh (Excellent Health)"
+      },
+      "priceUsd": 1150,
+      "warranty": "1 Year Coratech Warranty",
+      "inStock": true,
+      "featured": true,
+      "createdAt": "2026-08-20T10:00:00.000Z"
+    },
+    {
+      "id": "hw-2",
+      "model": "Lenovo ThinkPad T14s Gen 3 Enterprise",
+      "category": "business",
+      "categoryLabel": "Business Executive Laptop",
+      "image": "assets/hardware_laptop.jpg",
+      "condition": "Brand New Sealed",
+      "badgeCert": "FACTORY SEALED",
+      "specs": {
+        "cpu": "AMD Ryzen 7 PRO 6850U",
+        "ram": "16GB LPDDR5 6400MHz",
+        "storage": "512GB NVMe Opal2 SSD",
+        "display": "14.0\" FHD+ Anti-Glare 400 nits",
+        "gpu": "Integrated AMD Radeon 680M",
+        "battery": "57Wh (Rapid Charge)"
+      },
+      "priceUsd": 890,
+      "warranty": "1 Year Official Warranty",
+      "inStock": true,
+      "featured": true,
+      "createdAt": "2026-08-20T10:00:00.000Z"
+    },
+    {
+      "id": "hw-3",
+      "model": "Apple MacBook Pro 14\" M2 Pro",
+      "category": "developer",
+      "categoryLabel": "High-Performance Workstation",
+      "image": "assets/hardware_laptop.jpg",
+      "condition": "Grade A+ Like New",
+      "badgeCert": "APPLE CERTIFIED",
+      "specs": {
+        "cpu": "Apple M2 Pro (10-Core CPU)",
+        "ram": "16GB Unified Memory",
+        "storage": "512GB High-Speed SSD",
+        "display": "14.2\" Liquid Retina XDR 120Hz",
+        "gpu": "16-Core Neural GPU Engine",
+        "battery": "100% Battery Cycle"
+      },
+      "priceUsd": 1450,
+      "warranty": "6 Months Coratech Warranty",
+      "inStock": true,
+      "featured": true,
+      "createdAt": "2026-08-21T11:00:00.000Z"
+    },
+    {
+      "id": "hw-4",
+      "model": "HP EliteBook 840 G8 Corporate",
+      "category": "business",
+      "categoryLabel": "Enterprise Fleet Laptop",
+      "image": "assets/hardware_laptop.jpg",
+      "condition": "Grade A Refurbished",
+      "badgeCert": "CORATECH TESTED",
+      "specs": {
+        "cpu": "Intel Core i5-1145G7 vPro",
+        "ram": "16GB DDR4 3200MHz",
+        "storage": "256GB NVMe SSD",
+        "display": "14\" Full HD IPS Display",
+        "gpu": "Intel Iris Xe Graphics",
+        "battery": "Long Life 3-cell 53Wh"
+      },
+      "priceUsd": 580,
+      "warranty": "6 Months Coratech Warranty",
+      "inStock": true,
+      "featured": false,
+      "createdAt": "2026-08-21T12:00:00.000Z"
+    },
+    {
+      "id": "hw-5",
+      "model": "Dell UltraSharp 27\" 4K USB-C Hub Monitor",
+      "category": "accessories",
+      "categoryLabel": "Workstation Peripherals",
+      "image": "assets/cloud_infra.jpg",
+      "condition": "Brand New",
+      "badgeCert": "OFFICIAL ACCESSORY",
+      "specs": {
+        "cpu": "4K UHD (3840 x 2160) IPS",
+        "ram": "90W USB-C Power Delivery",
+        "storage": "RJ45 Ethernet + USB Hub",
+        "display": "99% sRGB / 95% DCI-P3",
+        "gpu": "Dual DisplayPort & HDMI",
+        "battery": "Built-in KVM Switch"
+      },
+      "priceUsd": 420,
+      "warranty": "1 Year Official Warranty",
+      "inStock": true,
+      "featured": false,
+      "createdAt": "2026-08-21T14:00:00.000Z"
+    },
+    {
+      "id": "hw-6",
+      "model": "Kingston Fury 2TB Gen4 NVMe + 32GB RAM Kit",
+      "category": "accessories",
+      "categoryLabel": "Hardware Upgrade Component",
+      "image": "assets/cloud_infra.jpg",
+      "condition": "Brand New Sealed",
+      "badgeCert": "GENUINE COMPONENT",
+      "specs": {
+        "cpu": "7,300 MB/s Read Speed",
+        "ram": "32GB DDR4 / DDR5 Kit",
+        "storage": "2000GB M.2 2280 NVMe",
+        "display": "Graphene Aluminum Heatspreader",
+        "gpu": "PS5 & PC Compatible",
+        "battery": "Includes Free Installation"
+      },
+      "priceUsd": 195,
+      "warranty": "3 Years Manufacturer Warranty",
+      "inStock": true,
+      "featured": false,
+      "createdAt": "2026-08-21T15:00:00.000Z"
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "port-1",
+      "title": "ApexFlow - Multi-Currency SaaS Billing Platform",
+      "category": "web",
+      "categoryLabel": "Web & SaaS Architecture",
+      "image": "assets/cloud_infra.jpg",
+      "metric": "+340% Processing Volume Surge",
+      "description": "Architected and engineered a resilient cloud-native subscription billing platform with automated recurring invoicing, webhooks, and real-time ledger auditing.",
+      "techStack": [
+        "Next.js",
+        "TypeScript",
+        "Node.js",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "caseStudy": {
+        "problem": "The client suffered from frequent checkout drop-offs and unhandled webhook race conditions during high-volume flash sale events.",
+        "solution": "Implemented an event-driven microservice architecture with Redis queueing, automated failovers, and a sleek responsive customer portal.",
+        "outcome": "Processed $2.8M in annualized transactions with 99.99% uptime and zero dropped webhook notifications."
+      },
+      "featured": true,
+      "createdAt": "2026-08-20T10:00:00.000Z"
+    },
+    {
+      "id": "port-2",
+      "title": "Vanguard Corporate 4-Floor Network & Active Directory",
+      "category": "it",
+      "categoryLabel": "Enterprise IT Deployment",
+      "image": "assets/hardware_laptop.jpg",
+      "metric": "0 Min Downtime Deployment",
+      "description": "Complete structured cabling, multi-VLAN segmentation, managed Ubiquiti UniFi Wi-Fi 6 mesh, and centralized Windows Active Directory implementation for 180 workstations.",
+      "techStack": [
+        "Ubiquiti UniFi",
+        "Windows Server 2022",
+        "Active Directory",
+        "VLANs",
+        "Cat6A Cabling"
+      ],
+      "caseStudy": {
+        "problem": "Frequent Wi-Fi dead zones, unmanaged workstation security, and poor network throughput crippling day-to-day corporate operations.",
+        "solution": "Designed high-density Wi-Fi 6 access points, isolated guest and employee VLANs, and deployed automated Group Policies for instantaneous workstation credential onboarding.",
+        "outcome": "Network bandwidth efficiency improved by 400%, and IT onboarding time for new hires dropped from 4 hours to 8 minutes."
+      },
+      "featured": true,
+      "createdAt": "2026-08-20T10:00:00.000Z"
+    },
+    {
+      "id": "port-3",
+      "title": "MedTrack Cloud Infrastructure & Disaster Recovery",
+      "category": "cloud",
+      "categoryLabel": "Cloud & DevOps",
+      "image": "assets/cloud_infra.jpg",
+      "metric": "99.995% SLA & HIPAA Compliance",
+      "description": "Engineered automated multi-region Kubernetes cloud infrastructure with end-to-end encryption, automated database replication, and sub-second failover routing.",
+      "techStack": [
+        "AWS EKS",
+        "Terraform",
+        "Cloudflare WAF",
+        "PostgreSQL Aurora",
+        "Prometheus"
+      ],
+      "caseStudy": {
+        "problem": "Healthcare records system required continuous zero-loss compliance, automatic disaster recovery, and protection against DDOS traffic spikes.",
+        "solution": "Implemented Infrastructure-as-Code (Terraform) provisioning with automated multi-AZ database read replicas and Cloudflare Enterprise edge caching.",
+        "outcome": "Passed external compliance audits with zero findings and reduced server latency by 68% nationwide."
+      },
+      "featured": true,
+      "createdAt": "2026-08-21T11:00:00.000Z"
+    },
+    {
+      "id": "port-4",
+      "title": "LogiQuick Logistics & Courier Mobile App",
+      "category": "mobile",
+      "categoryLabel": "Mobile Application",
+      "image": "assets/hero_portrait.jpg",
+      "metric": "45,000+ Active Monthly Deliveries",
+      "description": "Cross-platform mobile application for real-time dispatch, turn-by-turn route optimization, electronic proof of delivery (e-signature), and WhatsApp customer alerts.",
+      "techStack": [
+        "Flutter",
+        "Firebase",
+        "Google Maps API",
+        "Node.js",
+        "WebSocket"
+      ],
+      "caseStudy": {
+        "problem": "Manual dispatch calls caused delivery delays, lost packages, and high operational overhead.",
+        "solution": "Developed an intuitive mobile application for drivers and customers with live GPS tracking, automated push notifications, and instant digital proof-of-delivery.",
+        "outcome": "Driver daily delivery capacity increased by 35% with a 94% positive customer satisfaction rating."
+      },
+      "featured": true,
+      "createdAt": "2026-08-21T12:00:00.000Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "it_support",
+      "title": "IT Support & Troubleshooting",
+      "icon": "fa-solid fa-screwdriver-wrench",
+      "summary": "Proactive managed IT support, emergency on-site & remote troubleshooting, workstation optimization, and network maintenance.",
+      "features": [
+        "24/7 Rapid Incident Remediations",
+        "Network & Wi-Fi Router Configurations",
+        "Malware Removal & Endpoint Security",
+        "Hardware Diagnostics & Component Repairs"
+      ],
+      "fullDetails": {
+        "scope": "Our Managed IT Support service acts as your dedicated enterprise IT department. We maintain your systems, monitor server health, troubleshoot connectivity issues, configure printers, and ensure zero operational downtime.",
+        "deliverables": [
+          "SLA-backed 15-minute response time guarantee",
+          "Monthly proactive system health check & patch audits",
+          "Remote desktop troubleshooting and on-demand field visits",
+          "Comprehensive asset management & inventory documentation"
+        ],
+        "techStack": "Remote Management (RMM), Cisco / Ubiquiti UniFi, Wireshark, Active Directory, BitLocker, Windows Server"
+      }
+    },
+    {
+      "id": "web_dev",
+      "title": "Website Design & Development",
+      "icon": "fa-solid fa-code",
+      "summary": "Custom full-stack web applications, ultra-fast modern websites, responsive UI/UX design, and robust API integrations.",
+      "features": [
+        "Custom Full-Stack Architecture",
+        "High-Converting Responsive UI/UX",
+        "Secure Payment Gateway Integrations",
+        "Sub-Second Load Speed & SEO Core Vitals"
+      ],
+      "fullDetails": {
+        "scope": "We build bespoke, modern web applications engineered for scalability and conversion. From custom enterprise SaaS platforms to dynamic corporate websites and e-commerce portals, our code is clean, secure, and blazing fast.",
+        "deliverables": [
+          "Full-stack web application with responsive UI/UX",
+          "Custom REST / GraphQL API development & third-party integrations",
+          "Payment gateway (Stripe, Paystack, Flutterwave, PayPal) integration",
+          "Technical SEO optimization, SSL security, and CI/CD automated deployment"
+        ],
+        "techStack": "React, Next.js, Node.js, TypeScript, Python / Django, PostgreSQL, TailwindCSS, AWS / Vercel"
+      }
+    },
+    {
+      "id": "google_business",
+      "title": "Google Business Profile & SEO",
+      "icon": "fa-brands fa-google",
+      "summary": "Google Business Profile verification, top-3 local Map pack ranking, review reputation management, and local search indexing.",
+      "features": [
+        "Official Google Profile Verification",
+        "Local Map Pack Ranking Optimization",
+        "Automated Review & Reputation System",
+        "High-Intent Keyword & Geo-Tag Indexing"
+      ],
+      "fullDetails": {
+        "scope": "Maximize your physical and digital discoverability. We handle official Google Business Profile verification, optimize your local categories, implement local SEO schema, and setup customer review acquisition funnels to rank in the top 3 on Google Maps.",
+        "deliverables": [
+          "100% verified and optimized Google Business listing",
+          "Geotagged high-resolution photo assets and catalog uploads",
+          "Local citation building across top business directories",
+          "QR code review generation kit for instant 5-star customer reviews"
+        ],
+        "techStack": "Google Business Suite, Google Maps API, Schema.org LocalSEO, Semrush, BrightLocal"
+      }
+    },
+    {
+      "id": "cloud_hosting",
+      "title": "Website Hosting & Maintenance",
+      "icon": "fa-solid fa-cloud-arrow-up",
+      "summary": "Enterprise 99.9% uptime cloud hosting, managed SSL setups, domain lifecycle management, and automated daily backups.",
+      "features": [
+        "99.9% Uptime SLA Guarantee",
+        "Free Wildcard SSL & DDoS Protection",
+        "Automated Off-Site Daily Backups",
+        "Continuous Core & Security Updates"
+      ],
+      "fullDetails": {
+        "scope": "Never worry about server crashes, expired domains, or security vulnerabilities again. We provide fully managed, blazing-fast cloud hosting backed by enterprise CDNs, automated daily snapshots, and 24/7 uptime monitoring.",
+        "deliverables": [
+          "Isolated high-speed cloud hosting environment with HTTP/3 & NVMe storage",
+          "Enterprise Cloudflare DDoS mitigation and Web Application Firewall (WAF)",
+          "Daily automated multi-region encrypted backups with 1-click restore",
+          "Routine plugin, database, and security patch maintenance"
+        ],
+        "techStack": "AWS Cloud, DigitalOcean, Cloudflare Enterprise, Docker, Nginx, Redis Caching, UptimeRobot"
+      }
+    },
+    {
+      "id": "windows_os",
+      "title": "Windows OS Installation & Setup",
+      "icon": "fa-brands fa-windows",
+      "summary": "Clean Windows 11/10 Pro installations, OS migration, driver optimization, enterprise domain joining, and software packages.",
+      "features": [
+        "Genuine Windows 11/10 Pro Deployment",
+        "Complete Driver & Performance Tuning",
+        "Essential Software & Antivirus Suite",
+        "Data Backup & Lossless Migration"
+      ],
+      "fullDetails": {
+        "scope": "Whether you bought a new workstation, need an OS upgrade, or are recovering from a corrupt system, we provide professional clean Windows installations with guaranteed data integrity, licensed activations, and fine-tuned system performance.",
+        "deliverables": [
+          "Clean installation of Windows 11/10 Pro with genuine digital license",
+          "Installation of all motherboard, GPU, and chipset drivers",
+          "Enterprise productivity suite setup (MS Office, Chrome, PDF reader, Developer tools)",
+          "Full backup and lossless transfer of user files and configurations"
+        ],
+        "techStack": "Windows 11 / 10 Pro, Windows PE, Sysprep, BitLocker Drive Encryption, Microsoft 365, Acronis"
+      }
+    },
+    {
+      "id": "hardware_sales",
+      "title": "Laptop Sales & Accessories",
+      "icon": "fa-solid fa-laptop-code",
+      "summary": "Certified brand-new and Grade-A business laptops, high-performance developer workstations, monitors, and components.",
+      "features": [
+        "35-Point Hardware Quality Certified",
+        "6 to 12-Month Official Warranty",
+        "RAM & NVMe SSD Upgrade Options",
+        "Same-Day Delivery & Pre-Configured"
+      ],
+      "fullDetails": {
+        "scope": "We supply thoroughly tested, high-grade laptops and enterprise hardware. From ultra-portable Dell XPS and Lenovo ThinkPads for executives to high-powered MacBook Pros and developer workstations, every device is rigorously inspected.",
+        "deliverables": [
+          "Certified Grade-A device with clean battery health report (>85%)",
+          "Free pre-installed Windows 11 Pro / macOS + productivity suite",
+          "Original high-wattage power adapter and brand packaging",
+          "Official warranty certificate and free technical support"
+        ],
+        "techStack": "Dell Latitude / XPS, Lenovo ThinkPad, Apple MacBook Pro, HP EliteBook, Samsung NVMe, Crucial RAM"
+      }
+    }
+  ],
+  "tickets": [
+    {
+      "id": "CG-TICK-4629",
+      "name": "Test Client",
+      "email": "test@client.com",
+      "category": "Cloud Hosting",
+      "priority": "High",
+      "desc": "Automated test incident verification",
+      "status": "In Progress",
+      "step": 1,
+      "createdAt": "8/23/26, 1:58 AM"
+    },
+    {
+      "id": "CG-TICK-5821",
+      "name": "Test Client",
+      "email": "test@client.com",
+      "category": "Cloud Hosting",
+      "priority": "High",
+      "desc": "Automated test incident verification",
+      "status": "In Progress",
+      "step": 1,
+      "createdAt": "8/23/26, 1:57 AM"
+    },
+    {
+      "id": "CG-TICK-1042",
+      "name": "Alex Johnson (Vanguard Tech)",
+      "email": "alex@vanguardtech.com",
+      "category": "IT Support & Network Troubleshooting",
+      "priority": "High",
+      "desc": "Main switch in Server Room B experiencing intermittent packet loss on VLAN 20.",
+      "status": "In Progress",
+      "step": 2,
+      "createdAt": "2026-08-20 09:30 AM"
+    },
+    {
+      "id": "CG-TICK-1088",
+      "name": "Dr. Sarah Mensah",
+      "email": "sarah@horizonlabs.org",
+      "category": "Windows / OS Deployment & Setup",
+      "priority": "Critical 24/7",
+      "desc": "10 Workstations require clean Windows 11 Enterprise installation and antivirus deployment.",
+      "status": "Completed",
+      "step": 3,
+      "createdAt": "2026-08-21 11:15 AM"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "CG-APT-101",
+      "name": "Chief Adekunle Williams",
+      "phone": "+2348012345678",
+      "service": "Enterprise IT Support & Network Setup",
+      "type": "On-Site Physical Consultation (Office / Site)",
+      "date": "2026-08-25",
+      "time": "10:00 AM",
+      "status": "Confirmed",
+      "createdAt": "2026-08-22T08:30:00.000Z"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "CNT-101",
+      "name": "Michael Chang",
+      "email": "mchang@fintechwave.io",
+      "subject": "Custom Fintech Web App Quote",
+      "message": "We need a Next.js and Node.js subscription billing portal similar to ApexFlow.",
+      "createdAt": "2026-08-22T14:10:00.000Z"
+    }
+  ],
+  "newsletter": [
+    {
+      "email": "contact@techstartup.com",
+      "subscribedAt": "2026-08-22T16:00:00.000Z"
+    }
+  ]
+}

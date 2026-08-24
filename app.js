@@ -1449,12 +1449,34 @@ function initNavigation() {
   const header = document.getElementById("site-header");
 
   if (mobileToggle && mainNav) {
-    mobileToggle.addEventListener("click", () => {
-      mainNav.classList.toggle("open");
+    mobileToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = mainNav.classList.toggle("open");
+      mobileToggle.classList.toggle("active", isOpen);
+      const icon = mobileToggle.querySelector("i");
+      if (icon) {
+        icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+      }
     });
 
-    mainNav.querySelectorAll(".nav-link").forEach((link) => {
-      link.addEventListener("click", () => mainNav.classList.remove("open"));
+    // Close mobile menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (mainNav.classList.contains("open") && !mainNav.contains(e.target) && !mobileToggle.contains(e.target)) {
+        mainNav.classList.remove("open");
+        mobileToggle.classList.remove("active");
+        const icon = mobileToggle.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-bars";
+      }
+    });
+
+    // Close on nav link or mobile action button click
+    mainNav.querySelectorAll(".nav-link, .btn-mobile-cta").forEach((link) => {
+      link.addEventListener("click", () => {
+        mainNav.classList.remove("open");
+        mobileToggle.classList.remove("active");
+        const icon = mobileToggle.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-bars";
+      });
     });
   }
 

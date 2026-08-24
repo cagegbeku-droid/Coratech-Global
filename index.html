@@ -56,14 +56,42 @@
         <img src="assets/logo.svg" alt="Coratech Global Logo" class="brand-logo-img">
       </a>
 
-      <!-- Navigation Links -->
+      <!-- Navigation Links & Mobile Drawer -->
       <nav class="main-nav" id="main-nav">
-        <a href="#services" class="nav-link" id="nav-link-services">Services</a>
-        <a href="#hardware" class="nav-link" id="nav-link-hardware">Hardware Store</a>
-        <a href="#portfolio" class="nav-link" id="nav-link-portfolio">Portfolio</a>
-        <a href="#calculator" class="nav-link" id="nav-link-calc">Cost Estimator</a>
-        <a href="#support" class="nav-link" id="nav-link-support">IT Helpdesk</a>
-        <a href="#contact" class="nav-link" id="nav-link-contact">Contact</a>
+        <div class="nav-links-list">
+          <a href="#services" class="nav-link" id="nav-link-services">
+            <i class="fa-solid fa-code nav-link-icon"></i> <span>Services</span>
+          </a>
+          <a href="#hardware" class="nav-link" id="nav-link-hardware">
+            <i class="fa-solid fa-laptop nav-link-icon"></i> <span>Hardware Store</span>
+          </a>
+          <a href="#portfolio" class="nav-link" id="nav-link-portfolio">
+            <i class="fa-solid fa-diagram-project nav-link-icon"></i> <span>Portfolio</span>
+          </a>
+          <a href="#calculator" class="nav-link" id="nav-link-calc">
+            <i class="fa-solid fa-calculator nav-link-icon"></i> <span>Cost Estimator</span>
+          </a>
+          <a href="#support" class="nav-link" id="nav-link-support">
+            <i class="fa-solid fa-headset nav-link-icon"></i> <span>IT Helpdesk</span>
+          </a>
+          <a href="#contact" class="nav-link" id="nav-link-contact">
+            <i class="fa-solid fa-envelope nav-link-icon"></i> <span>Contact</span>
+          </a>
+        </div>
+
+        <!-- Mobile Drawer Only Action Panel -->
+        <div class="mobile-nav-cta-box">
+          <a href="https://wa.me/233599360626?text=Hello%20Coratech%20Global,%20I%20would%20like%20to%20inquire%20about%20your%20services" target="_blank" class="btn btn-whatsapp btn-mobile-cta">
+            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp (0599360626)
+          </a>
+          <a href="#support" class="btn btn-emergency btn-mobile-cta">
+            <i class="fa-solid fa-bolt"></i> Emergency IT Support
+          </a>
+          <div class="mobile-nav-contact-info">
+            <a href="tel:+233599360626"><i class="fa-solid fa-phone text-cyan"></i> +233 59 936 0626</a>
+            <span class="mobile-nav-badge"><i class="fa-solid fa-shield-halved"></i> 24/7 SLA Available</span>
+          </div>
+        </div>
       </nav>
 
       <!-- Nav Actions -->
@@ -73,12 +101,12 @@
           <i class="fa-solid fa-sun" id="theme-icon"></i>
         </button>
 
-        <!-- Direct WhatsApp CTA -->
+        <!-- Desktop Direct WhatsApp CTA -->
         <a href="https://wa.me/233599360626?text=Hello%20Coratech%20Global,%20I%20would%20like%20to%20inquire%20about%20your%20services" target="_blank" class="btn btn-whatsapp btn-sm" id="nav-whatsapp-btn">
           <i class="fa-brands fa-whatsapp"></i> Chat Now
         </a>
 
-        <!-- Emergency Support Button -->
+        <!-- Desktop Emergency Support Button -->
         <a href="#support" class="btn btn-emergency btn-sm" id="nav-emergency-btn">
           <i class="fa-solid fa-bolt"></i> Emergency IT
         </a>

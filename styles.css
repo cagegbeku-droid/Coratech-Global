@@ -111,9 +111,7 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-tap-highlight-color: transparent;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -121,14 +119,14 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+  min-height: 100%;
   position: relative;
+  overflow-x: clip; /* Modern clean containment without scroll-hijacking or cutoffs */
   transition: background-color var(--transition-normal), color var(--transition-normal);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Canvas Background for Particle Network (Strict Viewport Contained) */
+/* Canvas Background for Particle Network */
 #circuit-canvas {
   position: fixed;
   top: 0;
@@ -730,7 +728,7 @@ h1, h2, h3, h4, h5, h6 {
 /* --- Services Engine Section --- */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 30px;
 }
 
@@ -898,7 +896,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .hardware-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 30px;
 }
 
@@ -1034,7 +1032,7 @@ h1, h2, h3, h4, h5, h6 {
 /* --- Portfolio Showcase Section --- */
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 30px;
 }
 
@@ -1639,7 +1637,7 @@ h1, h2, h3, h4, h5, h6 {
 /* --- Testimonials & Social Proof --- */
 .testimonials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 30px;
 }
 
@@ -2533,6 +2531,32 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
   }
 
+  .services-grid,
+  .hardware-grid,
+  .portfolio-grid,
+  .testimonials-grid,
+  .appointment-grid,
+  .support-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .service-card,
+  .hardware-card,
+  .project-card,
+  .testimonial-card,
+  .contact-info-card,
+  .support-form-card,
+  .ticket-tracker-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .metrics-grid {
     grid-template-columns: 1fr 1fr;
     gap: 12px;
@@ -2581,10 +2605,16 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 480px) {
   .container {
     padding: 0 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .section {
     padding: 50px 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .section-title {

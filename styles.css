@@ -111,6 +111,9 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-tap-highlight-color: transparent;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -118,18 +121,21 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
   position: relative;
   transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-/* Canvas Background for Particle Network */
+/* Canvas Background for Particle Network (Strict Viewport Contained) */
 #circuit-canvas {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
   pointer-events: none;
   z-index: 0;
   opacity: 0.75;
@@ -2247,6 +2253,10 @@ h1, h2, h3, h4, h5, h6 {
     --nav-height: 70px;
   }
 
+  body {
+    padding-bottom: 85px; /* Extra bottom clearance for Centered Mobile Dock */
+  }
+
   .site-header {
     height: var(--nav-height);
   }
@@ -2396,6 +2406,111 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 4px;
   }
+
+  /* --- Centered Mobile Floating Bottom Dock --- */
+  .mobile-bottom-dock {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 28px);
+    max-width: 440px;
+    height: 62px;
+    background: rgba(8, 16, 38, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 242, 254, 0.28);
+    border-radius: 40px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 242, 254, 0.15);
+    z-index: 999;
+    padding: 4px 6px;
+    box-sizing: border-box;
+    transition: all var(--transition-normal);
+  }
+
+  [data-theme="light"] .mobile-bottom-dock {
+    background: rgba(255, 255, 255, 0.94);
+    border-color: rgba(2, 132, 199, 0.25);
+    box-shadow: 0 10px 30px rgba(11, 19, 43, 0.15), 0 0 15px rgba(2, 132, 199, 0.1);
+  }
+
+  .dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    height: 100%;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    position: relative;
+    border-radius: 20px;
+  }
+
+  .dock-icon-wrapper {
+    font-size: 1.15rem;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-bounce);
+  }
+
+  .dock-label {
+    letter-spacing: 0.2px;
+  }
+
+  .dock-item:hover,
+  .dock-item.active {
+    color: var(--accent-cyan);
+  }
+
+  .dock-item.active .dock-icon-wrapper {
+    transform: translateY(-2px) scale(1.1);
+    color: var(--accent-cyan);
+    filter: drop-shadow(0 0 6px var(--accent-cyan));
+  }
+
+  .dock-item-whatsapp {
+    color: #25D366;
+  }
+
+  .dock-wa-icon {
+    background: #25D366;
+    color: #FFFFFF;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    animation: pulseWhatsapp 2.5s infinite;
+  }
+
+  .dock-item-whatsapp:hover,
+  .dock-item-whatsapp.active {
+    color: #25D366;
+  }
+
+  /* Hide standalone floating button on mobile in favor of bottom dock */
+  .floating-whatsapp-widget {
+    display: none !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .mobile-bottom-dock {
+    display: none !important;
+  }
+
+  .floating-whatsapp-widget {
+    display: flex;
+  }
 }
 
 @media (max-width: 768px) {
@@ -2449,6 +2564,12 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 8px;
     -webkit-overflow-scrolling: touch;
     flex-wrap: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hardware-filter-bar::-webkit-scrollbar {
+    display: none;
   }
 
   .filter-btn {
@@ -2482,20 +2603,10 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
   }
 
-  .floating-whatsapp-widget {
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .floating-whatsapp-btn {
-    width: 52px;
-    height: 52px;
-    font-size: 1.6rem;
-  }
-
-  .whatsapp-popup-card {
-    width: calc(100vw - 32px);
-    right: -8px;
+  .mobile-bottom-dock {
+    bottom: 12px;
+    width: calc(100% - 20px);
+    height: 58px;
   }
 
   .modal-card {

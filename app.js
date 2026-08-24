@@ -1480,6 +1480,17 @@ function initNavigation() {
     });
   }
 
+  // Handle Mobile Bottom Dock clicks
+  document.querySelectorAll(".mobile-bottom-dock .dock-item").forEach((dockLink) => {
+    dockLink.addEventListener("click", () => {
+      const target = dockLink.getAttribute("data-dock-target");
+      if (target) {
+        document.querySelectorAll(".mobile-bottom-dock .dock-item").forEach((d) => d.classList.remove("active"));
+        dockLink.classList.add("active");
+      }
+    });
+  });
+
   // Scrollspy & Scrolled Header
   window.addEventListener("scroll", () => {
     if (window.scrollY > 40) {
@@ -1488,19 +1499,25 @@ function initNavigation() {
       header.classList.remove("scrolled");
     }
 
-    // Update active nav link
+    // Update active nav link & mobile dock item
     const sections = document.querySelectorAll("section[id]");
-    const scrollY = window.pageYOffset + 120;
+    const scrollY = window.pageYOffset + 140;
 
     sections.forEach((sec) => {
       const top = sec.offsetTop;
       const height = sec.offsetHeight;
       const id = sec.getAttribute("id");
       const navLink = document.querySelector(`.main-nav a[href="#${id}"]`);
+      const dockLink = document.querySelector(`.mobile-bottom-dock a[data-dock-target="${id}"]`);
 
       if (scrollY >= top && scrollY < top + height) {
         document.querySelectorAll(".main-nav a").forEach((a) => a.classList.remove("active"));
         if (navLink) navLink.classList.add("active");
+
+        if (dockLink) {
+          document.querySelectorAll(".mobile-bottom-dock .dock-item").forEach((d) => d.classList.remove("active"));
+          dockLink.classList.add("active");
+        }
       }
     });
   });

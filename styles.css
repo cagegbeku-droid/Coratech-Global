@@ -2405,6 +2405,122 @@ h1, h2, h3, h4, h5, h6 {
     gap: 4px;
   }
 
+  /* Hero Section Full-Width Mobile Optimization */
+  .hero-section {
+    padding-top: calc(var(--nav-height) + 20px);
+    padding-bottom: 40px;
+    min-height: auto;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    width: 100% !important;
+  }
+
+  .hero-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .hero-badge {
+    align-self: flex-start;
+    margin-bottom: 18px;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(2.1rem, 7vw, 2.85rem) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 18px !important;
+    width: 100% !important;
+  }
+
+  .hero-description {
+    font-size: 1rem !important;
+    line-height: 1.65 !important;
+    margin-bottom: 26px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .hero-cta-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-bottom: 28px !important;
+  }
+
+  .hero-cta-group .btn {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 1rem !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* 2-Column Full-Width Grid for Service Pills to eliminate blank right side */
+  .hero-service-pills {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-bottom: 30px !important;
+  }
+
+  .service-pill-chip {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+    font-size: 0.78rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: var(--radius-sm) !important;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+  }
+
+  .service-pill-chip:last-child:nth-child(odd) {
+    grid-column: span 2 !important;
+    justify-content: center !important;
+  }
+
+  /* Hero Media Visual Frame */
+  .hero-visual-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .hero-card-frame {
+    padding: 12px !important;
+    width: 100% !important;
+  }
+
+  .hero-portrait-img {
+    height: 280px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .hero-uptime-tag {
+    top: 20px !important;
+    right: 20px !important;
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .floating-status-badge {
+    bottom: 14px !important;
+    left: 14px !important;
+    right: 14px !important;
+    padding: 12px 14px !important;
+  }
+
   /* --- Centered Mobile Floating Bottom Dock --- */
   .mobile-bottom-dock {
     display: flex;

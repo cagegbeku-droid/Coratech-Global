@@ -600,6 +600,35 @@
       <form id="form-hardware" class="admin-modal-body">
         <input type="hidden" id="hw-edit-id">
 
+        <!-- Smart Spec Auto-Parser Box -->
+        <div class="smart-parser-container">
+          <div class="smart-parser-header">
+            <div class="smart-parser-badge-tag">
+              <i class="fa-solid fa-wand-magic-sparkles text-cyan"></i>
+              <span>Smart Spec Auto-Parser</span>
+            </div>
+            <span class="smart-parser-subtext">Paste raw listing or vendor message &bull; Auto-detects and fills all fields</span>
+          </div>
+          <div class="smart-parser-body">
+            <textarea id="hw-raw-spec-text" class="smart-parser-textarea" rows="4" placeholder="Paste vendor text here, e.g.:
+CORE I7 HP SPECTRE 13 ULTRABOOK (2 in 1)
+7TH GENERATION, X360 CONVERTIBLE
+TOUCHSCREEN, KEYBOARD LIGHT
+256 GIG SSD, 8 GIG RAM, 2.9GHZ
+FACIAL IDENTIFICATION, WEBCAM, WIFI, BLUETOOTH
+USED IN A BOX
+GHC 3900"></textarea>
+            <div class="smart-parser-footer">
+              <button type="button" class="btn btn-sm btn-primary" id="btn-hw-auto-parse">
+                <i class="fa-solid fa-bolt-lightning"></i> Auto-Detect & Arrange Specs
+              </button>
+              <button type="button" class="btn btn-sm btn-secondary" id="btn-hw-clear-raw">
+                Clear Box
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="form-grid-2col">
           <div class="form-group">
             <label for="hw-model">Model Name *</label>
@@ -731,6 +760,35 @@
       </div>
       <form id="form-portfolio" class="admin-modal-body">
         <input type="hidden" id="port-edit-id">
+
+        <!-- Smart Case Study Auto-Parser Box -->
+        <div class="smart-parser-container parser-container-purple">
+          <div class="smart-parser-header">
+            <div class="smart-parser-badge-tag badge-purple">
+              <i class="fa-solid fa-wand-magic-sparkles text-purple"></i>
+              <span>Smart Case Study Auto-Parser</span>
+            </div>
+            <span class="smart-parser-subtext">Paste project notes &bull; Auto-arranges into Title, Stack, Problem, Solution & Results</span>
+          </div>
+          <div class="smart-parser-body">
+            <textarea id="port-raw-spec-text" class="smart-parser-textarea" rows="4" placeholder="Paste project writeup or brief here, e.g.:
+Title: Cloud Migration for Logistics Firm
+Category: Cloud & DevOps
+Result: 99.99% Uptime SLA
+Tech: AWS, Kubernetes, Docker, PostgreSQL
+Problem: Legacy servers crashed under high traffic
+Solution: Deployed auto-scaling Kubernetes cluster
+Outcome: Cut downtime to zero and saved 38% costs"></textarea>
+            <div class="smart-parser-footer">
+              <button type="button" class="btn btn-sm btn-purple" id="btn-port-auto-parse">
+                <i class="fa-solid fa-bolt-lightning"></i> Auto-Detect & Arrange Case Study
+              </button>
+              <button type="button" class="btn btn-sm btn-secondary" id="btn-port-clear-raw">
+                Clear Box
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div class="form-grid-2col">
           <div class="form-group">

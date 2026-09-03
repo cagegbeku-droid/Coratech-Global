@@ -128,20 +128,20 @@
       "categoryLabel": "Workstation Peripherals",
       "image": "assets/cloud_infra.jpg",
       "condition": "Brand New",
-      "badgeCert": "OFFICIAL ACCESSORY",
+      "badgeCert": "FACTORY SEALED",
       "specs": {
-        "cpu": "4K UHD (3840 x 2160) IPS",
-        "ram": "90W USB-C Power Delivery",
-        "storage": "RJ45 Ethernet + USB Hub",
-        "display": "99% sRGB / 95% DCI-P3",
-        "gpu": "Dual DisplayPort & HDMI",
-        "battery": "Built-in KVM Switch"
+        "cpu": "IPS Black Technology Panel",
+        "ram": "USB-C 90W Power Delivery Hub",
+        "storage": "RJ45 Ethernet & DisplayPort 1.4",
+        "display": "27\" 4K UHD (3840 x 2160) Anti-Glare",
+        "gpu": "100% sRGB / 98% DCI-P3 Color",
+        "battery": "Integrated Power Supply"
       },
       "priceUsd": 6500,
-      "warranty": "1 Year Official Warranty",
+      "warranty": "3 Years Dell Replacement Warranty",
       "inStock": true,
       "featured": false,
-      "createdAt": "2026-08-21T14:00:00.000Z"
+      "createdAt": "2026-08-22T09:00:00.000Z"
     },
     {
       "id": "hw-6",
@@ -395,105 +395,9 @@
       }
     }
   ],
-  "tickets": [
-    {
-      "id": "CG-TICK-3795",
-      "name": "Esi Addo",
-      "email": "esi@fintech.com",
-      "category": "Cloud Hosting & DevOps",
-      "priority": "High",
-      "desc": "Requesting assistance setting up SSL and domain mapping.",
-      "status": "In Progress",
-      "step": 1,
-      "createdAt": "9/3/26, 11:40 AM"
-    },
-    {
-      "id": "CG-TICK-1042",
-      "name": "Alex Johnson (Vanguard Tech)",
-      "email": "alex@vanguardtech.com",
-      "category": "IT Support & Network Troubleshooting",
-      "priority": "High",
-      "desc": "Main network switch in Server Room B experiencing intermittent packet loss on VLAN 20.",
-      "status": "In Progress",
-      "step": 2,
-      "createdAt": "2026-08-20 09:30 AM"
-    },
-    {
-      "id": "CG-TICK-1088",
-      "name": "Dr. Sarah Mensah",
-      "email": "sarah@horizonlabs.org",
-      "category": "Windows / OS Deployment & Setup",
-      "priority": "High",
-      "desc": "10 Workstations require clean Windows 11 Enterprise installation and security setup.",
-      "status": "Completed",
-      "step": 3,
-      "createdAt": "2026-08-21 11:15 AM"
-    }
-  ],
-  "orders": [
-    {
-      "id": "ORD-600527",
-      "name": "Abena Osei",
-      "phone": "+233591234567",
-      "email": "abena@horizon.org",
-      "model": "MacBook Pro 16 (M1 Max)",
-      "priceUsd": 24500,
-      "location": "Cantonments, Accra",
-      "notes": "Please expedite delivery for tomorrow morning.",
-      "status": "Processing",
-      "createdAt": "2026-09-03T11:40:00.527Z"
-    },
-    {
-      "id": "ORD-101",
-      "name": "Kwame Mensah",
-      "phone": "+233541234567",
-      "email": "kwame.mensah@gmail.com",
-      "model": "Dell XPS 15 (9520) Developer Edition",
-      "priceUsd": 17800,
-      "location": "Airport Residential Area, Accra",
-      "notes": "Please include an extra 130W USB-C charger and confirm delivery time.",
-      "status": "Processing",
-      "createdAt": "2026-08-23T10:15:00.000Z"
-    }
-  ],
-  "appointments": [
-    {
-      "id": "CG-APT-153",
-      "name": "Kofi Boateng",
-      "phone": "+233501112233",
-      "service": "IT Infrastructure & Network Audit",
-      "type": "On-Site Office Visit",
-      "date": "2026-09-10",
-      "time": "11:30 AM",
-      "status": "Pending Confirmation",
-      "createdAt": "2026-09-03T11:40:00.544Z"
-    },
-    {
-      "id": "CG-APT-101",
-      "name": "Chief Adekunle Williams",
-      "phone": "+2348012345678",
-      "service": "Enterprise IT Support & Network Setup",
-      "type": "On-Site Physical Consultation (Office / Site)",
-      "date": "2026-08-25",
-      "time": "10:00 AM",
-      "status": "Confirmed",
-      "createdAt": "2026-08-22T08:30:00.000Z"
-    }
-  ],
-  "contacts": [
-    {
-      "id": "CNT-101",
-      "name": "Michael Chang",
-      "email": "mchang@fintechwave.io",
-      "subject": "Custom Fintech Web App Quote",
-      "message": "We need a Next.js and Node.js subscription billing portal similar to ApexFlow.",
-      "createdAt": "2026-08-22T14:10:00.000Z"
-    }
-  ],
-  "newsletter": [
-    {
-      "email": "contact@techstartup.com",
-      "subscribedAt": "2026-08-22T16:00:00.000Z"
-    }
-  ]
+  "tickets": [],
+  "orders": [],
+  "appointments": [],
+  "contacts": [],
+  "newsletter": []
 }

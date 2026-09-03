@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initAuthSession();
   initEventListeners();
   initDropzones();
+  initSmartParsers();
   checkServerHealth();
   setInterval(checkServerHealth, 15000);
 });
@@ -1509,4 +1510,375 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+// =========================================================================
+// 15. INTELLIGENT SPECIFICATION & CASE STUDY AUTO-PARSERS
+// =========================================================================
+
+function initSmartParsers() {
+  // Hardware Auto-Parse Button
+  const btnHwParse = document.getElementById("btn-hw-auto-parse");
+  const btnHwClear = document.getElementById("btn-hw-clear-raw");
+  const hwRawInput = document.getElementById("hw-raw-spec-text");
+
+  if (btnHwParse && hwRawInput) {
+    btnHwParse.addEventListener("click", () => {
+      const text = hwRawInput.value.trim();
+      if (!text) {
+        showAdminToast("Please paste the laptop description or specs first.", "warning");
+        return;
+      }
+      parseAndFillHardwareSpecs(text);
+    });
+  }
+
+  if (btnHwClear && hwRawInput) {
+    btnHwClear.addEventListener("click", () => {
+      hwRawInput.value = "";
+    });
+  }
+
+  // Portfolio Auto-Parse Button
+  const btnPortParse = document.getElementById("btn-port-auto-parse");
+  const btnPortClear = document.getElementById("btn-port-clear-raw");
+  const portRawInput = document.getElementById("port-raw-spec-text");
+
+  if (btnPortParse && portRawInput) {
+    btnPortParse.addEventListener("click", () => {
+      const text = portRawInput.value.trim();
+      if (!text) {
+        showAdminToast("Please paste the project description or case study notes first.", "warning");
+        return;
+      }
+      parseAndFillPortfolioCaseStudy(text);
+    });
+  }
+
+  if (btnPortClear && portRawInput) {
+    btnPortClear.addEventListener("click", () => {
+      portRawInput.value = "";
+    });
+  }
+}
+
+function flashField(element) {
+  if (!element) return;
+  element.classList.remove("field-auto-highlight");
+  void element.offsetWidth; // trigger reflow
+  element.classList.add("field-auto-highlight");
+}
+
+function parseAndFillHardwareSpecs(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const normalizedText = text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, " "); // remove emojis
+
+  // 1. Price Extraction
+  let price = null;
+  const priceRegex = /(?:ghc|gh₵|ghs|cedis|\$|usd|price|cost)[\s:]*([0-9,]+)/i;
+  const priceMatch = normalizedText.match(priceRegex);
+  if (priceMatch) {
+    price = parseInt(priceMatch[1].replace(/,/g, ""), 10);
+  } else {
+    // Check if any line is just numbers
+    for (const line of lines) {
+      const cleanLine = line.replace(/[^0-9]/g, "");
+      if (cleanLine.length >= 3 && cleanLine.length <= 6) {
+        const p = parseInt(cleanLine, 10);
+        if (p >= 500 && p <= 100000) {
+          price = p;
+          break;
+        }
+      }
+    }
+  }
+
+  // 2. CPU Extraction
+  let cpu = "";
+  const cpuCoreMatch = normalizedText.match(/(core\s*i[3579]|ryzen\s*[3579]|m[1234]\s*(?:pro|max|ultra)?)/i);
+  const genMatch = normalizedText.match(/(\d+)(?:th|nd|rd|st)?\s*gen(?:eration)?/i);
+  const speedMatch = normalizedText.match(/(\d+(?:\.\d+)?\s*ghz(?:\s*base(?:\s*speed)?)?)/i);
+
+  if (cpuCoreMatch) {
+    let coreName = cpuCoreMatch[1].toUpperCase();
+    if (coreName.startsWith("CORE")) coreName = "Intel " + coreName;
+    const genPart = genMatch ? ` ${genMatch[1]}th Gen` : "";
+    const speedPart = speedMatch ? ` (${speedMatch[1].toUpperCase()})` : "";
+    cpu = `${coreName}${genPart}${speedPart}`.trim();
+  }
+
+  // 3. RAM Extraction
+  let ram = "";
+  const ramMatch = normalizedText.match(/(\d+)\s*(?:gig|gb|gigs)\s*(?:ram|ddr[345]|memory)?/i) || normalizedText.match(/ram[\s:]*(\d+)\s*(?:gb|gig)?/i);
+  if (ramMatch) {
+    ram = `${ramMatch[1]}GB High-Speed RAM`;
+  }
+
+  // 4. Storage Extraction
+  let storage = "";
+  const ssdMatch = normalizedText.match(/(\d+)\s*(?:gig|gb|tb|tera)\s*(?:ssd|nvme|pcie|storage|drive)?/i);
+  if (ssdMatch) {
+    const isTb = /tb|tera/i.test(ssdMatch[0]);
+    storage = `${ssdMatch[1]}${isTb ? "TB" : "GB"} SSD High-Speed Storage`;
+  }
+
+  // 5. Display / Touchscreen / Form Factor
+  let display = "";
+  const isTouch = /touch(?:screen)?/i.test(normalizedText);
+  const isX360 = /x360|convertible|2\s*in\s*1/i.test(normalizedText);
+  const screenSizeMatch = normalizedText.match(/(\d{2}(?:\.\d)?)\s*(?:inch|"?)/i);
+  const screenSize = screenSizeMatch ? `${screenSizeMatch[1]}"` : (isTouch || isX360 ? '13.3"' : '14"');
+
+  if (isTouch && isX360) {
+    display = `${screenSize} Touchscreen (x360 2-in-1 Flip)`;
+  } else if (isTouch) {
+    display = `${screenSize} Full HD Touchscreen`;
+  } else {
+    display = `${screenSize} Full HD Anti-Glare Display`;
+  }
+
+  // 6. GPU
+  let gpu = "Integrated Intel Iris Plus Graphics";
+  if (/iris\s*xe/i.test(normalizedText)) gpu = "Intel Iris Xe Graphics";
+  else if (/radeon/i.test(normalizedText)) gpu = "AMD Radeon Graphics";
+  else if (/nvidia|rtx|gtx/i.test(normalizedText)) {
+    const dGpu = normalizedText.match(/(?:rtx|gtx)\s*\d+(?:\s*ti)?/i);
+    gpu = dGpu ? `NVIDIA ${dGpu[0].toUpperCase()}` : "NVIDIA Dedicated Graphics";
+  }
+
+  // 7. Battery
+  let battery = "Long-life battery with Fast Charge";
+  if (/battery/i.test(normalizedText)) {
+    const batMatch = normalizedText.match(/(\d+wh|\d+-cell)/i);
+    battery = batMatch ? `${batMatch[0]} High-Capacity Battery` : "Long-life Battery (>85% Health Guaranteed)";
+  }
+
+  // 8. Model Name Detection
+  let brand = "";
+  if (/hp/i.test(normalizedText)) brand = "HP";
+  else if (/dell/i.test(normalizedText)) brand = "Dell";
+  else if (/lenovo|thinkpad/i.test(normalizedText)) brand = "Lenovo";
+  else if (/apple|macbook/i.test(normalizedText)) brand = "Apple";
+  else if (/asus/i.test(normalizedText)) brand = "Asus";
+  else if (/acer/i.test(normalizedText)) brand = "Acer";
+  else if (/microsoft|surface/i.test(normalizedText)) brand = "Microsoft";
+
+  let series = "";
+  if (/spectre/i.test(normalizedText)) series = "Spectre 13";
+  else if (/elitebook/i.test(normalizedText)) series = "EliteBook";
+  else if (/probook/i.test(normalizedText)) series = "ProBook";
+  else if (/xps/i.test(normalizedText)) series = "XPS";
+  else if (/latitude/i.test(normalizedText)) series = "Latitude";
+  else if (/thinkpad/i.test(normalizedText)) series = "ThinkPad";
+  else if (/macbook\s*pro/i.test(normalizedText)) series = "MacBook Pro";
+  else if (/macbook\s*air/i.test(normalizedText)) series = "MacBook Air";
+  else if (/yoga/i.test(normalizedText)) series = "Yoga";
+
+  let modelName = "";
+  if (brand && series) {
+    const subDesc = isX360 ? " x360 Convertible Ultrabook (2-in-1)" : " Ultrabook";
+    modelName = `${brand} ${series}${subDesc}`.trim();
+  } else if (lines.length > 0) {
+    modelName = lines[0].replace(/[\u{1F300}-\u{1F9FF}]/gu, "").trim();
+  }
+
+  // 9. Condition
+  let condition = "Used in Box (Mint Condition)";
+  if (/brand\s*new|sealed/i.test(normalizedText)) {
+    condition = "Brand New Sealed";
+  } else if (/used\s*in\s*(?:a\s*)?box|in\s*box/i.test(normalizedText)) {
+    condition = "Used in Box (Mint Condition)";
+  } else if (/grade\s*a\+/i.test(normalizedText)) {
+    condition = "Grade A+ Refurbished";
+  } else if (/grade\s*a/i.test(normalizedText)) {
+    condition = "Grade A Refurbished";
+  } else if (/open\s*box|like\s*new/i.test(normalizedText)) {
+    condition = "Open Box / Like New";
+  }
+
+  // 10. Category
+  let category = "business";
+  if (isX360 || isTouch || /spectre|ultrabook/i.test(normalizedText)) {
+    category = "business";
+  } else if (/developer|workstation|i7|i9|m1|m2/i.test(normalizedText)) {
+    category = "developer";
+  }
+
+  // Populate HTML fields
+  if (modelName) {
+    const el = document.getElementById("hw-model");
+    el.value = modelName;
+    flashField(el);
+  }
+  if (category) {
+    const el = document.getElementById("hw-category");
+    el.value = category;
+    flashField(el);
+  }
+  if (price) {
+    const el = document.getElementById("hw-price");
+    el.value = price;
+    flashField(el);
+  }
+  if (condition) {
+    const el = document.getElementById("hw-condition");
+    el.value = condition;
+    flashField(el);
+  }
+  if (cpu) {
+    const el = document.getElementById("hw-spec-cpu");
+    el.value = cpu;
+    flashField(el);
+  }
+  if (ram) {
+    const el = document.getElementById("hw-spec-ram");
+    el.value = ram;
+    flashField(el);
+  }
+  if (storage) {
+    const el = document.getElementById("hw-spec-storage");
+    el.value = storage;
+    flashField(el);
+  }
+  if (display) {
+    const el = document.getElementById("hw-spec-display");
+    el.value = display;
+    flashField(el);
+  }
+  if (gpu) {
+    const el = document.getElementById("hw-spec-gpu");
+    el.value = gpu;
+    flashField(el);
+  }
+  if (battery) {
+    const el = document.getElementById("hw-spec-battery");
+    el.value = battery;
+    flashField(el);
+  }
+
+  const certEl = document.getElementById("hw-cert");
+  certEl.value = "CORATECH CERTIFIED";
+  flashField(certEl);
+
+  const warEl = document.getElementById("hw-warranty");
+  warEl.value = condition.includes("Brand New") ? "1 Year Official Warranty" : "6 Months Coratech Warranty";
+  flashField(warEl);
+
+  showAdminToast("✨ Specs automatically parsed & organized into fields!", "success");
+}
+
+function parseAndFillPortfolioCaseStudy(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+  let title = "";
+  let category = "web";
+  let metric = "";
+  let techStack = [];
+  let description = "";
+  let problem = "";
+  let solution = "";
+  let outcome = "";
+
+  // Title: check first line or "Title:" line
+  const titleLine = lines.find(l => /^title[\s:]+/i.test(l));
+  if (titleLine) {
+    title = titleLine.replace(/^title[\s:]+/i, "").trim();
+  } else if (lines.length > 0) {
+    title = lines[0].replace(/^(project|case study)[\s:]+/i, "").trim();
+  }
+
+  // Metric: check for lines with %, SLA, or keywords
+  const metricMatch = text.match(/(?:\+|sub-)?(?:\d+(?:\.\d+)?%\s*(?:uptime|sla|surge|increase|conversion|throughput|growth)?|\$\d+[km]?|\d+ms\s*latency)/i);
+  if (metricMatch) {
+    metric = metricMatch[0];
+  } else {
+    metric = "100% Client Satisfaction";
+  }
+
+  // Category detection
+  if (/cloud|aws|devops|docker|kubernetes|server|azure/i.test(text)) {
+    category = "cloud";
+  } else if (/web|saas|next\.js|frontend|portal|ecommerce|react/i.test(text)) {
+    category = "web";
+  } else if (/enterprise|workstation|network|active directory|windows 11/i.test(text)) {
+    category = "it";
+  } else if (/mobile|ios|android|flutter/i.test(text)) {
+    category = "mobile";
+  }
+
+  // Tech Stack extraction
+  const knownTech = [
+    "Next.js", "TypeScript", "Node.js", "React", "AWS", "Docker", "Kubernetes",
+    "PostgreSQL", "MongoDB", "Redis", "Python", "TailwindCSS", "Stripe", "GraphQL",
+    "Windows 11 Enterprise", "Active Directory", "BitLocker", "Prometheus", "Grafana"
+  ];
+  knownTech.forEach((tech) => {
+    const escaped = tech.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (new RegExp(`\\b${escaped}\\b`, "i").test(text)) {
+      techStack.push(tech);
+    }
+  });
+  if (techStack.length === 0) {
+    techStack = ["Modern Cloud Stack", "Full-Stack Web"];
+  }
+
+  // Problem, Solution, Outcome extraction
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^problem|challenge|bottleneck/i.test(line)) {
+      problem = line.replace(/^(problem|challenge|bottleneck)[\s:]*/i, "").trim() || (lines[i + 1] || "");
+    } else if (/^solution|delivered|approach/i.test(line)) {
+      solution = line.replace(/^(solution|delivered|approach)[\s:]*/i, "").trim() || (lines[i + 1] || "");
+    } else if (/^outcome|results?|impact/i.test(line)) {
+      outcome = line.replace(/^(outcome|results?|impact)[\s:]*/i, "").trim() || (lines[i + 1] || "");
+    }
+  }
+
+  // Description fallback
+  description = lines.filter(l => !/^(title|tech|category|problem|solution|outcome)/i.test(l)).slice(0, 2).join(" ");
+  if (!description) description = `Full-lifecycle delivery of ${title} with high availability and verified metrics.`;
+
+  // Populate HTML fields
+  if (title) {
+    const el = document.getElementById("port-title");
+    el.value = title;
+    flashField(el);
+  }
+  if (category) {
+    const el = document.getElementById("port-category");
+    el.value = category;
+    flashField(el);
+  }
+  if (metric) {
+    const el = document.getElementById("port-metric");
+    el.value = metric;
+    flashField(el);
+  }
+  if (techStack.length > 0) {
+    const el = document.getElementById("port-techstack");
+    el.value = techStack.join(", ");
+    flashField(el);
+  }
+  if (description) {
+    const el = document.getElementById("port-description");
+    el.value = description;
+    flashField(el);
+  }
+  if (problem) {
+    const el = document.getElementById("port-problem");
+    el.value = problem;
+    flashField(el);
+  }
+  if (solution) {
+    const el = document.getElementById("port-solution");
+    el.value = solution;
+    flashField(el);
+  }
+  if (outcome) {
+    const el = document.getElementById("port-outcome");
+    el.value = outcome;
+    flashField(el);
+  }
+
+  showAdminToast("✨ Case study decomposed and filled successfully!", "success");
 }

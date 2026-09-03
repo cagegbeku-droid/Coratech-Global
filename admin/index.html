@@ -98,6 +98,11 @@
         </button>
 
         <div class="nav-section-label">OPERATIONS & CLIENTS</div>
+        <button class="nav-tab-btn" data-tab="orders">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Device Orders</span>
+          <span class="nav-badge alert" id="badge-count-orders">0</span>
+        </button>
         <button class="nav-tab-btn" data-tab="tickets">
           <i class="fa-solid fa-ticket-simple"></i>
           <span>Support Tickets</span>
@@ -212,6 +217,19 @@
             </div>
             <div class="kpi-action">
               <button class="btn-text" onclick="switchTab('appointments')">View Schedule <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+
+          <div class="kpi-card" data-card="orders">
+            <div class="kpi-icon-box bg-cyan-glass">
+              <i class="fa-solid fa-cart-shopping text-cyan"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Hardware Orders</span>
+              <h3 class="kpi-value" id="kpi-orders-count">0</h3>
+            </div>
+            <div class="kpi-action">
+              <button class="btn-text" onclick="switchTab('orders')">View Orders <i class="fa-solid fa-chevron-right"></i></button>
             </div>
           </div>
         </div>
@@ -459,6 +477,41 @@
 
       </section>
 
+      <!-- TAB 6B: ORDERS & INQUIRIES -->
+      <section class="admin-tab-pane" id="tab-orders">
+        <div class="content-box">
+          <div class="box-header">
+            <div>
+              <h3><i class="fa-solid fa-cart-shopping text-cyan"></i> Laptop Purchase Orders & Inquiries</h3>
+              <p class="text-secondary" style="font-size: 0.85rem;">Client order requests submitted from the website hardware store</p>
+            </div>
+            <button class="btn btn-outline-cyan btn-sm" onclick="loadAllData()">
+              <i class="fa-solid fa-rotate"></i> Refresh
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer Name</th>
+                  <th>Contact Info</th>
+                  <th>Device Model</th>
+                  <th>Price</th>
+                  <th>Delivery Location</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body">
+                <!-- Dynamically loaded via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- TAB 7: SETTINGS & SECURITY -->
       <section class="admin-tab-pane" id="tab-settings">
         <div class="dashboard-grid-2col">
@@ -592,19 +645,26 @@
           </div>
         </div>
 
-        <!-- Image Upload Field -->
+        <!-- Image Upload Field (Supports One or More Images) -->
         <div class="form-group">
-          <label>Device Image *</label>
+          <label>Device Photos (Upload one or more images) *</label>
           <div class="image-upload-dropzone" id="hw-dropzone">
-            <input type="file" id="hw-file-input" accept="image/*" style="display: none;">
+            <input type="file" id="hw-file-input" accept="image/*" multiple style="display: none;">
             <div class="dropzone-content" id="hw-dropzone-content">
               <i class="fa-solid fa-cloud-arrow-up"></i>
-              <span>Drag & drop photo here or <strong>browse file</strong></span>
-              <small>Accepts JPG, PNG, WEBP, SVG</small>
+              <span>Drag & drop photo(s) here or <strong>browse files</strong></span>
+              <small>Accepts JPG, PNG, WEBP, SVG • Upload 1 or multiple photos</small>
             </div>
-            <div class="dropzone-preview" id="hw-dropzone-preview" style="display: none;">
-              <img src="" id="hw-preview-img" alt="Preview">
-              <button type="button" class="btn-remove-preview" id="hw-remove-img">&times;</button>
+            <div class="dropzone-preview-gallery" id="hw-dropzone-preview" style="display: none;">
+              <div class="gallery-thumbs-grid" id="hw-gallery-grid"></div>
+              <div class="gallery-actions-bar">
+                <button type="button" class="btn btn-sm btn-outline-cyan" id="hw-add-more-btn">
+                  <i class="fa-solid fa-plus"></i> Add More Photos
+                </button>
+                <button type="button" class="btn btn-sm btn-danger-outline" id="hw-remove-img">
+                  <i class="fa-solid fa-trash-can"></i> Clear All
+                </button>
+              </div>
             </div>
           </div>
           <input type="hidden" id="hw-image-url" value="assets/hardware_laptop.jpg">
@@ -701,18 +761,26 @@
           </div>
         </div>
 
-        <!-- Project Image Upload -->
+        <!-- Project Image Upload (Supports One or More Images) -->
         <div class="form-group">
-          <label>Project Cover Image *</label>
+          <label>Project Cover & Gallery Photos (Upload one or more images) *</label>
           <div class="image-upload-dropzone" id="port-dropzone">
-            <input type="file" id="port-file-input" accept="image/*" style="display: none;">
+            <input type="file" id="port-file-input" accept="image/*" multiple style="display: none;">
             <div class="dropzone-content" id="port-dropzone-content">
               <i class="fa-solid fa-cloud-arrow-up"></i>
-              <span>Drag & drop project photo or <strong>browse file</strong></span>
+              <span>Drag & drop photo(s) or <strong>browse files</strong></span>
+              <small>Upload 1 or multiple case study photos</small>
             </div>
-            <div class="dropzone-preview" id="port-dropzone-preview" style="display: none;">
-              <img src="" id="port-preview-img" alt="Preview">
-              <button type="button" class="btn-remove-preview" id="port-remove-img">&times;</button>
+            <div class="dropzone-preview-gallery" id="port-dropzone-preview" style="display: none;">
+              <div class="gallery-thumbs-grid" id="port-gallery-grid"></div>
+              <div class="gallery-actions-bar">
+                <button type="button" class="btn btn-sm btn-outline-purple" id="port-add-more-btn">
+                  <i class="fa-solid fa-plus"></i> Add More Photos
+                </button>
+                <button type="button" class="btn btn-sm btn-danger-outline" id="port-remove-img">
+                  <i class="fa-solid fa-trash-can"></i> Clear All
+                </button>
+              </div>
             </div>
           </div>
           <input type="hidden" id="port-image-url" value="assets/cloud_infra.jpg">

@@ -15,6 +15,7 @@ const adminState = {
   services: [],
   tickets: [],
   appointments: [],
+  orders: [],
   contacts: [],
   newsletter: [],
   settings: {},
@@ -80,7 +81,6 @@ function showDashboard() {
 // =========================================================================
 
 function getApiBaseUrl() {
-  // If opened via file:/// or a static server running on another port (e.g., Live Server port 5500)
   if (window.location.protocol === "file:" || (window.location.port && window.location.port !== "3000")) {
     return localStorage.getItem("coratech_api_base_url") || "http://localhost:3000";
   }
@@ -169,12 +169,13 @@ async function apiRequest(endpoint, method = "GET", body = null) {
 
 async function loadAllData() {
   try {
-    const [hwRes, portRes, srvRes, tickRes, aptRes, contRes, newsRes, setRes] = await Promise.all([
+    const [hwRes, portRes, srvRes, tickRes, aptRes, ordRes, contRes, newsRes, setRes] = await Promise.all([
       apiRequest("/api/hardware"),
       apiRequest("/api/portfolio"),
       apiRequest("/api/services"),
       apiRequest("/api/tickets"),
       apiRequest("/api/appointments"),
+      apiRequest("/api/orders").catch(() => ({ data: [] })),
       apiRequest("/api/contacts"),
       apiRequest("/api/newsletter"),
       apiRequest("/api/settings")
@@ -185,6 +186,7 @@ async function loadAllData() {
     adminState.services = srvRes.data || [];
     adminState.tickets = tickRes.data || [];
     adminState.appointments = aptRes.data || [];
+    adminState.orders = ordRes.data || [];
     adminState.contacts = contRes.data || [];
     adminState.newsletter = newsRes.data || [];
     adminState.settings = setRes.data || {};
@@ -195,6 +197,7 @@ async function loadAllData() {
     renderServicesCards();
     renderTicketsTable();
     renderAppointmentsTable();
+    renderOrdersTable();
     renderContactsAndNewsletter();
     populateSettingsForm();
   } catch (err) {
@@ -208,10 +211,16 @@ function updateBadgesAndKPIs() {
   document.getElementById("badge-count-tickets").textContent = adminState.tickets.length;
   document.getElementById("badge-count-appointments").textContent = adminState.appointments.length;
 
+  const ordersBadge = document.getElementById("badge-count-orders");
+  if (ordersBadge) ordersBadge.textContent = adminState.orders.length;
+
   document.getElementById("kpi-hardware-count").textContent = adminState.hardware.length;
   document.getElementById("kpi-portfolio-count").textContent = adminState.portfolio.length;
   document.getElementById("kpi-tickets-count").textContent = adminState.tickets.length;
   document.getElementById("kpi-appointments-count").textContent = adminState.appointments.length;
+
+  const ordersKpi = document.getElementById("kpi-orders-count");
+  if (ordersKpi) ordersKpi.textContent = adminState.orders.length;
 }
 
 // =========================================================================
@@ -429,6 +438,7 @@ function switchTab(tabId) {
     hardware: "Laptops & Hardware Store Manager",
     portfolio: "Portfolio & Case Studies Manager",
     services: "Services & Scope Configuration",
+    orders: "Laptop Purchase Orders & Customer Inquiries",
     tickets: "Support Tickets HelpDesk",
     appointments: "Client Consultation Bookings & Leads",
     settings: "System Settings & Security"
@@ -471,6 +481,7 @@ function renderHardwareTable() {
     <tr>
       <td>
         <img src="${resolveMediaUrl(item.image)}" alt="${item.model}" class="table-thumb-img">
+        ${Array.isArray(item.images) && item.images.length > 1 ? `<div style="font-size: 0.7rem; color: var(--accent-cyan); margin-top: 3px;"><i class="fa-solid fa-images"></i> ${item.images.length} photos</div>` : ""}
       </td>
       <td>
         <strong>${item.model}</strong>
@@ -507,8 +518,8 @@ function openCreateHardwareModal() {
   document.getElementById("hw-edit-id").value = "";
   document.getElementById("hw-modal-title").innerHTML = `<i class="fa-solid fa-plus-circle text-cyan"></i> Add New Laptop / Hardware`;
   document.getElementById("hw-image-url").value = "assets/hardware_laptop.jpg";
-  document.getElementById("hw-dropzone-content").style.display = "flex";
-  document.getElementById("hw-dropzone-preview").style.display = "none";
+  hwUploadedImages = [];
+  renderGalleryGrid("hw-gallery-grid", "hw-dropzone-content", "hw-dropzone-preview", "hw-image-url", hwUploadedImages, (list) => { hwUploadedImages = list; });
   document.getElementById("hw-instock").checked = true;
   document.getElementById("hw-featured").checked = false;
   document.getElementById("modal-hardware").classList.add("open");
@@ -537,11 +548,8 @@ function openEditHardwareModal(hwId) {
   document.getElementById("hw-instock").checked = item.inStock !== false;
   document.getElementById("hw-featured").checked = !!item.featured;
 
-  document.getElementById("hw-image-url").value = item.image;
-  const previewImg = document.getElementById("hw-preview-img");
-  previewImg.src = resolveMediaUrl(item.image);
-  document.getElementById("hw-dropzone-content").style.display = "none";
-  document.getElementById("hw-dropzone-preview").style.display = "inline-block";
+  hwUploadedImages = Array.isArray(item.images) && item.images.length > 0 ? [...item.images] : (item.image ? [item.image] : []);
+  renderGalleryGrid("hw-gallery-grid", "hw-dropzone-content", "hw-dropzone-preview", "hw-image-url", hwUploadedImages, (list) => { hwUploadedImages = list; });
 
   document.getElementById("modal-hardware").classList.add("open");
 }
@@ -634,8 +642,8 @@ function openCreatePortfolioModal() {
   document.getElementById("port-edit-id").value = "";
   document.getElementById("port-modal-title").innerHTML = `<i class="fa-solid fa-folder-plus text-purple"></i> Add New Case Study`;
   document.getElementById("port-image-url").value = "assets/cloud_infra.jpg";
-  document.getElementById("port-dropzone-content").style.display = "flex";
-  document.getElementById("port-dropzone-preview").style.display = "none";
+  portUploadedImages = [];
+  renderGalleryGrid("port-gallery-grid", "port-dropzone-content", "port-dropzone-preview", "port-image-url", portUploadedImages, (list) => { portUploadedImages = list; });
   document.getElementById("modal-portfolio").classList.add("open");
 }
 
@@ -657,11 +665,8 @@ function openEditPortfolioModal(projId) {
     document.getElementById("port-outcome").value = proj.caseStudy.outcome || "";
   }
 
-  document.getElementById("port-image-url").value = proj.image;
-  const previewImg = document.getElementById("port-preview-img");
-  previewImg.src = resolveMediaUrl(proj.image);
-  document.getElementById("port-dropzone-content").style.display = "none";
-  document.getElementById("port-dropzone-preview").style.display = "inline-block";
+  portUploadedImages = Array.isArray(proj.images) && proj.images.length > 0 ? [...proj.images] : (proj.image ? [proj.image] : []);
+  renderGalleryGrid("port-gallery-grid", "port-dropzone-content", "port-dropzone-preview", "port-image-url", portUploadedImages, (list) => { portUploadedImages = list; });
 
   document.getElementById("modal-portfolio").classList.add("open");
 }
@@ -906,6 +911,85 @@ async function deleteAppointment(id) {
   }
 }
 
+// =========================================================================
+// 10B. HARDWARE ORDERS & INQUIRIES CONTROLLER
+// =========================================================================
+
+function renderOrdersTable() {
+  const tbody = document.getElementById("orders-table-body");
+  if (!tbody) return;
+
+  if (!adminState.orders || adminState.orders.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fa-solid fa-cart-arrow-down" style="font-size: 2rem; margin-bottom: 8px; display: block; color: var(--accent-cyan);"></i>
+          No purchase orders currently on file.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = adminState.orders.map((order) => {
+    const isCompleted = order.status === "Completed";
+    return `
+      <tr>
+        <td><strong class="text-cyan font-mono">${order.id}</strong></td>
+        <td><strong>${escapeHtml(order.name)}</strong></td>
+        <td>
+          <div style="font-size: 0.85rem;"><a href="https://wa.me/${(order.phone || '').replace(/[^0-9]/g, '')}" target="_blank" class="text-cyan" style="text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> ${order.phone}</a></div>
+          ${order.email ? `<div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHtml(order.email)}</div>` : ""}
+        </td>
+        <td><strong>${escapeHtml(order.model)}</strong></td>
+        <td><span style="color: var(--accent-cyan); font-weight: 700;">GH₵ ${Number(order.priceUsd || 0).toLocaleString()}</span></td>
+        <td style="font-size: 0.82rem; max-width: 180px; color: var(--text-secondary);">${escapeHtml(order.location || "Not specified")}</td>
+        <td>
+          <span class="badge ${isCompleted ? "badge-success" : "badge-amber"}">${order.status || "Processing"}</span>
+        </td>
+        <td style="text-align: right;">
+          <button class="btn-table-action" onclick="toggleOrderStatus('${order.id}', '${order.status}')" title="${isCompleted ? 'Mark as Processing' : 'Mark as Completed'}">
+            <i class="fa-solid ${isCompleted ? 'fa-rotate-left' : 'fa-check'}"></i>
+          </button>
+          <button class="btn-table-action delete" onclick="deleteOrder('${order.id}')" title="Delete Order">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function toggleOrderStatus(orderId, currentStatus) {
+  const newStatus = currentStatus === "Completed" ? "Processing" : "Completed";
+  try {
+    const res = await apiRequest(`/api/orders/${orderId}`, "PATCH", { status: newStatus });
+    if (res.success) {
+      showAdminToast(`Order ${orderId} marked as ${newStatus}.`, "success");
+      const idx = adminState.orders.findIndex(o => o.id === orderId);
+      if (idx !== -1) adminState.orders[idx].status = newStatus;
+      renderOrdersTable();
+    }
+  } catch (err) {
+    showAdminToast(err.message, "error");
+  }
+}
+
+async function deleteOrder(orderId) {
+  if (!confirm(`Delete order "${orderId}"? This cannot be undone.`)) return;
+  try {
+    const res = await apiRequest(`/api/orders/${orderId}`, "DELETE");
+    if (res.success) {
+      showAdminToast(`Order ${orderId} deleted.`, "success");
+      adminState.orders = adminState.orders.filter(o => o.id !== orderId);
+      updateBadgesAndKPIs();
+      renderOrdersTable();
+    }
+  } catch (err) {
+    showAdminToast(err.message, "error");
+  }
+}
+
 function renderContactsAndNewsletter() {
   const contactsContainer = document.getElementById("contacts-list-container");
   const newsContainer = document.getElementById("newsletter-list-container");
@@ -1006,7 +1090,8 @@ function initFormSubmissions() {
       const condition = document.getElementById("hw-condition").value;
       const badgeCert = document.getElementById("hw-cert").value.trim();
       const warranty = document.getElementById("hw-warranty").value.trim();
-      const image = document.getElementById("hw-image-url").value.trim();
+      const primaryImage = hwUploadedImages[0] || document.getElementById("hw-image-url").value.trim() || "assets/hardware_laptop.jpg";
+      const images = hwUploadedImages.length > 0 ? hwUploadedImages : [primaryImage];
 
       const specs = {
         cpu: document.getElementById("hw-spec-cpu").value.trim(),
@@ -1020,7 +1105,7 @@ function initFormSubmissions() {
       const inStock = document.getElementById("hw-instock").checked;
       const featured = document.getElementById("hw-featured").checked;
 
-      const payload = { model, category, priceUsd, condition, badgeCert, warranty, image, specs, inStock, featured };
+      const payload = { model, category, priceUsd, condition, badgeCert, warranty, image: primaryImage, images, specs, inStock, featured };
 
       try {
         if (editId) {
@@ -1064,7 +1149,8 @@ function initFormSubmissions() {
       const metric = document.getElementById("port-metric").value.trim();
       const techStack = document.getElementById("port-techstack").value.split(",").map(s => s.trim()).filter(Boolean);
       const description = document.getElementById("port-description").value.trim();
-      const image = document.getElementById("port-image-url").value.trim();
+      const primaryImage = portUploadedImages[0] || document.getElementById("port-image-url").value.trim() || "assets/cloud_infra.jpg";
+      const images = portUploadedImages.length > 0 ? portUploadedImages : [primaryImage];
 
       const caseStudy = {
         problem: document.getElementById("port-problem").value.trim(),
@@ -1072,7 +1158,7 @@ function initFormSubmissions() {
         outcome: document.getElementById("port-outcome").value.trim()
       };
 
-      const payload = { title, category, metric, techStack, description, image, caseStudy };
+      const payload = { title, category, metric, techStack, description, image: primaryImage, images, caseStudy };
 
       try {
         if (editId) {
@@ -1212,30 +1298,109 @@ function initFormSubmissions() {
 }
 
 // =========================================================================
-// 13. DROPZONE & IMAGE UPLOAD ENGINE
+// 13. MULTI-IMAGE DROPZONE & UPLOAD ENGINE
 // =========================================================================
 
+let hwUploadedImages = [];
+let portUploadedImages = [];
+
 function initDropzones() {
-  setupSingleDropzone("hw-dropzone", "hw-file-input", "hw-image-url", "hw-dropzone-content", "hw-dropzone-preview", "hw-preview-img", "hw-remove-img");
-  setupSingleDropzone("port-dropzone", "port-file-input", "port-image-url", "port-dropzone-content", "port-dropzone-preview", "port-preview-img", "port-remove-img");
+  setupMultiDropzone({
+    dropzoneId: "hw-dropzone",
+    fileInputId: "hw-file-input",
+    urlInputId: "hw-image-url",
+    contentId: "hw-dropzone-content",
+    previewGalleryId: "hw-dropzone-preview",
+    gridId: "hw-gallery-grid",
+    addMoreBtnId: "hw-add-more-btn",
+    clearBtnId: "hw-remove-img",
+    getImageList: () => hwUploadedImages,
+    setImageList: (list) => { hwUploadedImages = list; }
+  });
+
+  setupMultiDropzone({
+    dropzoneId: "port-dropzone",
+    fileInputId: "port-file-input",
+    urlInputId: "port-image-url",
+    contentId: "port-dropzone-content",
+    previewGalleryId: "port-dropzone-preview",
+    gridId: "port-gallery-grid",
+    addMoreBtnId: "port-add-more-btn",
+    clearBtnId: "port-remove-img",
+    getImageList: () => portUploadedImages,
+    setImageList: (list) => { portUploadedImages = list; }
+  });
 }
 
-function setupSingleDropzone(dropzoneId, fileInputId, urlInputId, contentId, previewContainerId, previewImgId, removeBtnId) {
+function renderGalleryGrid(gridId, contentId, previewId, urlInputId, images, updateFn) {
+  const grid = document.getElementById(gridId);
+  const content = document.getElementById(contentId);
+  const preview = document.getElementById(previewId);
+  const urlInput = document.getElementById(urlInputId);
+
+  if (!grid || !content || !preview) return;
+
+  if (!images || images.length === 0) {
+    grid.innerHTML = "";
+    preview.style.display = "none";
+    content.style.display = "flex";
+    if (urlInput) urlInput.value = "";
+    return;
+  }
+
+  content.style.display = "none";
+  preview.style.display = "flex";
+  if (urlInput) urlInput.value = images[0] || "";
+
+  grid.innerHTML = images.map((url, index) => `
+    <div class="gallery-thumb-item" data-idx="${index}">
+      <img src="${resolveMediaUrl(url)}" alt="Photo ${index + 1}">
+      ${index === 0 ? `<span class="badge-cover">Cover</span>` : ""}
+      <button type="button" class="btn-remove-thumb" data-idx="${index}" title="Remove photo">&times;</button>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll(".btn-remove-thumb").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.getAttribute("data-idx"));
+      const updated = [...images];
+      updated.splice(idx, 1);
+      updateFn(updated);
+      renderGalleryGrid(gridId, contentId, previewId, urlInputId, updated, updateFn);
+    });
+  });
+}
+
+function setupMultiDropzone({ dropzoneId, fileInputId, urlInputId, contentId, previewGalleryId, gridId, addMoreBtnId, clearBtnId, getImageList, setImageList }) {
   const dropzone = document.getElementById(dropzoneId);
   const fileInput = document.getElementById(fileInputId);
-  const urlInput = document.getElementById(urlInputId);
-  const content = document.getElementById(contentId);
-  const previewContainer = document.getElementById(previewContainerId);
-  const previewImg = document.getElementById(previewImgId);
-  const removeBtn = document.getElementById(removeBtnId);
+  const addMoreBtn = document.getElementById(addMoreBtnId);
+  const clearBtn = document.getElementById(clearBtnId);
 
   if (!dropzone || !fileInput) return;
 
   dropzone.addEventListener("click", (e) => {
-    if (e.target !== removeBtn) {
+    if (!e.target.closest("button") && !e.target.closest(".gallery-thumb-item")) {
       fileInput.click();
     }
   });
+
+  if (addMoreBtn) {
+    addMoreBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setImageList([]);
+      renderGalleryGrid(gridId, contentId, previewGalleryId, urlInputId, [], setImageList);
+      fileInput.value = "";
+    });
+  }
 
   dropzone.addEventListener("dragover", (e) => {
     e.preventDefault();
@@ -1249,74 +1414,59 @@ function setupSingleDropzone(dropzoneId, fileInputId, urlInputId, contentId, pre
   dropzone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropzone.classList.remove("dragover");
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileUpload(e.dataTransfer.files[0], urlInput, content, previewContainer, previewImg);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleMultiFilesUpload(Array.from(e.dataTransfer.files), gridId, contentId, previewGalleryId, urlInputId, getImageList, setImageList);
     }
   });
 
   fileInput.addEventListener("change", () => {
-    if (fileInput.files && fileInput.files[0]) {
-      handleFileUpload(fileInput.files[0], urlInput, content, previewContainer, previewImg);
+    if (fileInput.files && fileInput.files.length > 0) {
+      handleMultiFilesUpload(Array.from(fileInput.files), gridId, contentId, previewGalleryId, urlInputId, getImageList, setImageList);
     }
   });
-
-  if (removeBtn) {
-    removeBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      urlInput.value = "";
-      fileInput.value = "";
-      previewContainer.style.display = "none";
-      content.style.display = "flex";
-    });
-  }
 }
 
-async function handleFileUpload(file, urlInput, content, previewContainer, previewImg) {
-  if (!file) return;
-
-  // Validate that the file is an image
-  if (!file.type.startsWith("image/") && !file.name.match(/\.(jpg|jpeg|png|webp|gif|svg|avif)$/i)) {
-    showAdminToast("Please select a valid image file (JPG, PNG, WEBP, SVG, GIF).", "warning");
+async function handleMultiFilesUpload(files, gridId, contentId, previewGalleryId, urlInputId, getImageList, setImageList) {
+  const validFiles = files.filter(f => f.type.startsWith("image/") || f.name.match(/\.(jpg|jpeg|png|webp|gif|svg|avif)$/i));
+  if (validFiles.length === 0) {
+    showAdminToast("Please select valid image files (JPG, PNG, WEBP, SVG, GIF).", "warning");
     return;
   }
 
-  // 1. Instant Local Preview using FileReader (zero latency)
-  const localReader = new FileReader();
-  localReader.onload = (e) => {
-    previewImg.src = e.target.result;
-    content.style.display = "none";
-    previewContainer.style.display = "inline-block";
-  };
-  localReader.readAsDataURL(file);
+  showAdminToast(`Processing ${validFiles.length} photo(s)...`, "info", 2000);
 
-  showAdminToast("Uploading image...", "info", 2000);
+  // 1. Instant local preview with Data URLs
+  const localPreviews = [];
+  for (const file of validFiles) {
+    const dataUrl = await new Promise((res) => {
+      const reader = new FileReader();
+      reader.onload = (e) => res(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    localPreviews.push(dataUrl);
+  }
 
+  const existingList = getImageList();
+  const optimisticList = [...existingList, ...localPreviews];
+  setImageList(optimisticList);
+  renderGalleryGrid(gridId, contentId, previewGalleryId, urlInputId, optimisticList, setImageList);
+
+  // 2. Upload to server
   const formData = new FormData();
-  formData.append("file", file);
+  validFiles.forEach((file) => formData.append("files", file));
 
   try {
     const res = await apiRequest("/api/upload", "POST", formData);
-    if (res.success) {
-      urlInput.value = res.url;
-      previewImg.src = resolveMediaUrl(res.url);
-      showAdminToast("Image uploaded and stored successfully!", "success");
+    if (res.success && Array.isArray(res.urls)) {
+      const confirmedList = [...existingList, ...res.urls];
+      setImageList(confirmedList);
+      renderGalleryGrid(gridId, contentId, previewGalleryId, urlInputId, confirmedList, setImageList);
+      showAdminToast(`${res.urls.length} photo(s) uploaded successfully!`, "success");
       return;
     }
   } catch (err) {
-    console.warn("Server upload failed, converting to local Base64 data URL:", err);
-    // 2. Resilient Base64 Fallback: Ensures user can continue saving without losing data
-    const base64Reader = new FileReader();
-    base64Reader.onload = (e) => {
-      const base64Url = e.target.result;
-      urlInput.value = base64Url;
-      previewImg.src = base64Url;
-      showAdminToast(
-        "Backend server offline: Image saved in Base64 mode! (Run 'npm start' to enable permanent disk storage)",
-        "warning",
-        6000
-      );
-    };
-    base64Reader.readAsDataURL(file);
+    console.warn("Server multi-upload note, preserved in Base64 mode:", err.message);
+    showAdminToast("Backend server offline: Photos preserved locally in Base64 mode.", "warning", 5000);
   }
 }
 

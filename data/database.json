@@ -106,7 +106,7 @@
       "categoryLabel": "Enterprise Fleet Laptop",
       "image": "assets/hardware_laptop.jpg",
       "condition": "Grade A Refurbished",
-      "badgeCert": "CORATECH TESTED",
+      "badgeCert": "CORATECH CERTIFIED",
       "specs": {
         "cpu": "Intel Core i5-1145G7 vPro",
         "ram": "16GB DDR4 3200MHz",
@@ -397,26 +397,15 @@
   ],
   "tickets": [
     {
-      "id": "CG-TICK-4629",
-      "name": "Test Client",
-      "email": "test@client.com",
-      "category": "Cloud Hosting",
+      "id": "CG-TICK-3795",
+      "name": "Esi Addo",
+      "email": "esi@fintech.com",
+      "category": "Cloud Hosting & DevOps",
       "priority": "High",
-      "desc": "Automated test incident verification",
+      "desc": "Requesting assistance setting up SSL and domain mapping.",
       "status": "In Progress",
       "step": 1,
-      "createdAt": "8/23/26, 1:58 AM"
-    },
-    {
-      "id": "CG-TICK-5821",
-      "name": "Test Client",
-      "email": "test@client.com",
-      "category": "Cloud Hosting",
-      "priority": "High",
-      "desc": "Automated test incident verification",
-      "status": "In Progress",
-      "step": 1,
-      "createdAt": "8/23/26, 1:57 AM"
+      "createdAt": "9/3/26, 11:40 AM"
     },
     {
       "id": "CG-TICK-1042",
@@ -424,7 +413,7 @@
       "email": "alex@vanguardtech.com",
       "category": "IT Support & Network Troubleshooting",
       "priority": "High",
-      "desc": "Main switch in Server Room B experiencing intermittent packet loss on VLAN 20.",
+      "desc": "Main network switch in Server Room B experiencing intermittent packet loss on VLAN 20.",
       "status": "In Progress",
       "step": 2,
       "createdAt": "2026-08-20 09:30 AM"
@@ -434,14 +423,51 @@
       "name": "Dr. Sarah Mensah",
       "email": "sarah@horizonlabs.org",
       "category": "Windows / OS Deployment & Setup",
-      "priority": "Critical 24/7",
-      "desc": "10 Workstations require clean Windows 11 Enterprise installation and antivirus deployment.",
+      "priority": "High",
+      "desc": "10 Workstations require clean Windows 11 Enterprise installation and security setup.",
       "status": "Completed",
       "step": 3,
       "createdAt": "2026-08-21 11:15 AM"
     }
   ],
+  "orders": [
+    {
+      "id": "ORD-600527",
+      "name": "Abena Osei",
+      "phone": "+233591234567",
+      "email": "abena@horizon.org",
+      "model": "MacBook Pro 16 (M1 Max)",
+      "priceUsd": 24500,
+      "location": "Cantonments, Accra",
+      "notes": "Please expedite delivery for tomorrow morning.",
+      "status": "Processing",
+      "createdAt": "2026-09-03T11:40:00.527Z"
+    },
+    {
+      "id": "ORD-101",
+      "name": "Kwame Mensah",
+      "phone": "+233541234567",
+      "email": "kwame.mensah@gmail.com",
+      "model": "Dell XPS 15 (9520) Developer Edition",
+      "priceUsd": 17800,
+      "location": "Airport Residential Area, Accra",
+      "notes": "Please include an extra 130W USB-C charger and confirm delivery time.",
+      "status": "Processing",
+      "createdAt": "2026-08-23T10:15:00.000Z"
+    }
+  ],
   "appointments": [
+    {
+      "id": "CG-APT-153",
+      "name": "Kofi Boateng",
+      "phone": "+233501112233",
+      "service": "IT Infrastructure & Network Audit",
+      "type": "On-Site Office Visit",
+      "date": "2026-09-10",
+      "time": "11:30 AM",
+      "status": "Pending Confirmation",
+      "createdAt": "2026-09-03T11:40:00.544Z"
+    },
     {
       "id": "CG-APT-101",
       "name": "Chief Adekunle Williams",

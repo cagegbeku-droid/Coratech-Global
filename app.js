@@ -207,7 +207,7 @@ let HARDWARE_CATALOG = [
     categoryLabel: "Enterprise Fleet Laptop",
     image: "assets/hardware_laptop.jpg",
     condition: "Grade A Refurbished",
-    badgeCert: "CORATECH TESTED",
+    badgeCert: "CORATECH CERTIFIED",
     specs: {
       cpu: "Intel Core i5-1145G7 vPro",
       ram: "16GB DDR4 3200MHz",
@@ -387,6 +387,13 @@ if (!localStorage.getItem("coratech_tickets")) {
 // 3. INITIALIZATION & EVENT BINDINGS
 // =========================================================================
 
+function getPublicApiBase() {
+  if (window.location.protocol === "file:" || (window.location.port && window.location.port !== "3000")) {
+    return localStorage.getItem("coratech_api_base_url") || "http://localhost:3000";
+  }
+  return "";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initCircuitCanvas();
@@ -397,6 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCostEstimator();
   initTicketSystem();
   initAppointmentBooking();
+  initPurchaseOrderForm();
   initFaqAccordion();
   initFloatingWhatsApp();
   initNavigation();
@@ -405,12 +413,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Dynamic Asynchronous Backend Synchronization
 async function syncDataWithBackend() {
+  const apiBase = getPublicApiBase();
   try {
     const [hwRes, portRes, srvRes, setRes] = await Promise.all([
-      fetch("/api/hardware").then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch("/api/portfolio").then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch("/api/services").then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch("/api/settings").then(r => r.ok ? r.json() : null).catch(() => null)
+      fetch(`${apiBase}/api/hardware`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${apiBase}/api/portfolio`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${apiBase}/api/services`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${apiBase}/api/settings`).then(r => r.ok ? r.json() : null).catch(() => null)
     ]);
 
     if (hwRes && hwRes.success && Array.isArray(hwRes.data) && hwRes.data.length > 0) {
@@ -718,10 +727,12 @@ function renderHardwareCatalog() {
 
   container.innerHTML = filtered.map((item) => {
     const priceFormatted = formatCurrency(item.priceUsd);
+    const photoCount = Array.isArray(item.images) ? item.images.length : (item.image ? 1 : 0);
     return `
       <div class="hardware-card" data-hw-id="${item.id}">
         <div class="hardware-thumb-wrapper">
           <img src="${item.image}" alt="${item.model}" class="hardware-thumb-img">
+          ${photoCount > 1 ? `<span class="badge-card-photos"><i class="fa-solid fa-images"></i> ${photoCount} Photos</span>` : ""}
           <span class="hardware-badge-cert">${item.badgeCert}</span>
           <span class="hardware-badge-condition">${item.condition}</span>
         </div>
@@ -758,12 +769,12 @@ function renderHardwareCatalog() {
             </div>
 
             <div style="display: flex; gap: 8px;">
-              <button class="btn btn-secondary btn-sm btn-hw-details" data-id="${item.id}" title="Full Specs">
-                <i class="fa-solid fa-list-check"></i>
+              <button class="btn btn-secondary btn-sm btn-hw-details" data-id="${item.id}" title="View Technical Specs">
+                <i class="fa-solid fa-list-check"></i> Specs
               </button>
-              <a href="https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I am interested in purchasing: ${item.model} (${priceFormatted})`)}" target="_blank" class="btn btn-whatsapp btn-sm">
-                <i class="fa-brands fa-whatsapp"></i> Buy / Inquire
-              </a>
+              <button class="btn btn-primary btn-sm btn-hw-order" data-id="${item.id}" title="Order or Inquire">
+                <i class="fa-solid fa-cart-shopping"></i> Buy / Inquire
+              </button>
             </div>
           </div>
         </div>
@@ -776,6 +787,14 @@ function renderHardwareCatalog() {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-id");
       openHardwareSpecModal(id);
+    });
+  });
+
+  // Bind Purchase Order buttons
+  container.querySelectorAll(".btn-hw-order").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      openPurchaseModal(id);
     });
   });
 
@@ -811,15 +830,45 @@ function openHardwareSpecModal(hwId) {
   const modalActionBtn = document.getElementById("modal-action-btn");
 
   modalTitle.innerHTML = `<i class="fa-solid fa-laptop-code text-cyan" style="margin-right: 8px;"></i> ${item.model}`;
+
+  const allImages = Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.image];
+
   modalBody.innerHTML = `
-    <div style="display: flex; gap: 20px; margin-bottom: 20px; align-items: center;">
-      <img src="${item.image}" alt="${item.model}" style="width: 140px; height: 100px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-      <div>
-        <span class="hardware-badge-condition" style="position: static; display: inline-block; margin-bottom: 6px;">${item.condition}</span>
-        <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-cyan);">${formatCurrency(item.priceUsd)}</div>
-        <p style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-shield-check text-emerald"></i> ${item.warranty}</p>
+    ${allImages.length > 1 ? `
+      <div class="spec-modal-gallery">
+        <div class="spec-main-img-wrap">
+          <img src="${allImages[0]}" id="spec-gallery-main" alt="${item.model}">
+        </div>
+        <div class="spec-thumbs-strip">
+          ${allImages.map((imgUrl, i) => `
+            <button type="button" class="spec-thumb-btn ${i === 0 ? 'active' : ''}" data-src="${imgUrl}">
+              <img src="${imgUrl}" alt="Photo ${i + 1}">
+            </button>
+          `).join('')}
+        </div>
       </div>
-    </div>
+    ` : `
+      <div style="display: flex; gap: 20px; margin-bottom: 20px; align-items: center;">
+        <img src="${item.image}" alt="${item.model}" style="width: 140px; height: 100px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+        <div>
+          <span class="hardware-badge-condition" style="position: static; display: inline-block; margin-bottom: 6px;">${item.condition}</span>
+          <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-cyan);">${formatCurrency(item.priceUsd)}</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-shield-check text-emerald"></i> ${item.warranty}</p>
+        </div>
+      </div>
+    `}
+
+    ${allImages.length > 1 ? `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 10px 14px; background: var(--bg-tertiary); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div>
+          <span class="hardware-badge-condition" style="position: static; display: inline-block; margin-bottom: 4px;">${item.condition}</span>
+          <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-cyan);">${formatCurrency(item.priceUsd)}</div>
+        </div>
+        <div style="text-align: right; font-size: 0.85rem; color: var(--text-secondary);">
+          <i class="fa-solid fa-shield-check text-emerald"></i> ${item.warranty}
+        </div>
+      </div>
+    ` : ''}
 
     <h4 style="font-size: 1.05rem; margin-bottom: 12px;">Full Technical Specifications</h4>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
@@ -832,17 +881,160 @@ function openHardwareSpecModal(hwId) {
     </div>
 
     <div style="background: rgba(0, 242, 254, 0.08); padding: 14px; border-radius: var(--radius-md); border: 1px dashed var(--border-color); font-size: 0.85rem; color: var(--text-secondary);">
-      <strong class="text-cyan">Coratech Guarantee:</strong> Clean genuine Windows / macOS pre-installed, original high-speed charger included, ready for work right out of the box.
+      <strong class="text-cyan">Coratech Guarantee:</strong> Genuine Windows pre-installed, high-speed charger included, inspected and certified for work right out of the box.
     </div>
   `;
 
-  modalActionBtn.innerHTML = `<i class="fa-brands fa-whatsapp"></i> Inquire / Order on WhatsApp`;
-  modalActionBtn.className = "btn btn-whatsapp";
+  // Bind thumbnails switcher if gallery
+  if (allImages.length > 1) {
+    const mainImg = modalBody.querySelector("#spec-gallery-main");
+    const thumbBtns = modalBody.querySelectorAll(".spec-thumb-btn");
+    thumbBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        thumbBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        mainImg.src = btn.getAttribute("data-src");
+      });
+    });
+  }
+
+  modalActionBtn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Order / Purchase This Device`;
+  modalActionBtn.className = "btn btn-primary";
   modalActionBtn.onclick = () => {
-    window.open(`https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I am ready to order: ${item.model} (${formatCurrency(item.priceUsd)})`)}`, "_blank");
+    closeModal();
+    openPurchaseModal(hwId);
   };
 
   openModal();
+}
+
+// =========================================================================
+// 8B. PURCHASE ORDER MODAL & SILENT BACKEND NOTIFICATION
+// =========================================================================
+
+function openPurchaseModal(hwId) {
+  const item = HARDWARE_CATALOG.find((h) => h.id === hwId);
+  if (!item) return;
+
+  const modal = document.getElementById("purchase-modal");
+  const summary = document.getElementById("purchase-summary-box");
+
+  document.getElementById("order-model-name").value = item.model;
+  document.getElementById("order-model-price").value = item.priceUsd;
+
+  summary.innerHTML = `
+    <img src="${item.image}" alt="${item.model}">
+    <div class="purchase-summary-details">
+      <div class="purchase-summary-title">${item.model}</div>
+      <div class="purchase-summary-price">${formatCurrency(item.priceUsd)}</div>
+      <div class="purchase-summary-warranty">
+        <i class="fa-solid fa-shield-check"></i> ${item.warranty} • ${item.condition}
+      </div>
+    </div>
+  `;
+
+  modal.classList.add("open");
+
+  // WhatsApp order button click
+  const waBtn = document.getElementById("btn-order-whatsapp");
+  waBtn.onclick = () => {
+    const name = document.getElementById("order-cust-name").value.trim() || "Customer";
+    const phone = document.getElementById("order-cust-phone").value.trim() || "Via WhatsApp";
+    const email = document.getElementById("order-cust-email").value.trim();
+    const location = document.getElementById("order-cust-location").value.trim() || "Pickup / Delivery";
+    const notes = document.getElementById("order-cust-notes").value.trim();
+
+    // Silent background dispatch to backend (triggers coratechglobal@gmail.com email)
+    const apiBase = getPublicApiBase();
+    fetch(`${apiBase}/api/orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        phone,
+        email,
+        model: item.model,
+        priceUsd: item.priceUsd,
+        location,
+        notes
+      })
+    }).catch((e) => console.warn("Background order dispatch note:", e));
+
+    closePurchaseModal();
+    showToast("Opening WhatsApp with your order details...", "success");
+
+    const message = `Hello Coratech Global, I would like to purchase:
+Device: ${item.model}
+Price: ${formatCurrency(item.priceUsd)}
+Customer Name: ${name}
+Phone: ${phone}
+Location: ${location || "Accra"}
+${notes ? "Notes: " + notes : ""}`;
+
+    window.open(`https://wa.me/233599360626?text=${encodeURIComponent(message)}`, "_blank");
+  };
+}
+
+function closePurchaseModal() {
+  const modal = document.getElementById("purchase-modal");
+  if (modal) modal.classList.remove("open");
+}
+
+function initPurchaseOrderForm() {
+  const form = document.getElementById("purchase-order-form");
+  const closeBtn = document.getElementById("purchase-modal-close");
+
+  if (closeBtn) {
+    closeBtn.onclick = closePurchaseModal;
+  }
+
+  const modal = document.getElementById("purchase-modal");
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closePurchaseModal();
+    });
+  }
+
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById("btn-submit-order");
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting...`;
+
+    const model = document.getElementById("order-model-name").value;
+    const priceUsd = parseFloat(document.getElementById("order-model-price").value) || 0;
+    const name = document.getElementById("order-cust-name").value.trim();
+    const phone = document.getElementById("order-cust-phone").value.trim();
+    const email = document.getElementById("order-cust-email").value.trim();
+    const location = document.getElementById("order-cust-location").value.trim();
+    const notes = document.getElementById("order-cust-notes").value.trim();
+
+    try {
+      const apiBase = getPublicApiBase();
+      const res = await fetch(`${apiBase}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, email, model, priceUsd, location, notes })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast("Order received! Our sales team will contact you shortly to confirm delivery.", "success", 6000);
+        form.reset();
+        closePurchaseModal();
+      } else {
+        showToast(data.error || "Could not submit order. Please try again or message via WhatsApp.", "error");
+      }
+    } catch (err) {
+      showToast("Order request received! Our team will contact you shortly.", "success");
+      form.reset();
+      closePurchaseModal();
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> Submit Order`;
+    }
+  });
 }
 
 // =========================================================================
@@ -1181,7 +1373,8 @@ function initTicketSystem() {
 
       // Send to Backend API
       try {
-        const res = await fetch("/api/tickets", {
+        const apiBase = getPublicApiBase();
+        const res = await fetch(`${apiBase}/api/tickets`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newTicket)
@@ -1225,7 +1418,8 @@ function initTicketSystem() {
 
       // Try Backend API First
       try {
-        const res = await fetch(`/api/tickets/${encodeURIComponent(input)}`);
+        const apiBase = getPublicApiBase();
+        const res = await fetch(`${apiBase}/api/tickets/${encodeURIComponent(input)}`);
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {
@@ -1332,7 +1526,8 @@ function initAppointmentBooking() {
 
       // Submit to Backend API
       try {
-        await fetch("/api/appointments", {
+        const apiBase = getPublicApiBase();
+        await fetch(`${apiBase}/api/appointments`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, phone, service, type, date, time: selectedSlot })
@@ -1426,7 +1621,8 @@ function initFloatingWhatsApp() {
       const email = document.getElementById("newsletter-email").value.trim();
 
       try {
-        await fetch("/api/newsletter", {
+        const apiBase = getPublicApiBase();
+        await fetch(`${apiBase}/api/newsletter`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email })

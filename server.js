@@ -10,10 +10,68 @@ const fs = require("fs");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "coratech_global_enterprise_sec_key_2026_9x48q";
+
+// =========================================================================
+// SILENT BACKEND EMAIL NOTIFICATIONS
+// Recipient: coratechglobal@gmail.com
+// Operates silently in the background without exposing details to customers
+// =========================================================================
+const NOTIFICATION_RECIPIENT = "coratechglobal@gmail.com";
+
+let mailTransporter = null;
+try {
+  const smtpUser = process.env.EMAIL_USER || process.env.SMTP_USER;
+  const smtpPass = process.env.EMAIL_PASS || process.env.SMTP_PASS;
+
+  if (smtpUser && smtpPass) {
+    mailTransporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: smtpUser,
+        pass: smtpPass
+      }
+    });
+    console.log(`Email notification engine active for ${NOTIFICATION_RECIPIENT}`);
+  }
+} catch (e) {
+  console.warn("Mail transporter initialization notice:", e.message);
+}
+
+function sendSilentNotification({ subject, text, html }) {
+  setImmediate(async () => {
+    try {
+      console.log(`\n======================================================`);
+      console.log(`[BACKEND NOTIFICATION -> ${NOTIFICATION_RECIPIENT}]`);
+      console.log(`Subject: ${subject}`);
+      console.log(`Time:    ${new Date().toISOString()}`);
+      console.log(`Details:\n${text}`);
+      console.log(`======================================================\n`);
+
+      if (mailTransporter) {
+        await mailTransporter.sendMail({
+          from: `"Coratech Platform Alerts" <${process.env.EMAIL_USER || "noreply@coratechglobal.com"}>`,
+          to: NOTIFICATION_RECIPIENT,
+          subject: subject,
+          text: text,
+          html: html || `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1e293b;">
+            <h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">${subject}</h2>
+            <pre style="background: #f8fafc; padding: 14px; border-radius: 6px; white-space: pre-wrap; font-family: inherit;">${text}</pre>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 20px;">Automated alert from Coratech Global Backend Engine.</p>
+          </div>`
+        });
+        console.log(`✓ Email notification delivered to ${NOTIFICATION_RECIPIENT}`);
+      }
+    } catch (err) {
+      // Silently log on server - strictly never thrown or surfaced to customer
+      console.error(`Silent notification delivery note: ${err.message}`);
+    }
+  });
+}
 
 // Ensure required directories exist
 const DATA_DIR = path.join(__dirname, "data");
@@ -207,28 +265,34 @@ app.post("/api/auth/change-password", authenticateToken, (req, res) => {
 });
 
 // =========================================================================
-// 2. FILE & IMAGE UPLOADS
+// 2. FILE & IMAGE UPLOADS (Supports One or More Images)
 // =========================================================================
 
 app.post("/api/upload", authenticateToken, (req, res) => {
-  upload.single("file")(req, res, (err) => {
+  upload.any()(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ success: false, error: `Upload error: ${err.message}` });
     } else if (err) {
       return res.status(400).json({ success: false, error: err.message || "File upload failed." });
     }
 
-    if (!req.file) {
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({ success: false, error: "No file was uploaded." });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const uploadedFiles = req.files.map((file) => ({
+      url: `/uploads/${file.filename}`,
+      filename: file.filename,
+      size: file.size,
+      mimetype: file.mimetype
+    }));
+
     res.json({
       success: true,
-      url: fileUrl,
-      filename: req.file.filename,
-      size: req.file.size,
-      mimetype: req.file.mimetype
+      url: uploadedFiles[0].url, // Primary image for single-image consumers
+      urls: uploadedFiles.map((f) => f.url), // Array of all uploaded image URLs
+      files: uploadedFiles,
+      message: `${uploadedFiles.length} image(s) uploaded successfully.`
     });
   });
 });
@@ -529,6 +593,20 @@ app.post("/api/tickets", (req, res) => {
   db.tickets.unshift(newTicket);
   writeDatabase(db);
 
+  // Silent backend notification to coratechglobal@gmail.com
+  sendSilentNotification({
+    subject: `🛠️ New Service / Support Ticket: ${newTicket.category} (${newTicket.id})`,
+    text: `Client Name: ${newTicket.name}
+Client Email: ${newTicket.email}
+Service Category: ${newTicket.category}
+Urgency Level: ${newTicket.priority}
+Ticket ID: ${newTicket.id}
+Date Logged: ${newTicket.createdAt}
+
+Problem Description:
+${newTicket.desc}`
+  });
+
   res.status(201).json({ success: true, data: newTicket, message: "Support ticket registered successfully." });
 });
 
@@ -612,6 +690,19 @@ app.post("/api/appointments", (req, res) => {
   db.appointments.unshift(newAppointment);
   writeDatabase(db);
 
+  // Silent backend notification to coratechglobal@gmail.com
+  sendSilentNotification({
+    subject: `📅 New Consultation Booking: ${newAppointment.service} (${newAppointment.id})`,
+    text: `Client Name: ${newAppointment.name}
+Phone Number: ${newAppointment.phone}
+Service Focus: ${newAppointment.service}
+Meeting Format: ${newAppointment.type}
+Preferred Date: ${newAppointment.date}
+Preferred Time: ${newAppointment.time}
+Booking ID: ${newAppointment.id}
+Submitted: ${new Date().toLocaleString()}`
+  });
+
   res.status(201).json({ success: true, data: newAppointment, message: "Appointment booking submitted successfully." });
 });
 
@@ -684,7 +775,112 @@ app.post("/api/contacts", (req, res) => {
   db.contacts.unshift(newContact);
   writeDatabase(db);
 
+  // Silent backend notification to coratechglobal@gmail.com
+  sendSilentNotification({
+    subject: `✉️ New Service / Contact Inquiry: ${newContact.subject} from ${newContact.name}`,
+    text: `Client Name: ${newContact.name}
+Client Email: ${newContact.email}
+Subject: ${newContact.subject}
+Date/Time: ${new Date().toLocaleString()}
+
+Message:
+${newContact.message}`
+  });
+
   res.status(201).json({ success: true, message: "Message sent successfully." });
+});
+
+// =========================================================================
+// 8B. HARDWARE PURCHASE ORDERS & INQUIRIES
+// =========================================================================
+
+// Admin: Get All Orders
+app.get("/api/orders", authenticateToken, (req, res) => {
+  const db = readDatabase();
+  if (!db) return res.status(500).json({ success: false, error: "Database error" });
+  res.json({ success: true, data: db.orders || [] });
+});
+
+// Public: Submit Purchase / Order Request
+app.post("/api/orders", (req, res) => {
+  const db = readDatabase();
+  if (!db) return res.status(500).json({ success: false, error: "Database error" });
+
+  const { name, phone, email, model, priceUsd, location, notes } = req.body;
+  if (!name || !phone || !model) {
+    return res.status(400).json({ success: false, error: "Name, phone number, and device model are required." });
+  }
+
+  const orderId = `ORD-${Date.now().toString().slice(-6)}`;
+  const newOrder = {
+    id: orderId,
+    name: name.trim(),
+    phone: phone.trim(),
+    email: email ? email.trim() : "",
+    model: model.trim(),
+    priceUsd: priceUsd || 0,
+    location: location ? location.trim() : "Not specified",
+    notes: notes ? notes.trim() : "",
+    status: "Processing",
+    createdAt: new Date().toISOString()
+  };
+
+  db.orders = db.orders || [];
+  db.orders.unshift(newOrder);
+  writeDatabase(db);
+
+  // Silent backend notification to coratechglobal@gmail.com
+  sendSilentNotification({
+    subject: `🛒 New Laptop Purchase Order: ${newOrder.model} (${newOrder.id})`,
+    text: `Customer Name: ${newOrder.name}
+Phone/WhatsApp: ${newOrder.phone}
+Email: ${newOrder.email || "N/A"}
+Device Ordered: ${newOrder.model}
+Price: GH₵ ${newOrder.priceUsd}
+Delivery Location: ${newOrder.location}
+Special Notes/Upgrades: ${newOrder.notes || "None"}
+Order ID: ${newOrder.id}
+Date: ${new Date().toLocaleString()}`
+  });
+
+  res.status(201).json({
+    success: true,
+    data: newOrder,
+    message: "Your purchase order request has been received. Our sales team will contact you shortly."
+  });
+});
+
+// Admin: Update Order Status
+app.patch("/api/orders/:id", authenticateToken, (req, res) => {
+  const db = readDatabase();
+  if (!db) return res.status(500).json({ success: false, error: "Database error" });
+
+  const { id } = req.params;
+  const index = (db.orders || []).findIndex((o) => o.id === id);
+  if (index === -1) {
+    return res.status(404).json({ success: false, error: "Order not found." });
+  }
+
+  if (req.body.status) db.orders[index].status = req.body.status;
+  writeDatabase(db);
+  res.json({ success: true, data: db.orders[index], message: "Order status updated." });
+});
+
+// Admin: Delete Order
+app.delete("/api/orders/:id", authenticateToken, (req, res) => {
+  const db = readDatabase();
+  if (!db) return res.status(500).json({ success: false, error: "Database error" });
+
+  const { id } = req.params;
+  const initialLength = (db.orders || []).length;
+  db.orders = (db.orders || []).filter((o) => o.id !== id);
+
+  if (db.orders.length === initialLength) {
+    return res.status(404).json({ success: false, error: "Order not found." });
+  }
+
+  writeDatabase(db);
+  res.json({ success: true, message: "Order deleted successfully." });
 });
 
 // Admin: Get Newsletter Subscribers

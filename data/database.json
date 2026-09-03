@@ -32,10 +32,13 @@
       }
     },
     "emailConfig": {
-      "user": "",
-      "pass": "",
+      "user": "cagegbeku@gmail.com",
+      "pass": "mkbvlbmraswpuqtx",
       "recipient": "coratechglobal@gmail.com",
-      "senderName": "Coratech Global"
+      "senderName": "Coratech Global",
+      "host": "smtp.gmail.com",
+      "port": 465,
+      "secure": true
     }
   },
   "hardware": [

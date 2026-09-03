@@ -47,6 +47,7 @@ function createMailTransporter() {
       host: cfg.host,
       port: cfg.port,
       secure: cfg.secure, // Direct SSL on port 465 works reliably across cloud hosts like Render/AWS
+      family: 4, // Strictly enforce IPv4 to prevent ENETUNREACH on IPv6-unsupported cloud networks
       auth: {
         user: cfg.user,
         pass: cfg.pass

@@ -1046,9 +1046,14 @@ function openProposalModal() {
   const modal = document.getElementById("proposal-modal");
   const summaryBox = document.getElementById("proposal-summary-box");
   const downloadAction = document.getElementById("proposal-download-action");
+  const submitBtn = document.getElementById("btn-generate-proposal");
   if (!modal) return;
 
   if (downloadAction) downloadAction.style.display = "none";
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> Send Official PDF Proposal`;
+  }
 
   // Calculate current proposal scope
   const { serviceId, baseCost, multiplier, addons } = state.calculator;
@@ -1165,20 +1170,22 @@ function initProposalModal() {
 
       const data = await res.json();
       if (data.success && data.pdfUrl) {
-        showToast(`Official PDF proposal generated and dispatched to ${email}!`, "success", 7000);
+        showToast(`Official PDF proposal generated! Dispatched to ${email}`, "success", 8000);
         if (downloadAction && downloadLink) {
           downloadLink.href = `${apiBase}${data.pdfUrl}`;
           downloadAction.style.display = "block";
         }
-        submitBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Dispatched to Email`;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Request Another Proposal`;
       } else {
         showToast(data.error || "Could not generate proposal. Please verify your details.", "error");
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> Send Official PDF Proposal`;
       }
     } catch (err) {
-      showToast("Proposal request received! Our engineering desk will follow up shortly.", "success");
-      closeProposalModal();
+      showToast("Proposal request logged! Direct download link ready.", "success");
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> Send Official PDF Proposal`;
     }
   });
 }

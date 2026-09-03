@@ -74,7 +74,13 @@ function initDatabaseSecurity() {
 initDatabaseSecurity();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+}));
+app.options("*", cors());
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 
@@ -204,18 +210,26 @@ app.post("/api/auth/change-password", authenticateToken, (req, res) => {
 // 2. FILE & IMAGE UPLOADS
 // =========================================================================
 
-app.post("/api/upload", authenticateToken, upload.single("file"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: "No file was uploaded." });
-  }
+app.post("/api/upload", authenticateToken, (req, res) => {
+  upload.single("file")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ success: false, error: `Upload error: ${err.message}` });
+    } else if (err) {
+      return res.status(400).json({ success: false, error: err.message || "File upload failed." });
+    }
 
-  const fileUrl = `/uploads/${req.file.filename}`;
-  res.json({
-    success: true,
-    url: fileUrl,
-    filename: req.file.filename,
-    size: req.file.size,
-    mimetype: req.file.mimetype
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: "No file was uploaded." });
+    }
+
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({
+      success: true,
+      url: fileUrl,
+      filename: req.file.filename,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
   });
 });
 
@@ -749,6 +763,18 @@ if (ADMIN_ROUTE !== "/admin") {
 app.use(ADMIN_ROUTE, express.static(path.join(__dirname, "admin")));
 app.get(`${ADMIN_ROUTE}*`, (req, res) => {
   res.sendFile(path.join(__dirname, "admin", "index.html"));
+});
+
+// Global Error Handling Middleware (Ensures JSON is always returned, not raw HTML)
+app.use((err, req, res, next) => {
+  console.error("API Error:", err);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || "An internal server error occurred."
+  });
 });
 
 // Server Initialization

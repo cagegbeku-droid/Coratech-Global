@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initAuthSession();
   initEventListeners();
   initDropzones();
+  checkServerHealth();
+  setInterval(checkServerHealth, 15000);
 });
 
 // Check existing session
@@ -74,10 +76,36 @@ function showDashboard() {
 }
 
 // =========================================================================
-// 3. API REQUEST HELPER WITH JWT AUTH
+// 3. API CONFIGURATION & REQUEST HELPER WITH JWT AUTH
 // =========================================================================
 
+function getApiBaseUrl() {
+  // If opened via file:/// or a static server running on another port (e.g., Live Server port 5500)
+  if (window.location.protocol === "file:" || (window.location.port && window.location.port !== "3000")) {
+    return localStorage.getItem("coratech_api_base_url") || "http://localhost:3000";
+  }
+  return "";
+}
+
+function resolveMediaUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("data:") || url.startsWith("blob:") || url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  const baseUrl = getApiBaseUrl();
+  if (url.startsWith("/uploads/")) {
+    return baseUrl ? `${baseUrl}${url}` : `..${url}`;
+  }
+  if (url.startsWith("assets/")) {
+    return `../${url}`;
+  }
+  return url;
+}
+
 async function apiRequest(endpoint, method = "GET", body = null) {
+  const baseUrl = getApiBaseUrl();
+  const url = endpoint.startsWith("http") ? endpoint : `${baseUrl}${endpoint}`;
+
   const headers = {};
   if (adminState.token) {
     headers["Authorization"] = `Bearer ${adminState.token}`;
@@ -94,8 +122,33 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     }
   }
 
-  const response = await fetch(endpoint, options);
-  const data = await response.json();
+  let response;
+  try {
+    response = await fetch(url, options);
+  } catch (netErr) {
+    console.error("Network connection error to:", url, netErr);
+    const isLocal = url.includes("localhost") || url.includes("127.0.0.1") || url.startsWith("/");
+    const hint = isLocal
+      ? " Backend server appears to be offline. Please start it with 'npm start' in your project terminal."
+      : " Please check your internet connection.";
+    throw new Error(`Failed to connect to API server (${url}).${hint}`);
+  }
+
+  let data;
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      data = await response.json();
+    } catch (parseErr) {
+      data = { error: "Failed to parse server JSON response." };
+    }
+  } else {
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(`Server returned error (${response.status}): ${text.slice(0, 120)}`);
+    }
+    data = { success: true, text };
+  }
 
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
@@ -104,7 +157,7 @@ async function apiRequest(endpoint, method = "GET", body = null) {
       showLogin();
       showAdminToast("Session expired. Please log in again.", "error");
     }
-    throw new Error(data.error || "An API error occurred.");
+    throw new Error(data.error || `Request failed with status ${response.status}`);
   }
 
   return data;
@@ -308,6 +361,57 @@ function initEventListeners() {
       if (icon) icon.className = next === "light" ? "fa-solid fa-moon" : "fa-solid fa-sun";
     });
   }
+
+  // Server Status Indicator Click (Manual check / retry)
+  const serverIndicator = document.getElementById("server-status-indicator");
+  if (serverIndicator) {
+    serverIndicator.addEventListener("click", async () => {
+      showAdminToast("Checking backend server connection...", "info", 1500);
+      await checkServerHealth(true);
+    });
+  }
+}
+
+// Server Health Monitoring
+async function checkServerHealth(showToast = false) {
+  const indicator = document.getElementById("server-status-indicator");
+  const textEl = document.getElementById("server-status-text");
+  if (!indicator || !textEl) return;
+
+  const baseUrl = getApiBaseUrl();
+  const target = baseUrl ? `${baseUrl}/api/settings` : "/api/settings";
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(target, { method: "GET", signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      indicator.className = "server-status-pill online";
+      const dot = indicator.querySelector(".status-dot");
+      if (dot) dot.className = "status-dot online";
+      const hostLabel = baseUrl ? baseUrl.replace(/https?:\/\//, "") : "Port 3000";
+      textEl.textContent = `Server: Online (${hostLabel})`;
+      indicator.title = "Connected to Coratech backend server. Click to refresh status.";
+      if (showToast) showAdminToast("Backend server is online and reachable!", "success");
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (e) {
+    indicator.className = "server-status-pill offline";
+    const dot = indicator.querySelector(".status-dot");
+    if (dot) dot.className = "status-dot offline";
+    textEl.textContent = "Server: Offline (npm start)";
+    indicator.title = "Cannot connect to Node.js backend. Run 'npm start' in terminal. Click to retry.";
+    if (showToast) {
+      showAdminToast(
+        "Backend server is offline! Start it by running 'npm start' in your project terminal.",
+        "error",
+        5000
+      );
+    }
+  }
 }
 
 // Tab Switching Helper
@@ -366,7 +470,7 @@ function renderHardwareTable() {
   tbody.innerHTML = filtered.map((item) => `
     <tr>
       <td>
-        <img src="${item.image.startsWith('/') ? '..' + item.image : (item.image.startsWith('assets') ? '../' + item.image : item.image)}" alt="${item.model}" class="table-thumb-img">
+        <img src="${resolveMediaUrl(item.image)}" alt="${item.model}" class="table-thumb-img">
       </td>
       <td>
         <strong>${item.model}</strong>
@@ -435,7 +539,7 @@ function openEditHardwareModal(hwId) {
 
   document.getElementById("hw-image-url").value = item.image;
   const previewImg = document.getElementById("hw-preview-img");
-  previewImg.src = item.image.startsWith('/') ? '..' + item.image : (item.image.startsWith('assets') ? '../' + item.image : item.image);
+  previewImg.src = resolveMediaUrl(item.image);
   document.getElementById("hw-dropzone-content").style.display = "none";
   document.getElementById("hw-dropzone-preview").style.display = "inline-block";
 
@@ -496,7 +600,7 @@ function renderPortfolioTable() {
   tbody.innerHTML = filtered.map((proj) => `
     <tr>
       <td>
-        <img src="${proj.image.startsWith('/') ? '..' + proj.image : (proj.image.startsWith('assets') ? '../' + proj.image : proj.image)}" alt="${proj.title}" class="table-thumb-img">
+        <img src="${resolveMediaUrl(proj.image)}" alt="${proj.title}" class="table-thumb-img">
       </td>
       <td>
         <strong>${proj.title}</strong>
@@ -555,7 +659,7 @@ function openEditPortfolioModal(projId) {
 
   document.getElementById("port-image-url").value = proj.image;
   const previewImg = document.getElementById("port-preview-img");
-  previewImg.src = proj.image.startsWith('/') ? '..' + proj.image : (proj.image.startsWith('assets') ? '../' + proj.image : proj.image);
+  previewImg.src = resolveMediaUrl(proj.image);
   document.getElementById("port-dropzone-content").style.display = "none";
   document.getElementById("port-dropzone-preview").style.display = "inline-block";
 
@@ -1168,22 +1272,51 @@ function setupSingleDropzone(dropzoneId, fileInputId, urlInputId, contentId, pre
 }
 
 async function handleFileUpload(file, urlInput, content, previewContainer, previewImg) {
-  const formData = new FormData();
-  formData.append("file", file);
+  if (!file) return;
+
+  // Validate that the file is an image
+  if (!file.type.startsWith("image/") && !file.name.match(/\.(jpg|jpeg|png|webp|gif|svg|avif)$/i)) {
+    showAdminToast("Please select a valid image file (JPG, PNG, WEBP, SVG, GIF).", "warning");
+    return;
+  }
+
+  // 1. Instant Local Preview using FileReader (zero latency)
+  const localReader = new FileReader();
+  localReader.onload = (e) => {
+    previewImg.src = e.target.result;
+    content.style.display = "none";
+    previewContainer.style.display = "inline-block";
+  };
+  localReader.readAsDataURL(file);
 
   showAdminToast("Uploading image...", "info", 2000);
+
+  const formData = new FormData();
+  formData.append("file", file);
 
   try {
     const res = await apiRequest("/api/upload", "POST", formData);
     if (res.success) {
       urlInput.value = res.url;
-      previewImg.src = `..${res.url}`;
-      content.style.display = "none";
-      previewContainer.style.display = "inline-block";
-      showAdminToast("Image uploaded successfully!", "success");
+      previewImg.src = resolveMediaUrl(res.url);
+      showAdminToast("Image uploaded and stored successfully!", "success");
+      return;
     }
   } catch (err) {
-    showAdminToast(err.message, "error");
+    console.warn("Server upload failed, converting to local Base64 data URL:", err);
+    // 2. Resilient Base64 Fallback: Ensures user can continue saving without losing data
+    const base64Reader = new FileReader();
+    base64Reader.onload = (e) => {
+      const base64Url = e.target.result;
+      urlInput.value = base64Url;
+      previewImg.src = base64Url;
+      showAdminToast(
+        "Backend server offline: Image saved in Base64 mode! (Run 'npm start' to enable permanent disk storage)",
+        "warning",
+        6000
+      );
+    };
+    base64Reader.readAsDataURL(file);
   }
 }
 

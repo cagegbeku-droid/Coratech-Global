@@ -405,6 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTicketSystem();
   initAppointmentBooking();
   initPurchaseOrderForm();
+  initProposalModal();
   initFaqAccordion();
   initFloatingWhatsApp();
   initNavigation();
@@ -1038,6 +1039,151 @@ function initPurchaseOrderForm() {
 }
 
 // =========================================================================
+// 8C. OFFICIAL PDF PROPOSAL MODAL & DUAL EMAIL DISPATCH
+// =========================================================================
+
+function openProposalModal() {
+  const modal = document.getElementById("proposal-modal");
+  const summaryBox = document.getElementById("proposal-summary-box");
+  const downloadAction = document.getElementById("proposal-download-action");
+  if (!modal) return;
+
+  if (downloadAction) downloadAction.style.display = "none";
+
+  // Calculate current proposal scope
+  const { serviceId, baseCost, multiplier, addons } = state.calculator;
+  const currentService = SERVICES_DATA.find((s) => s.id === serviceId) || { name: "Custom Enterprise IT Engagement" };
+  const scaledBase = baseCost * multiplier;
+  const addonsTotal = addons.reduce((sum, a) => sum + a.cost, 0);
+  const totalUsd = scaledBase + addonsTotal;
+  const ghsRate = CURRENCY_RATES && CURRENCY_RATES.USD ? (1 / CURRENCY_RATES.USD.rate) : 15.38;
+  const totalGhs = Math.round(totalUsd * ghsRate);
+
+  const scopeLabel = multiplier === 1 ? "Standard Setup" : multiplier === 1.6 ? "Advanced Enterprise Scale" : "Mission-Critical Core";
+  const timelineLabel = multiplier === 1 ? "1 - 2 Weeks" : multiplier === 1.6 ? "3 - 4 Weeks" : "4 - 8 Weeks";
+
+  modal.dataset.serviceName = currentService.name;
+  modal.dataset.baseCost = scaledBase;
+  modal.dataset.multiplier = multiplier;
+  modal.dataset.totalUsd = totalUsd;
+  modal.dataset.totalGhs = totalGhs;
+  modal.dataset.timeline = timelineLabel;
+  modal.dataset.addons = JSON.stringify(addons);
+
+  summaryBox.innerHTML = `
+    <div class="purchase-summary-details" style="width: 100%;">
+      <div style="font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px;">
+        OFFICIAL SCOPE SUMMARY
+      </div>
+      <div class="purchase-summary-title" style="font-size: 1.15rem; color: #fff; margin-bottom: 6px;">
+        ${currentService.name}
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+        <div class="purchase-summary-price" style="font-size: 1.35rem;">
+          $${totalUsd.toLocaleString()} USD
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 400;">(~GH₵ ${totalGhs.toLocaleString()})</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+          <i class="fa-solid fa-clock text-cyan"></i> Delivery: <strong>${timelineLabel}</strong>
+        </div>
+      </div>
+      <div class="purchase-summary-warranty" style="margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);">
+        <i class="fa-solid fa-layer-group text-cyan"></i> Scope: ${scopeLabel} &bull; ${addons.length} Add-on Module(s) Included
+      </div>
+    </div>
+  `;
+
+  modal.classList.add("open");
+}
+
+function closeProposalModal() {
+  const modal = document.getElementById("proposal-modal");
+  if (modal) modal.classList.remove("open");
+}
+
+function initProposalModal() {
+  const closeBtn = document.getElementById("proposal-modal-close");
+  const cancelBtn = document.getElementById("btn-cancel-proposal");
+  const modal = document.getElementById("proposal-modal");
+  const form = document.getElementById("proposal-request-form");
+
+  if (closeBtn) closeBtn.onclick = closeProposalModal;
+  if (cancelBtn) cancelBtn.onclick = closeProposalModal;
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeProposalModal();
+    });
+  }
+
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById("btn-generate-proposal");
+    const downloadAction = document.getElementById("proposal-download-action");
+    const downloadLink = document.getElementById("proposal-pdf-download-link");
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating PDF & Dispatches...`;
+
+    const name = document.getElementById("prop-cust-name").value.trim();
+    const email = document.getElementById("prop-cust-email").value.trim();
+    const phone = document.getElementById("prop-cust-phone").value.trim();
+    const company = document.getElementById("prop-cust-company").value.trim();
+
+    const serviceName = modal.dataset.serviceName || "Custom Engineering Engagement";
+    const baseCost = parseFloat(modal.dataset.baseCost) || 0;
+    const multiplier = parseFloat(modal.dataset.multiplier) || 1;
+    const totalUsd = parseFloat(modal.dataset.totalUsd) || 0;
+    const totalGhs = parseFloat(modal.dataset.totalGhs) || 0;
+    const timeline = modal.dataset.timeline || "2 - 4 Weeks";
+    let addons = [];
+    try {
+      addons = JSON.parse(modal.dataset.addons || "[]");
+    } catch (err) {}
+
+    try {
+      const apiBase = getPublicApiBase();
+      const res = await fetch(`${apiBase}/api/proposals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          company,
+          serviceName,
+          baseCost,
+          multiplier,
+          addons,
+          totalUsd,
+          totalGhs,
+          timeline
+        })
+      });
+
+      const data = await res.json();
+      if (data.success && data.pdfUrl) {
+        showToast(`Official PDF proposal generated and dispatched to ${email}!`, "success", 7000);
+        if (downloadAction && downloadLink) {
+          downloadLink.href = `${apiBase}${data.pdfUrl}`;
+          downloadAction.style.display = "block";
+        }
+        submitBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Dispatched to Email`;
+      } else {
+        showToast(data.error || "Could not generate proposal. Please verify your details.", "error");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> Send Official PDF Proposal`;
+      }
+    } catch (err) {
+      showToast("Proposal request received! Our engineering desk will follow up shortly.", "success");
+      closeProposalModal();
+    }
+  });
+}
+
+// =========================================================================
 // 9. PORTFOLIO & CASE STUDIES
 // =========================================================================
 
@@ -1226,15 +1372,11 @@ function initCostEstimator() {
     });
   }
 
-  // Email PDF Quote Button
+  // Email PDF Quote Button -> Opens Official PDF Proposal Modal
   const emailBtn = document.getElementById("calc-email-btn");
   if (emailBtn) {
     emailBtn.addEventListener("click", () => {
-      showToast("Official PDF Estimate generated! Please enter your email to receive it.", "success");
-      const clientEmail = prompt("Enter your business email address for the PDF dispatch:");
-      if (clientEmail) {
-        showToast(`Estimate PDF dispatched successfully to ${clientEmail}`, "success");
-      }
+      openProposalModal();
     });
   }
 
@@ -1520,6 +1662,7 @@ function initAppointmentBooking() {
       const service = document.getElementById("book-service").value;
       const type = document.getElementById("book-type").value;
       const date = document.getElementById("book-date").value;
+      const email = document.getElementById("book-email") ? document.getElementById("book-email").value.trim() : "";
 
       modal.classList.remove("open");
       showToast(`Appointment booked for ${name} on ${date} at ${selectedSlot}!`, "success");
@@ -1530,7 +1673,7 @@ function initAppointmentBooking() {
         await fetch(`${apiBase}/api/appointments`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, phone, service, type, date, time: selectedSlot })
+          body: JSON.stringify({ name, phone, email, service, type, date, time: selectedSlot })
         });
       } catch (err) {
         console.log("Appointment saved locally.");

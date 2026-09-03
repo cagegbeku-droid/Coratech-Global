@@ -1008,9 +1008,15 @@
             <input type="text" id="book-name" class="form-control" placeholder="Jane Doe" required>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="book-phone">WhatsApp / Phone Number *</label>
-            <input type="tel" id="book-phone" class="form-control" placeholder="+234..." required>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="book-phone">WhatsApp / Phone *</label>
+              <input type="tel" id="book-phone" class="form-control" placeholder="+233..." required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="book-email">Email Address</label>
+              <input type="email" id="book-email" class="form-control" placeholder="client@company.com">
+            </div>
           </div>
 
           <div class="form-group">
@@ -1107,6 +1113,66 @@
             </button>
             <button type="button" class="btn btn-whatsapp" id="btn-order-whatsapp" style="flex: 1;">
               <i class="fa-brands fa-whatsapp"></i> Order on WhatsApp
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Official PDF Proposal Modal -->
+  <div class="modal-overlay" id="proposal-modal">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.25rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-file-pdf text-cyan"></i> Request Official PDF Proposal
+        </h3>
+        <button class="modal-close-btn" id="proposal-modal-close" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="proposal-summary-box" class="purchase-summary-box" style="margin-bottom: 20px;">
+          <!-- Dynamically populated from cost estimator -->
+        </div>
+
+        <form id="proposal-request-form">
+          <div class="form-group">
+            <label class="form-label" for="prop-cust-name">Your Full Name / Contact Person *</label>
+            <input type="text" id="prop-cust-name" class="form-control" placeholder="Dr. Kwame Mensah" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="prop-cust-email">Official / Business Email Address *</label>
+              <input type="email" id="prop-cust-email" class="form-control" placeholder="kwame@company.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prop-cust-phone">WhatsApp / Phone Number *</label>
+              <input type="tel" id="prop-cust-phone" class="form-control" placeholder="+233..." required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prop-cust-company">Organization / Company Name (Optional)</label>
+            <input type="text" id="prop-cust-company" class="form-control" placeholder="e.g. Horizon Labs or Startup Tech">
+          </div>
+
+          <div id="proposal-download-action" style="display: none; background: rgba(0, 242, 254, 0.08); border: 1px solid var(--accent-cyan); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px; text-align: center;">
+            <p style="margin: 0 0 8px; font-weight: 600; color: var(--accent-cyan);">
+              <i class="fa-solid fa-circle-check"></i> Official Proposal Generated!
+            </p>
+            <a href="#" target="_blank" id="proposal-pdf-download-link" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-download"></i> Download Proposal PDF Now
+            </a>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary" id="btn-generate-proposal" style="flex: 1;">
+              <i class="fa-solid fa-envelope-circle-check"></i> Send Official PDF Proposal
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-cancel-proposal" style="flex: 0.5;">
+              Cancel
             </button>
           </div>
         </form>

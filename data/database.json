@@ -30,6 +30,12 @@
         "symbol": "€",
         "rate": 0.059
       }
+    },
+    "emailConfig": {
+      "user": "",
+      "pass": "",
+      "recipient": "coratechglobal@gmail.com",
+      "senderName": "Coratech Global"
     }
   },
   "hardware": [
@@ -399,5 +405,7 @@
   "orders": [],
   "appointments": [],
   "contacts": [],
-  "newsletter": []
+  "newsletter": [],
+  "proposals": [],
+  "emailLogs": []
 }

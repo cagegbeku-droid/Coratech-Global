@@ -16,6 +16,8 @@ const adminState = {
   tickets: [],
   appointments: [],
   orders: [],
+  proposals: [],
+  emailLogs: [],
   contacts: [],
   newsletter: [],
   settings: {},
@@ -170,13 +172,15 @@ async function apiRequest(endpoint, method = "GET", body = null) {
 
 async function loadAllData() {
   try {
-    const [hwRes, portRes, srvRes, tickRes, aptRes, ordRes, contRes, newsRes, setRes] = await Promise.all([
+    const [hwRes, portRes, srvRes, tickRes, aptRes, ordRes, propRes, logRes, contRes, newsRes, setRes] = await Promise.all([
       apiRequest("/api/hardware"),
       apiRequest("/api/portfolio"),
       apiRequest("/api/services"),
       apiRequest("/api/tickets"),
       apiRequest("/api/appointments"),
       apiRequest("/api/orders").catch(() => ({ data: [] })),
+      apiRequest("/api/proposals").catch(() => ({ data: [] })),
+      apiRequest("/api/email/logs").catch(() => ({ data: [] })),
       apiRequest("/api/contacts"),
       apiRequest("/api/newsletter"),
       apiRequest("/api/settings")
@@ -188,6 +192,8 @@ async function loadAllData() {
     adminState.tickets = tickRes.data || [];
     adminState.appointments = aptRes.data || [];
     adminState.orders = ordRes.data || [];
+    adminState.proposals = propRes.data || [];
+    adminState.emailLogs = logRes.data || [];
     adminState.contacts = contRes.data || [];
     adminState.newsletter = newsRes.data || [];
     adminState.settings = setRes.data || {};
@@ -199,6 +205,8 @@ async function loadAllData() {
     renderTicketsTable();
     renderAppointmentsTable();
     renderOrdersTable();
+    renderProposalsTable();
+    renderEmailLogsTable();
     renderContactsAndNewsletter();
     populateSettingsForm();
   } catch (err) {
@@ -214,6 +222,9 @@ function updateBadgesAndKPIs() {
 
   const ordersBadge = document.getElementById("badge-count-orders");
   if (ordersBadge) ordersBadge.textContent = adminState.orders.length;
+
+  const proposalsBadge = document.getElementById("badge-count-proposals");
+  if (proposalsBadge) proposalsBadge.textContent = adminState.proposals.length;
 
   document.getElementById("kpi-hardware-count").textContent = adminState.hardware.length;
   document.getElementById("kpi-portfolio-count").textContent = adminState.portfolio.length;
@@ -978,10 +989,11 @@ async function toggleOrderStatus(orderId, currentStatus) {
 
 async function deleteOrder(orderId) {
   if (!confirm(`Delete order "${orderId}"? This cannot be undone.`)) return;
+
   try {
     const res = await apiRequest(`/api/orders/${orderId}`, "DELETE");
     if (res.success) {
-      showAdminToast(`Order ${orderId} deleted.`, "success");
+      showAdminToast(`Order ${orderId} deleted successfully.`, "success");
       adminState.orders = adminState.orders.filter(o => o.id !== orderId);
       updateBadgesAndKPIs();
       renderOrdersTable();
@@ -989,6 +1001,128 @@ async function deleteOrder(orderId) {
   } catch (err) {
     showAdminToast(err.message, "error");
   }
+}
+
+// =========================================================================
+// 10C. OFFICIAL PDF PROPOSALS CONTROLLER
+// =========================================================================
+
+function renderProposalsTable() {
+  const tbody = document.getElementById("proposals-table-body");
+  if (!tbody) return;
+
+  if (!adminState.proposals || adminState.proposals.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fa-solid fa-file-pdf" style="font-size: 2rem; margin-bottom: 8px; display: block; color: var(--accent-cyan);"></i>
+          No formal PDF proposals generated yet.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = adminState.proposals.map((prop) => {
+    const createdDate = new Date(prop.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const addonsCount = Array.isArray(prop.addons) ? prop.addons.length : 0;
+    return `
+      <tr>
+        <td><strong class="text-cyan font-mono">${prop.id}</strong></td>
+        <td>
+          <strong>${escapeHtml(prop.name)}</strong>
+          ${prop.company ? `<div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHtml(prop.company)}</div>` : ""}
+          <div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHtml(prop.email)} &bull; ${escapeHtml(prop.phone)}</div>
+        </td>
+        <td><strong>${escapeHtml(prop.serviceName)}</strong></td>
+        <td>
+          <span class="badge badge-cyan">${addonsCount} Add-on(s)</span>
+        </td>
+        <td>
+          <strong style="color: var(--accent-cyan);">$${Number(prop.totalUsd || 0).toLocaleString()} USD</strong>
+          ${prop.totalGhs ? `<div style="font-size: 0.78rem; color: var(--text-muted);">GH₵ ${Number(prop.totalGhs).toLocaleString()}</div>` : ""}
+        </td>
+        <td>${escapeHtml(prop.timeline || "2 - 4 Weeks")}</td>
+        <td><span style="font-size: 0.8rem; color: var(--text-secondary);">${createdDate}</span></td>
+        <td style="text-align: right;">
+          <a href="${getApiBaseUrl()}${prop.pdfUrl}" target="_blank" class="btn btn-outline-cyan btn-sm" title="Download & View Official PDF" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+            <i class="fa-solid fa-file-pdf"></i> PDF
+          </a>
+          <button class="btn-table-action delete" onclick="deleteProposal('${prop.id}')" title="Delete Proposal Record">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function deleteProposal(propId) {
+  if (!confirm(`Delete proposal record "${propId}"?`)) return;
+
+  try {
+    const res = await apiRequest(`/api/proposals/${propId}`, "DELETE");
+    if (res.success) {
+      showAdminToast(`Proposal ${propId} deleted.`, "success");
+      adminState.proposals = adminState.proposals.filter(p => p.id !== propId);
+      updateBadgesAndKPIs();
+      renderProposalsTable();
+    }
+  } catch (err) {
+    showAdminToast(err.message, "error");
+  }
+}
+
+// =========================================================================
+// 10D. EMAIL OUTBOX & DISPATCH LOGS CONTROLLER
+// =========================================================================
+
+function renderEmailLogsTable() {
+  const tbody = document.getElementById("email-logs-table-body");
+  if (!tbody) return;
+
+  if (!adminState.emailLogs || adminState.emailLogs.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fa-solid fa-inbox" style="font-size: 2rem; margin-bottom: 8px; display: block; color: var(--accent-cyan);"></i>
+          No outbound emails logged yet.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = adminState.emailLogs.map((log) => {
+    let statusBadge = `<span class="badge badge-cyan">${log.status}</span>`;
+    if (log.status === "Delivered") {
+      statusBadge = `<span class="badge badge-success"><i class="fa-solid fa-check"></i> Delivered</span>`;
+    } else if (log.status === "Failed") {
+      statusBadge = `<span class="badge badge-danger" title="${escapeHtml(log.error || '')}"><i class="fa-solid fa-triangle-exclamation"></i> Failed</span>`;
+    } else if (log.status === "Logged") {
+      statusBadge = `<span class="badge badge-amber"><i class="fa-solid fa-clock"></i> Logged (No SMTP)</span>`;
+    }
+
+    const typeBadge = log.type === "Customer" 
+      ? `<span class="badge" style="background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);">Customer</span>`
+      : `<span class="badge" style="background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid #c084fc;">Admin Alert</span>`;
+
+    const timeStr = new Date(log.sentAt).toLocaleString();
+
+    return `
+      <tr>
+        <td><strong>${escapeHtml(log.to)}</strong></td>
+        <td>${typeBadge}</td>
+        <td>
+          ${escapeHtml(log.subject)}
+          ${log.hasAttachment ? `<span class="text-cyan" title="Has PDF Attachment" style="margin-left: 6px;"><i class="fa-solid fa-paperclip"></i></span>` : ""}
+        </td>
+        <td><span style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted);">${escapeHtml(log.category)}</span></td>
+        <td>${statusBadge}</td>
+        <td><span style="font-size: 0.8rem; color: var(--text-secondary);">${timeStr}</span></td>
+      </tr>
+    `;
+  }).join("");
 }
 
 function renderContactsAndNewsletter() {
@@ -1067,6 +1201,17 @@ function populateSettingsForm() {
     if (rates.NGN) document.getElementById("curr-ngn").value = rates.NGN.rate;
     if (rates.GBP) document.getElementById("curr-gbp").value = rates.GBP.rate;
     if (rates.EUR) document.getElementById("curr-eur").value = rates.EUR.rate;
+  }
+
+  // Populate Email SMTP Configuration
+  const emailCfg = adminState.settings.emailConfig;
+  if (emailCfg) {
+    if (document.getElementById("set-email-user")) document.getElementById("set-email-user").value = emailCfg.user || "";
+    if (document.getElementById("set-email-recipient")) document.getElementById("set-email-recipient").value = emailCfg.recipient || "coratechglobal@gmail.com";
+    if (document.getElementById("set-email-sender-name")) document.getElementById("set-email-sender-name").value = emailCfg.senderName || "Coratech Global";
+    if (emailCfg.pass && document.getElementById("set-email-pass")) {
+      document.getElementById("set-email-pass").placeholder = "•••••••••••••••• (App Password configured)";
+    }
   }
 }
 
@@ -1293,6 +1438,64 @@ function initFormSubmissions() {
         }
       } catch (err) {
         showAdminToast(err.message, "error");
+      }
+    });
+  }
+
+  // Email SMTP Settings Form
+  const emailForm = document.getElementById("form-email-settings");
+  if (emailForm) {
+    emailForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById("btn-save-email-cfg");
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
+      const user = document.getElementById("set-email-user").value.trim();
+      const pass = document.getElementById("set-email-pass").value.trim();
+      const recipient = document.getElementById("set-email-recipient").value.trim();
+      const senderName = document.getElementById("set-email-sender-name").value.trim();
+
+      const payload = { user, recipient, senderName };
+      if (pass) payload.pass = pass;
+
+      try {
+        const res = await apiRequest("/api/settings/email", "PATCH", payload);
+        if (res.success) {
+          showAdminToast("Email SMTP configuration saved successfully!", "success");
+          if (res.data.isPassSet) {
+            document.getElementById("set-email-pass").value = "";
+            document.getElementById("set-email-pass").placeholder = "•••••••••••••••• (App Password configured)";
+          }
+        }
+      } catch (err) {
+        showAdminToast(err.message, "error");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save Email Settings`;
+      }
+    });
+  }
+
+  // Test Email Button
+  const testEmailBtn = document.getElementById("btn-test-email-send");
+  if (testEmailBtn) {
+    testEmailBtn.addEventListener("click", async () => {
+      const recipient = document.getElementById("set-email-recipient").value.trim() || "coratechglobal@gmail.com";
+      testEmailBtn.disabled = true;
+      testEmailBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Dispatching test across network...`;
+
+      try {
+        const res = await apiRequest("/api/email/test", "POST", { to: recipient });
+        if (res.success) {
+          showAdminToast(res.message, "success", 7000);
+          loadAllData();
+        }
+      } catch (err) {
+        showAdminToast("Test Email Failed: " + err.message, "error", 8000);
+      } finally {
+        testEmailBtn.disabled = false;
+        testEmailBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Live Test Email to coratechglobal@gmail.com`;
       }
     });
   }

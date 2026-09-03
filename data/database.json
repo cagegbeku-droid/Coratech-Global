@@ -1,7 +1,7 @@
 {
   "admin": {
     "email": "admin@coratechglobal.com",
-    "password": "$2a$10$WjJvqMisIORwBY2ymtUEAecp6n3q/e4aGUYyjgo7gGdsbyaJOit82",
+    "password": "$2a$10$ftv3l8.uoItwJMabos8CLOE3dOst.0lfHTpc2hHPewdM8pp3KKvWS",
     "name": "Coratech Administrator",
     "role": "Super Admin"
   },

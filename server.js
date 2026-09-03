@@ -1525,6 +1525,31 @@ app.patch("/api/settings/email", authenticateToken, (req, res) => {
 });
 
 // =========================================================================
+// 9. SETTINGS & CURRENCY CONFIGURATION
+// =========================================================================
+
+// Public: Get Settings
+app.get("/api/settings", (req, res) => {
+  const db = readDatabase();
+  if (!db) return res.status(500).json({ success: false, error: "Database error" });
+  res.json({ success: true, data: db.settings || {} });
+});
+
+// Admin: Update Settings
+app.put("/api/settings", authenticateToken, (req, res) => {
+  const db = readDatabase();
+  if (!db) return res.status(500).json({ success: false, error: "Database error" });
+
+  db.settings = {
+    ...db.settings,
+    ...req.body
+  };
+
+  writeDatabase(db);
+  res.json({ success: true, data: db.settings, message: "Settings updated successfully." });
+});
+
+// =========================================================================
 // 10. ADMIN DASHBOARD ROUTE FALLBACK (Configurable & Hidden)
 // =========================================================================
 

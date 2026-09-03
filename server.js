@@ -28,23 +28,35 @@ function getMailConfig() {
     }
   } catch (e) {}
 
-  const user = process.env.EMAIL_USER || process.env.SMTP_USER || dbConfig.user || "";
-  const pass = process.env.EMAIL_PASS || process.env.SMTP_PASS || dbConfig.pass || "";
-  const recipient = dbConfig.recipient || process.env.NOTIFICATION_RECIPIENT || DEFAULT_ADMIN_EMAIL;
-  const senderName = dbConfig.senderName || "Coratech Global";
+  const user = (process.env.EMAIL_USER || process.env.SMTP_USER || dbConfig.user || "").trim();
+  const rawPass = (process.env.EMAIL_PASS || process.env.SMTP_PASS || dbConfig.pass || "").trim();
+  const pass = rawPass.replace(/\s+/g, ""); // Strip whitespace from 16-char app passwords
+  const recipient = (dbConfig.recipient || process.env.NOTIFICATION_RECIPIENT || DEFAULT_ADMIN_EMAIL).trim();
+  const senderName = (dbConfig.senderName || "Coratech Global").trim();
+  const host = (dbConfig.host || process.env.SMTP_HOST || "smtp.gmail.com").trim();
+  const port = parseInt(dbConfig.port || process.env.SMTP_PORT || "465", 10);
+  const secure = dbConfig.secure !== undefined ? Boolean(dbConfig.secure) : (port === 465);
 
-  return { user, pass, recipient, senderName };
+  return { user, pass, recipient, senderName, host, port, secure };
 }
 
 function createMailTransporter() {
   const cfg = getMailConfig();
   if (cfg.user && cfg.pass) {
     return nodemailer.createTransport({
-      service: "gmail",
+      host: cfg.host,
+      port: cfg.port,
+      secure: cfg.secure, // Direct SSL on port 465 works reliably across cloud hosts like Render/AWS
       auth: {
         user: cfg.user,
         pass: cfg.pass
-      }
+      },
+      tls: {
+        rejectUnauthorized: false
+      },
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000
     });
   }
   return null;
@@ -220,6 +232,11 @@ function buildCustomerEmailHtml({ title, greeting, bodyContent, actionLabel, act
 function generateOfficialProposalPDF(data, targetPath) {
   return new Promise((resolve, reject) => {
     try {
+      const targetDir = path.dirname(targetPath);
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
+
       const doc = new PDFDocument({ margin: 40, size: "A4" });
       const stream = fs.createWriteStream(targetPath);
       doc.pipe(stream);
@@ -312,16 +329,19 @@ function generateOfficialProposalPDF(data, targetPath) {
 }
 
 // Ensure required directories exist
+// Ensure required directories exist
 const DATA_DIR = path.join(__dirname, "data");
 const DB_FILE = path.join(DATA_DIR, "database.json");
 const UPLOADS_DIR = path.join(__dirname, "uploads");
+const PROPOSALS_DIR = path.join(UPLOADS_DIR, "proposals");
+const HARDWARE_DIR = path.join(UPLOADS_DIR, "hardware");
+const PORTFOLIO_DIR = path.join(UPLOADS_DIR, "portfolio");
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-}
+[DATA_DIR, UPLOADS_DIR, PROPOSALS_DIR, HARDWARE_DIR, PORTFOLIO_DIR].forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 // Database helper functions
 function readDatabase() {
@@ -1502,13 +1522,16 @@ app.patch("/api/settings/email", authenticateToken, (req, res) => {
   const db = readDatabase();
   if (!db) return res.status(500).json({ success: false, error: "Database error" });
 
-  const { user, pass, recipient, senderName } = req.body;
+  const { user, pass, recipient, senderName, host, port, secure } = req.body;
   db.settings = db.settings || {};
   db.settings.emailConfig = {
     user: user !== undefined ? user.trim() : (db.settings.emailConfig?.user || ""),
-    pass: pass !== undefined ? pass.trim() : (db.settings.emailConfig?.pass || ""),
+    pass: pass !== undefined ? pass.trim().replace(/\s+/g, "") : (db.settings.emailConfig?.pass || ""),
     recipient: recipient !== undefined ? recipient.trim() : (db.settings.emailConfig?.recipient || DEFAULT_ADMIN_EMAIL),
-    senderName: senderName !== undefined ? senderName.trim() : (db.settings.emailConfig?.senderName || "Coratech Global")
+    senderName: senderName !== undefined ? senderName.trim() : (db.settings.emailConfig?.senderName || "Coratech Global"),
+    host: host !== undefined ? host.trim() : (db.settings.emailConfig?.host || "smtp.gmail.com"),
+    port: port !== undefined ? parseInt(port, 10) : (db.settings.emailConfig?.port || 465),
+    secure: secure !== undefined ? Boolean(secure) : (db.settings.emailConfig?.secure !== undefined ? db.settings.emailConfig.secure : true)
   };
 
   writeDatabase(db);
@@ -1518,6 +1541,9 @@ app.patch("/api/settings/email", authenticateToken, (req, res) => {
       user: db.settings.emailConfig.user,
       recipient: db.settings.emailConfig.recipient,
       senderName: db.settings.emailConfig.senderName,
+      host: db.settings.emailConfig.host,
+      port: db.settings.emailConfig.port,
+      secure: db.settings.emailConfig.secure,
       isPassSet: Boolean(db.settings.emailConfig.pass)
     },
     message: "Email SMTP configuration saved successfully."

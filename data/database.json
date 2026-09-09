@@ -181,7 +181,7 @@
       "title": "AfriVisa — Virtual Visa Card & Cross-Border Payment Platform",
       "category": "cloud",
       "categoryLabel": "Fintech & Card Rails",
-      "image": "assets/cloud_infra.jpg",
+      "image": "assets/portfolio/afrivisa.jpg",
       "description": "Production-grade Virtual Visa card issuance platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
       "metric": "Instant MoMo Top-Up & Sub-Second Clearance",
       "techStack": [
@@ -210,7 +210,7 @@
       "title": "SusuRow — Digital Rotational Savings & Credit Platform",
       "category": "web",
       "categoryLabel": "Ghanaian Fintech & ROSCA",
-      "image": "assets/hardware_laptop.jpg",
+      "image": "assets/portfolio/susurow.jpg",
       "description": "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech platform with automated Ghana Mobile Money settlement and transparent rotational payouts.",
       "metric": "Automated Escrow & 0% Default Tracking",
       "techStack": [
@@ -238,7 +238,7 @@
       "title": "SocialFlow — Multi-Channel Social SaaS & Scheduling Engine",
       "category": "web",
       "categoryLabel": "SaaS Workflow Automation",
-      "image": "assets/cloud_infra.jpg",
+      "image": "assets/portfolio/socialflow.jpg",
       "description": "Comprehensive social media management and publishing SaaS platform featuring Google OAuth, PostgreSQL Row-Level Security, multi-account queueing, and drag-and-drop calendar planning.",
       "metric": "10x Faster Content Scheduling",
       "techStack": [
@@ -266,7 +266,7 @@
       "title": "Event Hub — Digital Event Ticketing & Attendee Portal",
       "category": "web",
       "categoryLabel": "Event Tech & Discovery",
-      "image": "assets/hero_portrait.jpg",
+      "image": "assets/portfolio/eventhub.jpg",
       "description": "Modern event discovery and digital ticketing web application with dynamic category filtering, automated QR code attendee verification, and real-time organizer registration telemetry.",
       "metric": "<500ms Ticket Generation & QR Check-in",
       "techStack": [
@@ -294,7 +294,7 @@
       "title": "NIPMA BPMS — Enterprise Business Process Management System",
       "category": "it",
       "categoryLabel": "Enterprise Architecture",
-      "image": "assets/cloud_infra.jpg",
+      "image": "assets/portfolio/nipma_bpms.jpg",
       "description": "Enterprise-grade Business Process Management System (BPMS) designed to automate corporate workflows, hierarchical document approvals, role-based departmental pipelines, and audit trails.",
       "metric": "75% Reduction in Approval Latency",
       "techStack": [
@@ -322,7 +322,7 @@
       "title": "Coratech Global — Full-Stack Enterprise IT & Digital Platform",
       "category": "cloud",
       "categoryLabel": "Full-Stack Enterprise IT",
-      "image": "assets/hardware_laptop.jpg",
+      "image": "assets/portfolio/coratech_global.png",
       "description": "Flagship full-stack technology ecosystem combining an e-commerce hardware store, on-demand PDF proposal compiler, dual IPv4 SMTP notification engine, Paystack MoMo gateway, and Neon PostgreSQL database.",
       "metric": "Sub-Second Global Edge Latency",
       "techStack": [

@@ -227,6 +227,10 @@ async function initPostgresSchema() {
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_channel TEXT;
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS amount_paid_ghs NUMERIC;
+
+      -- Ensure Live URL & Repo Columns Exist on Portfolio Projects Table
+      ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS live_url TEXT;
+      ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS repo_url TEXT;
     `);
 
     console.log("Neon PostgreSQL tables verified & ready.");
@@ -380,7 +384,7 @@ async function getDatabase() {
         }));
 
         // 4. Portfolio
-        const portRes = await client.query("SELECT * FROM portfolio_projects ORDER BY created_at DESC");
+        const portRes = await client.query("SELECT * FROM portfolio_projects ORDER BY id ASC");
         const portfolio = portRes.rows.map(r => ({
           id: r.id,
           title: r.title,
@@ -389,10 +393,17 @@ async function getDatabase() {
           image: r.image,
           description: r.description,
           metric: r.metric,
-          techStack: r.tech_stack,
+          techStack: Array.isArray(r.tech_stack) ? r.tech_stack : (typeof r.tech_stack === "string" ? r.tech_stack.split(",").map(s => s.trim()) : []),
           challenge: r.challenge,
           solution: r.solution,
           outcome: r.outcome,
+          liveUrl: r.live_url || null,
+          repoUrl: r.repo_url || null,
+          caseStudy: {
+            problem: r.challenge || "",
+            solution: r.solution || "",
+            outcome: r.outcome || ""
+          },
           featured: r.featured,
           createdAt: r.created_at
         }));
@@ -613,8 +624,8 @@ async function saveDatabase(data) {
           await client.query("DELETE FROM portfolio_projects");
           for (const p of data.portfolio) {
             await client.query(
-              `INSERT INTO portfolio_projects (id, title, category, category_label, image, description, metric, tech_stack, challenge, solution, outcome, featured, created_at)
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+              `INSERT INTO portfolio_projects (id, title, category, category_label, image, description, metric, tech_stack, challenge, solution, outcome, live_url, repo_url, featured, created_at)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
               [
                 p.id,
                 p.title,
@@ -623,10 +634,12 @@ async function saveDatabase(data) {
                 p.image,
                 p.description,
                 p.metric,
-                p.techStack,
-                p.challenge,
-                p.solution,
-                p.outcome,
+                Array.isArray(p.techStack) ? p.techStack.join(", ") : (p.techStack || ""),
+                (p.caseStudy && p.caseStudy.problem) || p.challenge || "",
+                (p.caseStudy && p.caseStudy.solution) || p.solution || "",
+                (p.caseStudy && p.caseStudy.outcome) || p.outcome || "",
+                p.liveUrl || null,
+                p.repoUrl || null,
                 Boolean(p.featured),
                 p.createdAt || new Date().toISOString()
               ]

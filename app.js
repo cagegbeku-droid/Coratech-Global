@@ -262,62 +262,104 @@ let HARDWARE_CATALOG = [
 let PORTFOLIO_DATA = [
   {
     id: "port-1",
-    title: "ApexFlow - Multi-Currency SaaS Billing Platform",
-    category: "web",
-    categoryLabel: "Web & SaaS Architecture",
+    title: "AfriVisa — Virtual Visa Card & Cross-Border Payment Platform",
+    category: "cloud",
+    categoryLabel: "Fintech & Card Rails",
     image: "assets/cloud_infra.jpg",
-    metric: "+340% Processing Volume Surge",
-    description: "Architected and engineered a resilient cloud-native subscription billing platform with automated recurring invoicing, webhooks, and real-time ledger auditing.",
-    techStack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "Redis", "Docker"],
+    metric: "Instant MoMo Top-Up & Sub-Second Clearance",
+    description: "Production-grade Virtual Visa card issuance platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
+    techStack: ["FastAPI", "Python", "Neon PostgreSQL", "React", "Mobile Money", "Docker"],
+    liveUrl: "https://vcardfrontend-beta.vercel.app",
+    repoUrl: "https://github.com/cagegbeku-droid/virtual-card-system",
     caseStudy: {
-      problem: "The client suffered from frequent checkout drop-offs and unhandled webhook race conditions during high-volume flash sale events.",
-      solution: "Implemented an event-driven microservice architecture with Redis queueing, automated failovers, and a sleek responsive customer portal.",
-      outcome: "Processed $2.8M in annualized transactions with 99.99% uptime and zero dropped webhook notifications."
+      problem: "African developers and businesses frequently face declined card transactions and strict foreign exchange limits when subscribing to global cloud tools (AWS, OpenAI, GitHub, Vercel).",
+      solution: "Engineered a high-concurrency fintech backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
+      outcome: "Enabled frictionless cross-border subscriptions with sub-second card generation, automated transaction webhooks, and 99.9% top-up reliability."
     }
   },
   {
     id: "port-2",
-    title: "Vanguard Corporate 4-Floor Network & Active Directory",
-    category: "it",
-    categoryLabel: "Enterprise IT Deployment",
+    title: "SusuRow — Digital Rotational Savings & Credit Platform",
+    category: "web",
+    categoryLabel: "Ghanaian Fintech & ROSCA",
     image: "assets/hardware_laptop.jpg",
-    metric: "0 Min Downtime Deployment",
-    description: "Complete structured cabling, multi-VLAN segmentation, managed Ubiquiti UniFi Wi-Fi 6 mesh, and centralized Windows Active Directory implementation for 180 workstations.",
-    techStack: ["Ubiquiti UniFi", "Windows Server 2022", "Active Directory", "VLANs", "Cat6A Cabling"],
+    metric: "Automated Escrow & 0% Default Tracking",
+    description: "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech platform with automated Ghana Mobile Money settlement and transparent rotational payouts.",
+    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Paystack MoMo", "TailwindCSS"],
+    liveUrl: "https://frontend-fawn-phi-76.vercel.app",
+    repoUrl: "https://github.com/cagegbeku-droid/SusuRow",
     caseStudy: {
-      problem: "Frequent Wi-Fi dead zones, unmanaged workstation security, and poor network throughput crippling day-to-day corporate operations.",
-      solution: "Designed high-density Wi-Fi 6 access points, isolated guest and employee VLANs, and deployed automated Group Policies for instantaneous workstation credential onboarding.",
-      outcome: "Network bandwidth efficiency improved by 400%, and IT onboarding time for new hires dropped from 4 hours to 8 minutes."
+      problem: "Informal peer-to-peer savings circles in Ghana suffer from manual cash handling risks, member default ambiguity, and zero audit trails.",
+      solution: "Built an escrow-backed automated rotating savings vault with automated MoMo debits on cycle dates, transparent member trust scoring, and instant payout disbursements.",
+      outcome: "Transformed traditional communal banking into an auditable digital ecosystem with zero lost records and automated payout scheduling."
     }
   },
   {
     id: "port-3",
-    title: "MedTrack Cloud Infrastructure & Disaster Recovery",
-    category: "cloud",
-    categoryLabel: "Cloud & DevOps",
+    title: "SocialFlow — Multi-Channel Social SaaS & Scheduling Engine",
+    category: "web",
+    categoryLabel: "SaaS Workflow Automation",
     image: "assets/cloud_infra.jpg",
-    metric: "99.995% SLA & HIPAA Compliance",
-    description: "Engineered automated multi-region Kubernetes cloud infrastructure with end-to-end encryption, automated database replication, and sub-second failover routing.",
-    techStack: ["AWS EKS", "Terraform", "Cloudflare WAF", "PostgreSQL Aurora", "Prometheus"],
+    metric: "10x Faster Content Scheduling",
+    description: "Comprehensive social media management and publishing SaaS platform featuring Google OAuth, PostgreSQL Row-Level Security, multi-account queueing, and drag-and-drop calendar planning.",
+    techStack: ["React", "Supabase", "PostgreSQL RLS", "OAuth 2.0", "Netlify"],
+    liveUrl: "https://socialflow-beta-six.vercel.app",
+    repoUrl: "https://github.com/cagegbeku-droid/socialflow",
     caseStudy: {
-      problem: "Healthcare records system required continuous zero-loss compliance, automatic disaster recovery, and protection against DDOS traffic spikes.",
-      solution: "Implemented Infrastructure-as-Code (Terraform) provisioning with automated multi-AZ database read replicas and Cloudflare Enterprise edge caching.",
-      outcome: "Passed external compliance audits with zero findings and reduced server latency by 68% nationwide."
+      problem: "Managing campaigns across disparate social platforms is fragmented, prone to authentication drops, and lacks centralized queue scheduling.",
+      solution: "Created a single-pane-of-glass dashboard with visual drag-and-drop calendar scheduling, background post workers, and strict multi-tenant data isolation via Supabase RLS.",
+      outcome: "Reduced agency publishing overhead by over 70% with synchronized cross-platform queueing and real-time state telemetry."
     }
   },
   {
     id: "port-4",
-    title: "LogiQuick Logistics & Courier Mobile App",
-    category: "mobile",
-    categoryLabel: "Mobile Application",
+    title: "Event Hub — Digital Event Ticketing & Attendee Portal",
+    category: "web",
+    categoryLabel: "Event Tech & Discovery",
     image: "assets/hero_portrait.jpg",
-    metric: "45,000+ Active Monthly Deliveries",
-    description: "Cross-platform mobile application for real-time dispatch, turn-by-turn route optimization, electronic proof of delivery (e-signature), and WhatsApp customer alerts.",
-    techStack: ["Flutter", "Firebase", "Google Maps API", "Node.js", "WebSocket"],
+    metric: "<500ms Ticket Generation & QR Check-in",
+    description: "Modern event discovery and digital ticketing web application with dynamic category filtering, automated QR code attendee verification, and real-time organizer registration telemetry.",
+    techStack: ["TypeScript", "Next.js", "Node.js", "Express", "Vercel"],
+    liveUrl: "https://event-hub-eight-nu.vercel.app",
+    repoUrl: "https://github.com/cagegbeku-droid/Event_hub",
     caseStudy: {
-      problem: "Manual dispatch calls caused delivery delays, lost packages, and high operational overhead.",
-      solution: "Developed an intuitive mobile application for drivers and customers with live GPS tracking, automated push notifications, and instant digital proof-of-delivery.",
-      outcome: "Driver daily delivery capacity increased by 35% with a 94% positive customer satisfaction rating."
+      problem: "Event organizers face ticket counterfeiting, slow manual gate check-in lines, and high service fees from legacy ticketing vendors.",
+      solution: "Developed a fast full-stack discovery engine with instant digital ticket passes, encrypted QR codes, and streamlined attendee self-registration.",
+      outcome: "Delivered sub-second ticket rendering, streamlined gate check-in throughput, and simplified event discovery."
+    }
+  },
+  {
+    id: "port-5",
+    title: "NIPMA BPMS — Enterprise Business Process Management System",
+    category: "it",
+    categoryLabel: "Enterprise Architecture",
+    image: "assets/cloud_infra.jpg",
+    metric: "75% Reduction in Approval Latency",
+    description: "Enterprise-grade Business Process Management System (BPMS) designed to automate corporate workflows, hierarchical document approvals, role-based departmental pipelines, and audit trails.",
+    techStack: ["JavaScript", "React", "Node.js", "REST APIs", "RBAC Security"],
+    liveUrl: "https://nipma-bpms.vercel.app",
+    repoUrl: "https://github.com/cagegbeku-droid/nipma-bpms",
+    caseStudy: {
+      problem: "Institutional approval bottlenecks and paper-based routing causing weeks of delay in critical operational approvals.",
+      solution: "Constructed a multi-role digital pipeline with automated sign-off stages, encrypted document attachments, and full compliance activity logs.",
+      outcome: "Eliminated physical paperwork bottlenecks and provided real-time tracking of institutional decisions across all management levels."
+    }
+  },
+  {
+    id: "port-6",
+    title: "Coratech Global — Full-Stack Enterprise IT & Digital Platform",
+    category: "cloud",
+    categoryLabel: "Full-Stack Enterprise IT",
+    image: "assets/hardware_laptop.jpg",
+    metric: "Sub-Second Global Edge Latency",
+    description: "Flagship full-stack technology ecosystem combining an e-commerce hardware store, on-demand PDF proposal compiler, dual IPv4 SMTP notification engine, Paystack MoMo gateway, and Neon PostgreSQL database.",
+    techStack: ["Node.js", "Express", "Neon PostgreSQL", "Paystack Gateway", "PDFKit", "Render"],
+    liveUrl: "https://www.coratechglobal.com",
+    repoUrl: "https://github.com/cagegbeku-droid/Coratech-Global",
+    caseStudy: {
+      problem: "Modern IT service firms struggle with disconnected platforms for client quotes, hardware inventory, and manual payment confirmations.",
+      solution: "Engineered a unified platform with automated MoMo payment verification, custom domain SSL, secret admin CMS (`/manage-coratech`), and resilient serverless PostgreSQL pooling.",
+      outcome: "Delivered 100% automated client lifecycle management with instant payments, automated PDF quotes, and cloud-scale reliability."
     }
   }
 ];
@@ -1388,13 +1430,24 @@ function renderPortfolio() {
           </div>
         </div>
 
-        <div class="project-card-footer">
+        <div class="project-card-footer" style="flex-wrap: wrap; gap: 8px;">
+          ${proj.liveUrl ? `
+          <a href="${proj.liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Demo
+          </a>
+          ` : ''}
           <button class="btn btn-outline-cyan btn-sm btn-open-case-study" data-id="${proj.id}">
-            <i class="fa-solid fa-folder-open"></i> View Case Study
+            <i class="fa-solid fa-folder-open"></i> Case Study
           </button>
+          ${proj.repoUrl ? `
+          <a href="${proj.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="View Source on GitHub" style="display: inline-flex; align-items: center; gap: 5px;">
+            <i class="fa-brands fa-github"></i> GitHub
+          </a>
+          ` : `
           <a href="#calculator" class="btn btn-secondary btn-sm" onclick="prefillCalculatorService('${proj.category}')">
             <i class="fa-solid fa-arrow-right"></i> Build Similar
           </a>
+          `}
         </div>
       </div>
     </div>
@@ -1436,6 +1489,13 @@ function openCaseStudyModal(projId) {
         <i class="fa-solid fa-trophy"></i> Key Outcome: <strong>${proj.metric}</strong>
       </div>
     </div>
+
+    ${proj.liveUrl || proj.repoUrl ? `
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+      ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-cyan btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; flex: 1; min-width: 150px; justify-content: center;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Production App</a>` : ''}
+      ${proj.repoUrl ? `<a href="${proj.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; flex: 1; min-width: 150px; justify-content: center;"><i class="fa-brands fa-github"></i> View GitHub Repository</a>` : ''}
+    </div>
+    ` : ''}
 
     <div style="margin-bottom: 18px;">
       <h4 style="font-size: 1.05rem; color: var(--accent-rose); margin-bottom: 6px;">

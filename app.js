@@ -1895,9 +1895,19 @@ function initNavigation() {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "A" || e.key === "a")) {
       e.preventDefault();
       showToast("Accessing Admin CRM Portal...", "info", 1500);
-      setTimeout(() => {
-        window.location.href = "/admin";
-      }, 350);
+      fetch("/api/admin-route")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          const target = data && data.route ? data.route : "/manage-coratech";
+          setTimeout(() => {
+            window.location.href = target;
+          }, 300);
+        })
+        .catch(() => {
+          setTimeout(() => {
+            window.location.href = "/manage-coratech";
+          }, 300);
+        });
     }
   });
 }

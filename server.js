@@ -1598,6 +1598,14 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Expose dynamic configured Admin CRM route for hotkey navigation
+app.get("/api/admin-route", (req, res) => {
+  res.json({
+    success: true,
+    route: ADMIN_ROUTE
+  });
+});
+
 // Database Health / Status Endpoint
 app.get("/api/db/status", (req, res) => {
   res.json({

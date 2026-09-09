@@ -49,11 +49,15 @@ git push -u origin main
    - **Build Command**: `npm install`
    - **Start Command**: `npm start`
    - **Instance Type**: Free or Starter
-5. Under **Advanced / Environment Variables**, add:
+5. Under **Environment Variables**, add the following keys:
+   - `DATABASE_URL`: `postgresql://neondb_owner:npg_bX6RcsBUWGv9@ep-nameless-moon-b2wowej5-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require`
+   - `EMAIL_USER`: `cagegbeku@gmail.com`
+   - `EMAIL_PASS`: `mkbvlbmraswpuqtx`
+   - `NOTIFICATION_RECIPIENT`: `coratechglobal@gmail.com`
    - `JWT_SECRET`: `coratech_production_secure_key_2026_x89`
    - `NODE_ENV`: `production`
    - `PORT`: `10000`
-6. Click **Create Web Service**. Render will install dependencies and start your live server in ~1 minute!
+6. Click **Create Web Service**. Render will install dependencies and start your live server in ~1 minute! All data will be durably stored in your Neon PostgreSQL cloud database.
 
 ---
 

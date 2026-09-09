@@ -344,28 +344,15 @@ const PORTFOLIO_DIR = path.join(UPLOADS_DIR, "portfolio");
   }
 });
 
+const dbEngine = require("./db");
+
 // Database helper functions
 function readDatabase() {
-  try {
-    if (!fs.existsSync(DB_FILE)) {
-      return null;
-    }
-    const data = fs.readFileSync(DB_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (err) {
-    console.error("Error reading database:", err);
-    return null;
-  }
+  return dbEngine.readDatabase();
 }
 
 function writeDatabase(data) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
-    return true;
-  } catch (err) {
-    console.error("Error writing database:", err);
-    return false;
-  }
+  return dbEngine.writeDatabase(data);
 }
 
 // Initialize and ensure Admin Password Hash & Environment Overrides
@@ -1611,12 +1598,34 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Database Health / Status Endpoint
+app.get("/api/db/status", (req, res) => {
+  res.json({
+    success: true,
+    engine: dbEngine.isPostgresConnected() ? "Neon PostgreSQL" : "Local JSON (Offline Mode)",
+    connected: dbEngine.isPostgresConnected(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Server Initialization
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`====================================================`);
   console.log(` CORATECH GLOBAL FULL-STACK PLATFORM RUNNING`);
   console.log(` Web Portal:  http://localhost:${PORT}`);
   console.log(` Admin Panel: http://localhost:${PORT}${ADMIN_ROUTE}`);
   console.log(` REST API:    http://localhost:${PORT}/api/hardware`);
   console.log(`====================================================`);
+
+  // Initialize Neon PostgreSQL Database & Table Migrations if configured
+  try {
+    await dbEngine.initPostgresSchema();
+    if (dbEngine.isPostgresConnected()) {
+      console.log(`✓ Neon PostgreSQL Cloud Database is ACTIVE and SYNCHRONIZED.`);
+    } else {
+      console.log(`ℹ Local JSON Database active. Set DATABASE_URL to connect Neon PostgreSQL.`);
+    }
+  } catch (e) {
+    console.error(`Postgres init warning: ${e.message}`);
+  }
 });

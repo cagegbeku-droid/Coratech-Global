@@ -18,7 +18,12 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 // Connection string detection (Neon standard is DATABASE_URL or NEON_DATABASE_URL)
-const connectionString = (process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || "").trim();
+let rawConnectionString = (process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || "").trim();
+let connectionString = rawConnectionString;
+if (connectionString && connectionString.includes("sslmode=")) {
+  // Normalize sslmode to verify-full to eliminate the pg driver v9 libpq warning
+  connectionString = connectionString.replace(/sslmode=[^&]+/, "sslmode=verify-full");
+}
 
 let pool = null;
 let isPostgresConnected = false;

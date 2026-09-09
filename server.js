@@ -80,11 +80,27 @@ function dispatchSystemEmail({ to, subject, text, html, attachments = [], catego
     let deliveryStatus = "Logged";
     let failureReason = null;
 
+    // Departmental Routing for Work Emails
+    let senderTitle = cfg.senderName || "Coratech Global";
+    let replyToAddress = "info@coratechglobal.com";
+
+    if (category === "order" || category === "proposal") {
+      senderTitle = "Coratech Global Sales";
+      replyToAddress = "sales@coratechglobal.com";
+    } else if (category === "ticket" || category === "appointment") {
+      senderTitle = "Coratech Technical Support";
+      replyToAddress = "support@coratechglobal.com";
+    } else if (category === "contact") {
+      senderTitle = "Coratech Client Relations";
+      replyToAddress = "contact@coratechglobal.com";
+    }
+
     const transporter = createMailTransporter();
     if (transporter) {
       try {
         await transporter.sendMail({
-          from: `"${cfg.senderName}" <${cfg.user || "info@coratechglobal.com"}>`,
+          from: `"${senderTitle}" <${cfg.user || "info@coratechglobal.com"}>`,
+          replyTo: replyToAddress,
           to: targetEmail,
           subject: subject,
           text: text,

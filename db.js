@@ -220,6 +220,13 @@ async function initPostgresSchema() {
         message TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
+
+      -- Ensure Payment Columns Exist on Orders Table
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status TEXT DEFAULT 'Pending';
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_ref TEXT;
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_channel TEXT;
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS amount_paid_ghs NUMERIC;
     `);
 
     console.log("Neon PostgreSQL tables verified & ready.");
@@ -442,6 +449,11 @@ async function getDatabase() {
           location: r.location,
           notes: r.notes,
           status: r.status,
+          paymentStatus: r.payment_status || "Pending",
+          paymentRef: r.payment_ref || null,
+          paymentChannel: r.payment_channel || null,
+          paidAt: r.paid_at || null,
+          amountPaidGhs: r.amount_paid_ghs ? Number(r.amount_paid_ghs) : null,
           createdAt: r.created_at
         }));
 
@@ -670,9 +682,25 @@ async function saveDatabase(data) {
           await client.query("DELETE FROM orders");
           for (const o of data.orders) {
             await client.query(
-              `INSERT INTO orders (id, name, phone, email, model, price_usd, location, notes, status, created_at)
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-              [o.id, o.name, o.phone, o.email, o.model, o.priceUsd || 0, o.location, o.notes, o.status, o.createdAt || new Date().toISOString()]
+              `INSERT INTO orders (id, name, phone, email, model, price_usd, location, notes, status, payment_status, payment_ref, payment_channel, paid_at, amount_paid_ghs, created_at)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+              [
+                o.id,
+                o.name,
+                o.phone,
+                o.email,
+                o.model,
+                o.priceUsd || 0,
+                o.location,
+                o.notes,
+                o.status,
+                o.paymentStatus || "Pending",
+                o.paymentRef || null,
+                o.paymentChannel || null,
+                o.paidAt || null,
+                o.amountPaidGhs || null,
+                o.createdAt || new Date().toISOString()
+              ]
             );
           }
         }

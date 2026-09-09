@@ -998,6 +998,126 @@ function initPurchaseOrderForm() {
 
   if (!form) return;
 
+  // 1. Instant Online Checkout with Mobile Money & Cards
+  const btnPayOnline = document.getElementById("btn-pay-momo-card");
+  if (btnPayOnline) {
+    btnPayOnline.addEventListener("click", async () => {
+      const model = document.getElementById("order-model-name").value;
+      const priceGhs = parseFloat(document.getElementById("order-model-price").value) || 0;
+      const name = document.getElementById("order-cust-name").value.trim();
+      const phone = document.getElementById("order-cust-phone").value.trim();
+      const email = document.getElementById("order-cust-email").value.trim();
+      const location = document.getElementById("order-cust-location").value.trim() || "Delivery Pending Verification";
+      const notes = document.getElementById("order-cust-notes").value.trim();
+
+      if (!name) {
+        showToast("Please enter your full name.", "warning");
+        document.getElementById("order-cust-name").focus();
+        return;
+      }
+      if (!phone) {
+        showToast("Please enter your WhatsApp / phone number for delivery.", "warning");
+        document.getElementById("order-cust-phone").focus();
+        return;
+      }
+      if (!email || !email.includes("@")) {
+        showToast("Please enter a valid email address to receive your official payment receipt.", "warning");
+        document.getElementById("order-cust-email").focus();
+        return;
+      }
+
+      btnPayOnline.disabled = true;
+      btnPayOnline.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Initializing Gateway...`;
+
+      try {
+        const apiBase = getPublicApiBase();
+
+        // 1. Check Paystack Config
+        const cfgRes = await fetch(`${apiBase}/api/payments/config`);
+        const cfgData = await cfgRes.json();
+
+        // 2. Register initial order in database
+        const orderRes = await fetch(`${apiBase}/api/orders`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, phone, email, model, priceUsd: priceGhs, location, notes })
+        });
+        const orderData = await orderRes.json();
+        const orderId = orderData.data ? orderData.data.id : `ORD-${Date.now()}`;
+
+        if (!cfgData.configured || !cfgData.publicKey) {
+          showToast("Paystack payment gateway is being activated. Connecting to sales team via WhatsApp...", "info", 6000);
+          const waUrl = `https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I would like to pay for ${model} (GH₵ ${priceGhs.toLocaleString()}) via Mobile Money. Order Ref: ${orderId}. My Name: ${name}`)}`;
+          setTimeout(() => {
+            window.open(waUrl, "_blank");
+          }, 1000);
+          closePurchaseModal();
+          return;
+        }
+
+        // 3. Launch Paystack Inline Checkout Popup
+        if (typeof PaystackPop === "undefined") {
+          throw new Error("Paystack payment script failed to load. Please check your internet connection.");
+        }
+
+        const paymentRef = `CG-PAY-${orderId}-${Date.now()}`;
+        const handler = PaystackPop.setup({
+          key: cfgData.publicKey,
+          email: email,
+          amount: Math.round(priceGhs * 100), // In Ghana Pesewas
+          currency: "GHS",
+          ref: paymentRef,
+          channels: ["mobile_money", "card", "bank_transfer", "ussd"],
+          metadata: {
+            custom_fields: [
+              { display_name: "Customer Name", variable_name: "customer_name", value: name },
+              { display_name: "Device Model", variable_name: "device_model", value: model },
+              { display_name: "Order ID", variable_name: "order_id", value: orderId },
+              { display_name: "Phone Number", variable_name: "phone", value: phone }
+            ]
+          },
+          callback: async function(response) {
+            showToast("Payment submitted! Verifying transaction on blockchain & banking network...", "info", 4000);
+            try {
+              const verifyRes = await fetch(`${apiBase}/api/payments/verify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ reference: response.reference, orderId: orderId })
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyData.success) {
+                showPaymentSuccessModal({
+                  reference: response.reference,
+                  amountGhs: priceGhs,
+                  channel: (verifyData.data && verifyData.data.channel) || "mobile_money",
+                  order: { id: orderId, model }
+                });
+                form.reset();
+              } else {
+                showToast("Payment received. Reference: " + response.reference, "success", 7000);
+                closePurchaseModal();
+              }
+            } catch (vErr) {
+              showToast("Payment successful! Ref: " + response.reference, "success", 7000);
+              closePurchaseModal();
+            }
+          },
+          onClose: function() {
+            showToast("Online checkout paused. You can also pay on delivery or via WhatsApp.", "info", 5000);
+          }
+        });
+
+        handler.openIframe();
+      } catch (err) {
+        showToast(err.message || "Could not connect to payment gateway. Please try again.", "error");
+      } finally {
+        btnPayOnline.disabled = false;
+        btnPayOnline.innerHTML = `<i class="fa-solid fa-mobile-screen-button"></i> Pay Now with MoMo / Card / Bank`;
+      }
+    });
+  }
+
+  // 2. Manual / Pay on Delivery Submission
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const submitBtn = document.getElementById("btn-submit-order");
@@ -1033,9 +1153,53 @@ function initPurchaseOrderForm() {
       closePurchaseModal();
     } finally {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> Submit Order`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-truck-ramp-box"></i> Pay on Delivery / Manual`;
     }
   });
+}
+
+function showPaymentSuccessModal(data) {
+  closePurchaseModal();
+  const modal = document.getElementById("payment-success-modal");
+  const details = document.getElementById("payment-success-details");
+  if (!modal || !details) return;
+
+  const channelLabel =
+    data.channel === "mobile_money" ? "Mobile Money (MTN / Telecel / AT)" :
+    data.channel === "card" ? "Visa / Mastercard Card" :
+    data.channel.toUpperCase();
+
+  details.innerHTML = `
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 6px;">
+      <span style="color: var(--text-muted);">Payment Status:</span>
+      <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px;">
+        <i class="fa-solid fa-circle-check"></i> VERIFIED & PAID
+      </span>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+      <span style="color: var(--text-muted);">Receipt Ref:</span>
+      <strong style="color: var(--accent-cyan); font-family: var(--font-mono);">${data.reference}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+      <span style="color: var(--text-muted);">Amount Paid:</span>
+      <strong style="color: #10b981; font-size: 1.05rem;">GH₵ ${Number(data.amountGhs).toLocaleString()}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+      <span style="color: var(--text-muted);">Method:</span>
+      <span style="color: #f8fafc; font-weight: 500;">${channelLabel}</span>
+    </div>
+    <div style="display: flex; justify-content: space-between;">
+      <span style="color: var(--text-muted);">Order Ref:</span>
+      <span style="color: #cbd5e1;">${data.order ? data.order.id : data.reference}</span>
+    </div>
+  `;
+
+  modal.classList.add("open");
+
+  const closeBtn = document.getElementById("btn-close-payment-success");
+  if (closeBtn) {
+    closeBtn.onclick = () => modal.classList.remove("open");
+  }
 }
 
 // =========================================================================

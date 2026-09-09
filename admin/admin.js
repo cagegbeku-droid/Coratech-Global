@@ -954,9 +954,17 @@ function renderOrdersTable() {
 
   tbody.innerHTML = adminState.orders.map((order) => {
     const isCompleted = order.status === "Completed";
+    const isPaid = order.paymentStatus === "Paid" || order.status === "Paid";
+    const paymentBadge = isPaid
+      ? `<span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px;" title="Ref: ${order.paymentRef || 'Verified'}"><i class="fa-solid fa-circle-check"></i> PAID (${(order.paymentChannel || 'MOMO').toUpperCase()})</span>`
+      : `<span class="badge badge-amber"><i class="fa-solid fa-clock"></i> Unpaid / Pay on Delivery</span>`;
+
     return `
       <tr>
-        <td><strong class="text-cyan font-mono">${order.id}</strong></td>
+        <td>
+          <strong class="text-cyan font-mono">${order.id}</strong>
+          ${order.paymentRef ? `<div style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-muted);">${order.paymentRef}</div>` : ""}
+        </td>
         <td><strong>${escapeHtml(order.name)}</strong></td>
         <td>
           <div style="font-size: 0.85rem;"><a href="https://wa.me/${(order.phone || '').replace(/[^0-9]/g, '')}" target="_blank" class="text-cyan" style="text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> ${order.phone}</a></div>
@@ -966,7 +974,10 @@ function renderOrdersTable() {
         <td><span style="color: var(--accent-cyan); font-weight: 700;">GH₵ ${Number(order.priceUsd || 0).toLocaleString()}</span></td>
         <td style="font-size: 0.82rem; max-width: 180px; color: var(--text-secondary);">${escapeHtml(order.location || "Not specified")}</td>
         <td>
-          <span class="badge ${isCompleted ? "badge-success" : "badge-amber"}">${order.status || "Processing"}</span>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            ${paymentBadge}
+            <span class="badge ${isCompleted ? "badge-success" : "badge-secondary"}" style="font-size: 0.72rem;">${order.status || "Processing"}</span>
+          </div>
         </td>
         <td style="text-align: right;">
           <button class="btn-table-action" onclick="toggleOrderStatus('${order.id}', '${order.status}')" title="${isCompleted ? 'Mark as Processing' : 'Mark as Completed'}">

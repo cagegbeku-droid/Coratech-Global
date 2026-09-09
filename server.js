@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -1288,6 +1289,286 @@ app.delete("/api/orders/:id", authenticateToken, (req, res) => {
 
   writeDatabase(db);
   res.json({ success: true, message: "Order deleted successfully." });
+});
+
+// =========================================================================
+// 8C. PAYSTACK PAYMENT GATEWAY (MOBILE MONEY, BANK & CARDS)
+// Supports: MTN MoMo, Telecel Cash, AT Money, Visa, Mastercard, USSD
+// =========================================================================
+
+function getPaystackConfig() {
+  const secretKey = (process.env.PAYSTACK_SECRET_KEY || "").trim();
+  const publicKey = (process.env.PAYSTACK_PUBLIC_KEY || "").trim();
+  const isLive = secretKey.startsWith("sk_live_");
+  const isConfigured = Boolean(secretKey && publicKey);
+  return { secretKey, publicKey, isLive, isConfigured };
+}
+
+// Get Public Payment Gateway Configuration for Checkout Popup
+app.get("/api/payments/config", (req, res) => {
+  const cfg = getPaystackConfig();
+  res.json({
+    success: true,
+    configured: cfg.isConfigured,
+    publicKey: cfg.publicKey,
+    isLive: cfg.isLive,
+    supportedChannels: ["mobile_money", "card", "bank_transfer", "ussd"],
+    currency: "GHS"
+  });
+});
+
+// Initialize Online Payment Transaction
+app.post("/api/payments/initialize", async (req, res) => {
+  const cfg = getPaystackConfig();
+  const { orderId, amountGhs, email, name, phone, itemType, itemTitle } = req.body;
+
+  if (!email || !amountGhs || parseFloat(amountGhs) <= 0) {
+    return res.status(400).json({ success: false, error: "Valid customer email and payment amount (GHS) are required." });
+  }
+
+  const amountPesewas = Math.round(parseFloat(amountGhs) * 100);
+  const reference = `CG-PAY-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
+
+  if (!cfg.secretKey) {
+    return res.status(503).json({
+      success: false,
+      error: "Paystack API keys not yet configured. Please set PAYSTACK_SECRET_KEY and PAYSTACK_PUBLIC_KEY in your environment variables.",
+      fallback: "whatsapp"
+    });
+  }
+
+  try {
+    const paystackRes = await fetch("https://api.paystack.co/transaction/initialize", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${cfg.secretKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email.trim(),
+        amount: amountPesewas,
+        currency: "GHS",
+        reference: reference,
+        channels: ["mobile_money", "card", "bank_transfer", "ussd"],
+        metadata: {
+          orderId: orderId || reference,
+          customerName: name || "",
+          customerPhone: phone || "",
+          itemType: itemType || "Hardware",
+          itemTitle: itemTitle || "Certified Laptop / Enterprise Service"
+        },
+        callback_url: `https://www.coratechglobal.com/?payment_ref=${reference}`
+      })
+    });
+
+    const data = await paystackRes.json();
+    if (!data.status) {
+      throw new Error(data.message || "Paystack transaction initialization failed.");
+    }
+
+    res.json({
+      success: true,
+      reference: reference,
+      accessCode: data.data.access_code,
+      authorizationUrl: data.data.authorization_url
+    });
+  } catch (err) {
+    console.error("Paystack Initialize Error:", err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Verify Payment Transaction & Update Database
+app.post("/api/payments/verify", async (req, res) => {
+  const cfg = getPaystackConfig();
+  const { reference, orderId } = req.body;
+
+  if (!reference) {
+    return res.status(400).json({ success: false, error: "Payment reference is required." });
+  }
+
+  if (!cfg.secretKey) {
+    return res.status(503).json({ success: false, error: "Paystack Secret Key is not configured." });
+  }
+
+  try {
+    const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference.trim())}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${cfg.secretKey}`
+      }
+    });
+
+    const result = await verifyRes.json();
+    if (!result.status || result.data.status !== "success") {
+      return res.status(400).json({
+        success: false,
+        error: result.data ? result.data.gateway_response : "Payment verification failed."
+      });
+    }
+
+    const txData = result.data;
+    const amountGhs = txData.amount / 100;
+    const channel = txData.channel || "momo";
+    const paidAt = txData.paid_at || new Date().toISOString();
+
+    // Update Order in Database
+    const db = readDatabase();
+    let updatedOrder = null;
+
+    if (db && Array.isArray(db.orders)) {
+      const matchIdx = db.orders.findIndex(
+        (o) => o.id === orderId || (o.paymentRef && o.paymentRef === reference)
+      );
+
+      if (matchIdx !== -1) {
+        db.orders[matchIdx].status = "Paid";
+        db.orders[matchIdx].paymentStatus = "Paid";
+        db.orders[matchIdx].paymentRef = reference;
+        db.orders[matchIdx].paymentChannel = channel;
+        db.orders[matchIdx].paidAt = paidAt;
+        db.orders[matchIdx].amountPaidGhs = amountGhs;
+        updatedOrder = db.orders[matchIdx];
+      } else {
+        const autoOrder = {
+          id: orderId || `ORD-${reference.slice(-6)}`,
+          name: (txData.metadata && txData.metadata.customerName) || txData.customer.first_name || "Client",
+          phone: (txData.metadata && txData.metadata.customerPhone) || txData.customer.phone || "",
+          email: txData.customer.email,
+          model: (txData.metadata && txData.metadata.itemTitle) || "Certified Hardware / Service",
+          priceUsd: amountGhs,
+          location: "Verified Online Payment",
+          notes: `Paid via Paystack (${channel.toUpperCase()}) - Ref: ${reference}`,
+          status: "Paid",
+          paymentStatus: "Paid",
+          paymentRef: reference,
+          paymentChannel: channel,
+          paidAt: paidAt,
+          amountPaidGhs: amountGhs,
+          createdAt: new Date().toISOString()
+        };
+        db.orders.unshift(autoOrder);
+        updatedOrder = autoOrder;
+      }
+      writeDatabase(db);
+    }
+
+    // 1. Dispatch Payment Receipt to Customer
+    const customerEmail = txData.customer.email;
+    if (customerEmail) {
+      dispatchSystemEmail({
+        to: customerEmail,
+        subject: `🧾 Official Payment Receipt (GH₵ ${amountGhs.toLocaleString()}) - Coratech Global`,
+        text: `Hello ${updatedOrder ? updatedOrder.name : "Valued Customer"},
+
+Your payment of GH₵ ${amountGhs.toLocaleString()} has been received and confirmed.
+Transaction Reference: ${reference}
+Payment Channel: ${channel.toUpperCase()} (Mobile Money / Card)
+Date: ${new Date(paidAt).toLocaleString()}
+
+Order ID: ${updatedOrder ? updatedOrder.id : reference}
+Item: ${updatedOrder ? updatedOrder.model : "Certified Hardware / Service"}
+
+Our fulfillment and dispatch team is finalizing your order.
+WhatsApp Hotline: +233 59 936 0626`,
+        html: buildCustomerEmailHtml({
+          title: "Payment Received & Confirmed",
+          greeting: updatedOrder ? updatedOrder.name : "Valued Customer",
+          bodyContent: `
+            <p>We have successfully received your payment via <strong>${channel === "mobile_money" ? "Mobile Money (MTN / Telecel / AT)" : "Debit / Credit Card"}</strong>.</p>
+            <div style="background:#0f172a; border:1px solid #10b981; border-radius:8px; padding:16px; margin:16px 0;">
+              <table width="100%" style="font-size:13px; color:#cbd5e1;">
+                <tr><td style="color:#94a3b8; padding:4px 0;">Receipt Ref:</td><td style="color:#00f2fe; font-weight:700;">${reference}</td></tr>
+                <tr><td style="color:#94a3b8; padding:4px 0;">Amount Paid:</td><td style="color:#10b981; font-weight:700; font-size:16px;">GH₵ ${amountGhs.toLocaleString()}</td></tr>
+                <tr><td style="color:#94a3b8; padding:4px 0;">Payment Method:</td><td style="color:#ffffff; font-weight:600; text-transform:uppercase;">${channel}</td></tr>
+                <tr><td style="color:#94a3b8; padding:4px 0;">Item / Service:</td><td style="color:#f8fafc;">${updatedOrder ? updatedOrder.model : "Device / Service"}</td></tr>
+                <tr><td style="color:#94a3b8; padding:4px 0;">Verification:</td><td style="color:#10b981; font-weight:700;">VERIFIED & PAID</td></tr>
+              </table>
+            </div>
+            <p>Your order is cleared for immediate dispatch. Thank you for partnering with Coratech Global.</p>
+          `,
+          actionLabel: "Track Order on WhatsApp",
+          actionUrl: `https://wa.me/233599360626?text=${encodeURIComponent(`Hello Coratech Global, I completed payment of GH₵ ${amountGhs} for order ${updatedOrder ? updatedOrder.id : reference}. Ref: ${reference}`)}`,
+          notes: "Our logistics team will contact you before physical delivery."
+        }),
+        category: "order"
+      });
+    }
+
+    // 2. Alert Admin (coratechglobal@gmail.com)
+    sendSilentNotification({
+      subject: `💰 PAYMENT RECEIVED: GH₵ ${amountGhs.toLocaleString()} via ${channel.toUpperCase()} (${reference})`,
+      text: `Payment Confirmed!
+Amount: GH₵ ${amountGhs.toLocaleString()}
+Method: ${channel.toUpperCase()} (MoMo / Card)
+Customer: ${updatedOrder ? updatedOrder.name : "N/A"} (${customerEmail})
+Phone: ${updatedOrder ? updatedOrder.phone : "N/A"}
+Item: ${updatedOrder ? updatedOrder.model : "Device/Service"}
+Order ID: ${updatedOrder ? updatedOrder.id : reference}
+Reference: ${reference}
+Date: ${new Date(paidAt).toLocaleString()}`
+    });
+
+    res.json({
+      success: true,
+      message: "Payment verified successfully.",
+      data: {
+        reference,
+        amountGhs,
+        channel,
+        paidAt,
+        order: updatedOrder
+      }
+    });
+  } catch (err) {
+    console.error("Paystack Verification Error:", err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Paystack Webhook Handler (Automated Instant Background Verification)
+app.post("/api/payments/webhook", (req, res) => {
+  const cfg = getPaystackConfig();
+  if (!cfg.secretKey) {
+    return res.status(200).send("No secret key configured");
+  }
+
+  const signature = req.headers["x-paystack-signature"];
+  const hash = crypto.createHmac("sha512", cfg.secretKey).update(JSON.stringify(req.body)).digest("hex");
+
+  if (hash !== signature) {
+    return res.status(400).send("Invalid signature");
+  }
+
+  const event = req.body;
+  if (event.event === "charge.success") {
+    const txData = event.data;
+    const reference = txData.reference;
+    const amountGhs = txData.amount / 100;
+    const channel = txData.channel;
+
+    console.log(`[PAYSTACK WEBHOOK] Successful charge: ${reference} - GH₵ ${amountGhs}`);
+
+    const db = readDatabase();
+    if (db && Array.isArray(db.orders)) {
+      const matchIdx = db.orders.findIndex(
+        (o) => (o.paymentRef && o.paymentRef === reference) || (o.id && txData.metadata && txData.metadata.orderId === o.id)
+      );
+
+      if (matchIdx !== -1 && db.orders[matchIdx].status !== "Paid") {
+        db.orders[matchIdx].status = "Paid";
+        db.orders[matchIdx].paymentStatus = "Paid";
+        db.orders[matchIdx].paymentRef = reference;
+        db.orders[matchIdx].paymentChannel = channel;
+        db.orders[matchIdx].paidAt = txData.paid_at || new Date().toISOString();
+        db.orders[matchIdx].amountPaidGhs = amountGhs;
+        writeDatabase(db);
+        console.log(`[PAYSTACK WEBHOOK] Order ${db.orders[matchIdx].id} marked as PAID.`);
+      }
+    }
+  }
+
+  res.sendStatus(200);
 });
 
 // Admin: Get Newsletter Subscribers

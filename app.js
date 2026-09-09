@@ -1882,12 +1882,22 @@ function initNavigation() {
     });
   }
 
-  // Close modals with Escape key
+  // Global Keyboard Shortcuts (Escape to close modals, Ctrl+Shift+A to access Admin CRM)
   document.addEventListener("keydown", (e) => {
+    // Escape key: Close open modals
     if (e.key === "Escape") {
       closeModal();
       const bookModal = document.getElementById("booking-modal");
       if (bookModal) bookModal.classList.remove("open");
+    }
+
+    // Ctrl + Shift + A (or Cmd + Shift + A on macOS): Quick Access to Admin CRM
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "A" || e.key === "a")) {
+      e.preventDefault();
+      showToast("Accessing Admin CRM Portal...", "info", 1500);
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 350);
     }
   });
 }

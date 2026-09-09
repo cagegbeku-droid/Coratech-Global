@@ -240,6 +240,15 @@ function updateBadgesAndKPIs() {
 // =========================================================================
 
 function initEventListeners() {
+  // Global Admin Keyboard Shortcuts (Escape to close modals, Ctrl+Shift+H to return to website)
+  document.addEventListener("keydown", (e) => {
+    // Ctrl + Shift + H: Return to public web portal
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "H" || e.key === "h")) {
+      e.preventDefault();
+      window.location.href = "/";
+    }
+  });
+
   // Login Form
   const loginForm = document.getElementById("login-form");
   if (loginForm) {

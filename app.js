@@ -263,31 +263,29 @@ let PORTFOLIO_DATA = [
   {
     id: "port-1",
     title: "AfriVisa — Virtual Visa Card & Cross-Border Payment Platform",
-    category: "cloud",
-    categoryLabel: "Fintech & Card Rails",
+    category: "mobile",
+    categoryLabel: "Fintech Mobile Architecture",
     image: "assets/portfolio/afrivisa.jpg",
     metric: "Instant MoMo Top-Up & Sub-Second Clearance",
-    description: "Production-grade Virtual Visa card issuance platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
-    techStack: ["FastAPI", "Python", "Neon PostgreSQL", "React", "Mobile Money", "Docker"],
-    liveUrl: "https://vcardfrontend-beta.vercel.app",
-    repoUrl: "https://github.com/cagegbeku-droid/virtual-card-system",
+    description: "Production-grade Virtual Visa card issuance mobile platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
+    techStack: ["React Native", "FastAPI", "Python", "Neon PostgreSQL", "Mobile Money", "Docker"],
+    liveUrl: null,
     caseStudy: {
       problem: "African developers and businesses frequently face declined card transactions and strict foreign exchange limits when subscribing to global cloud tools (AWS, OpenAI, GitHub, Vercel).",
-      solution: "Engineered a high-concurrency fintech backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
+      solution: "Engineered a high-concurrency fintech mobile backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
       outcome: "Enabled frictionless cross-border subscriptions with sub-second card generation, automated transaction webhooks, and 99.9% top-up reliability."
     }
   },
   {
     id: "port-2",
     title: "SusuRow — Digital Rotational Savings & Credit Platform",
-    category: "web",
-    categoryLabel: "Ghanaian Fintech & ROSCA",
+    category: "mobile",
+    categoryLabel: "Fintech Mobile App",
     image: "assets/portfolio/susurow.jpg",
     metric: "Automated Escrow & 0% Default Tracking",
-    description: "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech platform with automated Ghana Mobile Money settlement and transparent rotational payouts.",
-    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Paystack MoMo", "TailwindCSS"],
-    liveUrl: "https://frontend-fawn-phi-76.vercel.app",
-    repoUrl: "https://github.com/cagegbeku-droid/SusuRow",
+    description: "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech mobile application with automated Ghana Mobile Money settlement and transparent rotational payouts.",
+    techStack: ["React Native", "TypeScript", "PostgreSQL", "Paystack MoMo", "TailwindCSS"],
+    liveUrl: null,
     caseStudy: {
       problem: "Informal peer-to-peer savings circles in Ghana suffer from manual cash handling risks, member default ambiguity, and zero audit trails.",
       solution: "Built an escrow-backed automated rotating savings vault with automated MoMo debits on cycle dates, transparent member trust scoring, and instant payout disbursements.",
@@ -303,8 +301,7 @@ let PORTFOLIO_DATA = [
     metric: "10x Faster Content Scheduling",
     description: "Comprehensive social media management and publishing SaaS platform featuring Google OAuth, PostgreSQL Row-Level Security, multi-account queueing, and drag-and-drop calendar planning.",
     techStack: ["React", "Supabase", "PostgreSQL RLS", "OAuth 2.0", "Netlify"],
-    liveUrl: "https://socialflow-beta-six.vercel.app",
-    repoUrl: "https://github.com/cagegbeku-droid/socialflow",
+    liveUrl: null,
     caseStudy: {
       problem: "Managing campaigns across disparate social platforms is fragmented, prone to authentication drops, and lacks centralized queue scheduling.",
       solution: "Created a single-pane-of-glass dashboard with visual drag-and-drop calendar scheduling, background post workers, and strict multi-tenant data isolation via Supabase RLS.",
@@ -321,7 +318,6 @@ let PORTFOLIO_DATA = [
     description: "Modern event discovery and digital ticketing web application with dynamic category filtering, automated QR code attendee verification, and real-time organizer registration telemetry.",
     techStack: ["TypeScript", "Next.js", "Node.js", "Express", "Vercel"],
     liveUrl: "https://event-hub-eight-nu.vercel.app",
-    repoUrl: "https://github.com/cagegbeku-droid/Event_hub",
     caseStudy: {
       problem: "Event organizers face ticket counterfeiting, slow manual gate check-in lines, and high service fees from legacy ticketing vendors.",
       solution: "Developed a fast full-stack discovery engine with instant digital ticket passes, encrypted QR codes, and streamlined attendee self-registration.",
@@ -338,7 +334,6 @@ let PORTFOLIO_DATA = [
     description: "Enterprise-grade Business Process Management System (BPMS) designed to automate corporate workflows, hierarchical document approvals, role-based departmental pipelines, and audit trails.",
     techStack: ["JavaScript", "React", "Node.js", "REST APIs", "RBAC Security"],
     liveUrl: "https://nipma-bpms.vercel.app",
-    repoUrl: "https://github.com/cagegbeku-droid/nipma-bpms",
     caseStudy: {
       problem: "Institutional approval bottlenecks and paper-based routing causing weeks of delay in critical operational approvals.",
       solution: "Constructed a multi-role digital pipeline with automated sign-off stages, encrypted document attachments, and full compliance activity logs.",
@@ -355,7 +350,6 @@ let PORTFOLIO_DATA = [
     description: "Flagship full-stack technology ecosystem combining an e-commerce hardware store, on-demand PDF proposal compiler, dual IPv4 SMTP notification engine, Paystack MoMo gateway, and Neon PostgreSQL database.",
     techStack: ["Node.js", "Express", "Neon PostgreSQL", "Paystack Gateway", "PDFKit", "Render"],
     liveUrl: "https://www.coratechglobal.com",
-    repoUrl: "https://github.com/cagegbeku-droid/Coratech-Global",
     caseStudy: {
       problem: "Modern IT service firms struggle with disconnected platforms for client quotes, hardware inventory, and manual payment confirmations.",
       solution: "Engineered a unified platform with automated MoMo payment verification, custom domain SSL, secret admin CMS (`/manage-coratech`), and resilient serverless PostgreSQL pooling.",
@@ -1435,19 +1429,17 @@ function renderPortfolio() {
           <a href="${proj.liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Demo
           </a>
-          ` : ''}
+          ` : (proj.category === 'mobile' || proj.id === 'port-1' || proj.id === 'port-2' ? `
+          <span class="btn btn-secondary btn-sm" style="cursor: default; opacity: 0.9; display: inline-flex; align-items: center; gap: 5px; background: rgba(14, 165, 233, 0.12); color: var(--accent-cyan); border-color: rgba(14, 165, 233, 0.3);">
+            <i class="fa-solid fa-mobile-screen"></i> Mobile App
+          </span>
+          ` : '')}
           <button class="btn btn-outline-cyan btn-sm btn-open-case-study" data-id="${proj.id}">
             <i class="fa-solid fa-folder-open"></i> Case Study
           </button>
-          ${proj.repoUrl ? `
-          <a href="${proj.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="View Source on GitHub" style="display: inline-flex; align-items: center; gap: 5px;">
-            <i class="fa-brands fa-github"></i> GitHub
-          </a>
-          ` : `
           <a href="#calculator" class="btn btn-secondary btn-sm" onclick="prefillCalculatorService('${proj.category}')">
             <i class="fa-solid fa-arrow-right"></i> Build Similar
           </a>
-          `}
         </div>
       </div>
     </div>
@@ -1490,12 +1482,18 @@ function openCaseStudyModal(projId) {
       </div>
     </div>
 
-    ${proj.liveUrl || proj.repoUrl ? `
+    ${proj.liveUrl ? `
     <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-      ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-cyan btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; flex: 1; min-width: 150px; justify-content: center;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Production App</a>` : ''}
-      ${proj.repoUrl ? `<a href="${proj.repoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; flex: 1; min-width: 150px; justify-content: center;"><i class="fa-brands fa-github"></i> View GitHub Repository</a>` : ''}
+      <a href="${proj.liveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-cyan btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; flex: 1; min-width: 150px; justify-content: center;">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Application
+      </a>
     </div>
-    ` : ''}
+    ` : (proj.category === 'mobile' || proj.id === 'port-1' || proj.id === 'port-2' ? `
+    <div style="margin-bottom: 20px; padding: 12px 16px; background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: var(--radius-md); display: flex; align-items: center; gap: 12px;">
+      <i class="fa-solid fa-mobile-screen-button text-cyan" style="font-size: 1.4rem;"></i>
+      <span style="font-size: 0.9rem; color: var(--text-primary);">This platform architecture is actively being engineered into a standalone native mobile application for iOS & Android.</span>
+    </div>
+    ` : '')}
 
     <div style="margin-bottom: 18px;">
       <h4 style="font-size: 1.05rem; color: var(--accent-rose); margin-bottom: 6px;">

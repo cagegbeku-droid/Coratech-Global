@@ -179,27 +179,26 @@
     {
       "id": "port-1",
       "title": "AfriVisa — Virtual Visa Card & Cross-Border Payment Platform",
-      "category": "cloud",
-      "categoryLabel": "Fintech & Card Rails",
+      "category": "mobile",
+      "categoryLabel": "Fintech Mobile Architecture",
       "image": "assets/portfolio/afrivisa.jpg",
-      "description": "Production-grade Virtual Visa card issuance platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
+      "description": "Production-grade Virtual Visa card issuance mobile platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
       "metric": "Instant MoMo Top-Up & Sub-Second Clearance",
       "techStack": [
+        "React Native",
         "FastAPI",
         "Python",
         "Neon PostgreSQL",
-        "React",
         "Mobile Money",
         "Docker"
       ],
       "challenge": "African developers and businesses frequently face declined card transactions and strict foreign exchange limits when subscribing to global cloud tools (AWS, OpenAI, GitHub, Vercel).",
-      "solution": "Engineered a high-concurrency fintech backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
+      "solution": "Engineered a high-concurrency fintech mobile backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
       "outcome": "Enabled frictionless cross-border subscriptions with sub-second card generation, automated transaction webhooks, and 99.9% top-up reliability.",
-      "liveUrl": "https://vcardfrontend-beta.vercel.app",
-      "repoUrl": "https://github.com/cagegbeku-droid/virtual-card-system",
+      "liveUrl": null,
       "caseStudy": {
         "problem": "African developers and businesses frequently face declined card transactions and strict foreign exchange limits when subscribing to global cloud tools (AWS, OpenAI, GitHub, Vercel).",
-        "solution": "Engineered a high-concurrency fintech backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
+        "solution": "Engineered a high-concurrency fintech mobile backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
         "outcome": "Enabled frictionless cross-border subscriptions with sub-second card generation, automated transaction webhooks, and 99.9% top-up reliability."
       },
       "featured": true,
@@ -208,13 +207,13 @@
     {
       "id": "port-2",
       "title": "SusuRow — Digital Rotational Savings & Credit Platform",
-      "category": "web",
-      "categoryLabel": "Ghanaian Fintech & ROSCA",
+      "category": "mobile",
+      "categoryLabel": "Fintech Mobile App",
       "image": "assets/portfolio/susurow.jpg",
-      "description": "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech platform with automated Ghana Mobile Money settlement and transparent rotational payouts.",
+      "description": "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech mobile application with automated Ghana Mobile Money settlement and transparent rotational payouts.",
       "metric": "Automated Escrow & 0% Default Tracking",
       "techStack": [
-        "Next.js",
+        "React Native",
         "TypeScript",
         "PostgreSQL",
         "Paystack MoMo",
@@ -223,8 +222,7 @@
       "challenge": "Informal peer-to-peer savings circles in Ghana suffer from manual cash handling risks, member default ambiguity, and zero audit trails.",
       "solution": "Built an escrow-backed automated rotating savings vault with automated MoMo debits on cycle dates, transparent member trust scoring, and instant payout disbursements.",
       "outcome": "Transformed traditional communal banking into an auditable digital ecosystem with zero lost records and automated payout scheduling.",
-      "liveUrl": "https://frontend-fawn-phi-76.vercel.app",
-      "repoUrl": "https://github.com/cagegbeku-droid/SusuRow",
+      "liveUrl": null,
       "caseStudy": {
         "problem": "Informal peer-to-peer savings circles in Ghana suffer from manual cash handling risks, member default ambiguity, and zero audit trails.",
         "solution": "Built an escrow-backed automated rotating savings vault with automated MoMo debits on cycle dates, transparent member trust scoring, and instant payout disbursements.",
@@ -251,8 +249,7 @@
       "challenge": "Managing campaigns across disparate social platforms is fragmented, prone to authentication drops, and lacks centralized queue scheduling.",
       "solution": "Created a single-pane-of-glass dashboard with visual drag-and-drop calendar scheduling, background post workers, and strict multi-tenant data isolation via Supabase RLS.",
       "outcome": "Reduced agency publishing overhead by over 70% with synchronized cross-platform queueing and real-time state telemetry.",
-      "liveUrl": "https://socialflow-beta-six.vercel.app",
-      "repoUrl": "https://github.com/cagegbeku-droid/socialflow",
+      "liveUrl": null,
       "caseStudy": {
         "problem": "Managing campaigns across disparate social platforms is fragmented, prone to authentication drops, and lacks centralized queue scheduling.",
         "solution": "Created a single-pane-of-glass dashboard with visual drag-and-drop calendar scheduling, background post workers, and strict multi-tenant data isolation via Supabase RLS.",
@@ -280,7 +277,6 @@
       "solution": "Developed a fast full-stack discovery engine with instant digital ticket passes, encrypted QR codes, and streamlined attendee self-registration.",
       "outcome": "Delivered sub-second ticket rendering, streamlined gate check-in throughput, and simplified event discovery.",
       "liveUrl": "https://event-hub-eight-nu.vercel.app",
-      "repoUrl": "https://github.com/cagegbeku-droid/Event_hub",
       "caseStudy": {
         "problem": "Event organizers face ticket counterfeiting, slow manual gate check-in lines, and high service fees from legacy ticketing vendors.",
         "solution": "Developed a fast full-stack discovery engine with instant digital ticket passes, encrypted QR codes, and streamlined attendee self-registration.",
@@ -308,7 +304,6 @@
       "solution": "Constructed a multi-role digital pipeline with automated sign-off stages, encrypted document attachments, and full compliance activity logs.",
       "outcome": "Eliminated physical paperwork bottlenecks and provided real-time tracking of institutional decisions across all management levels.",
       "liveUrl": "https://nipma-bpms.vercel.app",
-      "repoUrl": "https://github.com/cagegbeku-droid/nipma-bpms",
       "caseStudy": {
         "problem": "Institutional approval bottlenecks and paper-based routing causing weeks of delay in critical operational approvals.",
         "solution": "Constructed a multi-role digital pipeline with automated sign-off stages, encrypted document attachments, and full compliance activity logs.",
@@ -337,7 +332,6 @@
       "solution": "Engineered a unified platform with automated MoMo payment verification, custom domain SSL, secret admin CMS (/manage-coratech), and resilient serverless PostgreSQL pooling.",
       "outcome": "Delivered 100% automated client lifecycle management with instant payments, automated PDF quotes, and cloud-scale reliability.",
       "liveUrl": "https://www.coratechglobal.com",
-      "repoUrl": "https://github.com/cagegbeku-droid/Coratech-Global",
       "caseStudy": {
         "problem": "Modern IT service firms struggle with disconnected platforms for client quotes, hardware inventory, and manual payment confirmations.",
         "solution": "Engineered a unified platform with automated MoMo payment verification, custom domain SSL, secret admin CMS (/manage-coratech), and resilient serverless PostgreSQL pooling.",

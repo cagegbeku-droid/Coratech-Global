@@ -398,7 +398,6 @@ async function getDatabase() {
           solution: r.solution,
           outcome: r.outcome,
           liveUrl: r.live_url || null,
-          repoUrl: r.repo_url || null,
           caseStudy: {
             problem: r.challenge || "",
             solution: r.solution || "",

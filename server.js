@@ -325,16 +325,16 @@ function generateOfficialProposalPDF(data, targetPath) {
 
       // Quality Guarantee & Milestone Terms
       doc.rect(40, y, 515, 96).fillAndStroke("#f0fdf4", "#86efac");
-      doc.fillColor("#166534").fontSize(10).font("Helvetica-Bold").text("CORATECH GLOBAL COMMITMENT & SLA", 55, y + 12);
+      doc.fillColor("#166534").fontSize(10).font("Helvetica-Bold").text("CORATECH GLOBAL SERVICE GUARANTEE", 55, y + 12);
       doc.font("Helvetica").fontSize(8.5).fillColor("#15803d").lineGap(2.5);
-      doc.text("• Clean Code & 99.99% Uptime: Enterprise-ready architecture with automated daily backups and zero vendor lock-in.", 55, y + 28);
-      doc.text("• Weekly Sprint Deliveries: Transparent progress updates with direct engineering access via private Slack / WhatsApp.", 55, y + 42);
-      doc.text("• 90-Day Post-Launch Warranty: Full bug fixing, performance optimizations, and security monitoring included at no extra cost.", 55, y + 56);
-      doc.text("• Standard Payment Milestones: 50% Kickoff Deposit, 30% Mid-Sprint Review, 20% Production Deployment.", 55, y + 70);
+      doc.text("• Reliable & Secure: Clean modern code with automated daily backups and zero vendor lock-in.", 55, y + 28);
+      doc.text("• Clear Weekly Updates: Transparent progress reports with direct WhatsApp or phone communication.", 55, y + 42);
+      doc.text("• 90-Day Service Warranty: Bug fixing, performance checks, and technical support included at no extra cost.", 55, y + 56);
+      doc.text("• Payment Terms: 50% Project Kickoff, 30% Milestone Review, 20% Final Delivery.", 55, y + 70);
 
       // Sign-off Footer
       y += 125;
-      doc.fontSize(9).fillColor("#0f172a").font("Helvetica-Bold").text("Authorized by Coratech Global Engineering Directorate", 40, y);
+      doc.fontSize(9).fillColor("#0f172a").font("Helvetica-Bold").text("Authorized by Coratech Global Management", 40, y);
       doc.fontSize(8).fillColor("#64748b").font("Helvetica").text("Accra, Ghana • Direct Dispatch: +233 59 936 0626 • info@coratechglobal.com", 40, y + 14);
 
       doc.end();

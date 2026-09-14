@@ -178,40 +178,40 @@
   "portfolio": [
     {
       "id": "port-1",
-      "title": "AfriVisa — Virtual Visa Card & Cross-Border Payment Platform",
+      "title": "AfriVisa — Virtual Visa Card & Cross-Border Payments",
       "category": "mobile",
-      "categoryLabel": "Fintech Mobile Architecture",
+      "categoryLabel": "Mobile Fintech App",
       "image": "assets/portfolio/afrivisa.jpg",
-      "description": "Production-grade Virtual Visa card issuance mobile platform empowering African developers and businesses to execute cross-border international SaaS payments funded directly via Mobile Money.",
-      "metric": "Instant MoMo Top-Up & Sub-Second Clearance",
+      "description": "A virtual Visa card app built for African developers, freelancers, and businesses to pay for international software subscriptions (AWS, OpenAI, GitHub, Vercel) directly using Mobile Money.",
+      "metric": "Fast MoMo Top-Up & Low Fees",
       "techStack": [
         "React Native",
         "FastAPI",
         "Python",
-        "Neon PostgreSQL",
+        "PostgreSQL",
         "Mobile Money",
         "Docker"
       ],
-      "challenge": "African developers and businesses frequently face declined card transactions and strict foreign exchange limits when subscribing to global cloud tools (AWS, OpenAI, GitHub, Vercel).",
-      "solution": "Engineered a high-concurrency fintech mobile backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
-      "outcome": "Enabled frictionless cross-border subscriptions with sub-second card generation, automated transaction webhooks, and 99.9% top-up reliability.",
+      "challenge": "Bank cards in Ghana and Nigeria frequently get declined or blocked when paying for essential foreign tools like OpenAI, GitHub, AWS, and online services.",
+      "solution": "Built a secure virtual card mobile backend connected directly to MTN MoMo and Telecel Cash, allowing users to create virtual US Dollar Visa cards in seconds and fund them with local currency.",
+      "outcome": "Gives local creators and companies a dependable way to pay for essential global software without bank delays or card declines.",
       "liveUrl": null,
       "caseStudy": {
-        "problem": "African developers and businesses frequently face declined card transactions and strict foreign exchange limits when subscribing to global cloud tools (AWS, OpenAI, GitHub, Vercel).",
-        "solution": "Engineered a high-concurrency fintech mobile backend connecting directly to African Mobile Money rails, generating instantaneous virtual dollar Visa cards backed by automated ledger settlements.",
-        "outcome": "Enabled frictionless cross-border subscriptions with sub-second card generation, automated transaction webhooks, and 99.9% top-up reliability."
+        "problem": "Bank cards in Ghana and Nigeria frequently get declined or blocked when paying for essential foreign tools like OpenAI, GitHub, AWS, and online services.",
+        "solution": "Built a secure virtual card mobile backend connected directly to MTN MoMo and Telecel Cash, allowing users to create virtual US Dollar Visa cards in seconds and fund them with local currency.",
+        "outcome": "Gives local creators and companies a dependable way to pay for essential global software without bank delays or card declines."
       },
       "featured": true,
       "createdAt": "2026-08-20T10:00:00.000Z"
     },
     {
       "id": "port-2",
-      "title": "SusuRow — Digital Rotational Savings & Credit Platform",
+      "title": "SusuRow — Digital Group Savings & Contributions",
       "category": "mobile",
       "categoryLabel": "Fintech Mobile App",
       "image": "assets/portfolio/susurow.jpg",
-      "description": "Digitizing West Africa's traditional 'Susu' rotational peer-to-peer savings model into a secure fintech mobile application with automated Ghana Mobile Money settlement and transparent rotational payouts.",
-      "metric": "Automated Escrow & 0% Default Tracking",
+      "description": "A modern mobile app that turns traditional community 'Susu' rotational savings into a safe, automated digital experience with Mobile Money contributions and scheduled member payouts.",
+      "metric": "Automated Savings & Zero Default",
       "techStack": [
         "React Native",
         "TypeScript",
@@ -219,53 +219,53 @@
         "Paystack MoMo",
         "TailwindCSS"
       ],
-      "challenge": "Informal peer-to-peer savings circles in Ghana suffer from manual cash handling risks, member default ambiguity, and zero audit trails.",
-      "solution": "Built an escrow-backed automated rotating savings vault with automated MoMo debits on cycle dates, transparent member trust scoring, and instant payout disbursements.",
-      "outcome": "Transformed traditional communal banking into an auditable digital ecosystem with zero lost records and automated payout scheduling.",
+      "challenge": "Traditional Susu groups face cash theft, forgotten contribution dates, and disputes over who receives each round of savings.",
+      "solution": "Created an automated group savings app where members save together digitally, receive payment reminders, and collect their rotation payouts directly to Mobile Money.",
+      "outcome": "Delivered a transparent, stress-free savings system with clear digital records and automated Mobile Money transfers.",
       "liveUrl": null,
       "caseStudy": {
-        "problem": "Informal peer-to-peer savings circles in Ghana suffer from manual cash handling risks, member default ambiguity, and zero audit trails.",
-        "solution": "Built an escrow-backed automated rotating savings vault with automated MoMo debits on cycle dates, transparent member trust scoring, and instant payout disbursements.",
-        "outcome": "Transformed traditional communal banking into an auditable digital ecosystem with zero lost records and automated payout scheduling."
+        "problem": "Traditional Susu groups face cash theft, forgotten contribution dates, and disputes over who receives each round of savings.",
+        "solution": "Created an automated group savings app where members save together digitally, receive payment reminders, and collect their rotation payouts directly to Mobile Money.",
+        "outcome": "Delivered a transparent, stress-free savings system with clear digital records and automated Mobile Money transfers."
       },
       "featured": true,
       "createdAt": "2026-08-20T11:00:00.000Z"
     },
     {
       "id": "port-3",
-      "title": "SocialFlow — Multi-Channel Social SaaS & Scheduling Engine",
+      "title": "SocialFlow — Social Media Management & Post Scheduler",
       "category": "web",
-      "categoryLabel": "SaaS Workflow Automation",
+      "categoryLabel": "Social Media Management Tool",
       "image": "assets/portfolio/socialflow.jpg",
-      "description": "Comprehensive social media management and publishing SaaS platform featuring Google OAuth, PostgreSQL Row-Level Security, multi-account queueing, and drag-and-drop calendar planning.",
-      "metric": "10x Faster Content Scheduling",
+      "description": "A multi-platform social media scheduler that helps marketing teams and business owners plan, queue, and publish content across their social accounts from one simple dashboard.",
+      "metric": "Save 5+ Hours Weekly on Social Posts",
       "techStack": [
         "React",
         "Supabase",
-        "PostgreSQL RLS",
+        "PostgreSQL",
         "OAuth 2.0",
         "Netlify"
       ],
-      "challenge": "Managing campaigns across disparate social platforms is fragmented, prone to authentication drops, and lacks centralized queue scheduling.",
-      "solution": "Created a single-pane-of-glass dashboard with visual drag-and-drop calendar scheduling, background post workers, and strict multi-tenant data isolation via Supabase RLS.",
-      "outcome": "Reduced agency publishing overhead by over 70% with synchronized cross-platform queueing and real-time state telemetry.",
+      "challenge": "Switching between multiple social media apps every day to post updates is repetitive and wastes valuable hours.",
+      "solution": "Built a visual drag-and-drop calendar that lets users write posts once and schedule them to publish automatically across multiple platforms.",
+      "outcome": "Helped marketing teams cut publishing time in half while keeping their brand active and consistent every day.",
       "liveUrl": null,
       "caseStudy": {
-        "problem": "Managing campaigns across disparate social platforms is fragmented, prone to authentication drops, and lacks centralized queue scheduling.",
-        "solution": "Created a single-pane-of-glass dashboard with visual drag-and-drop calendar scheduling, background post workers, and strict multi-tenant data isolation via Supabase RLS.",
-        "outcome": "Reduced agency publishing overhead by over 70% with synchronized cross-platform queueing and real-time state telemetry."
+        "problem": "Switching between multiple social media apps every day to post updates is repetitive and wastes valuable hours.",
+        "solution": "Built a visual drag-and-drop calendar that lets users write posts once and schedule them to publish automatically across multiple platforms.",
+        "outcome": "Helped marketing teams cut publishing time in half while keeping their brand active and consistent every day."
       },
       "featured": true,
       "createdAt": "2026-08-21T10:00:00.000Z"
     },
     {
       "id": "port-4",
-      "title": "Event Hub — Digital Event Ticketing & Attendee Portal",
+      "title": "Event Hub — Event Ticketing & Attendee Portal",
       "category": "web",
-      "categoryLabel": "Event Tech & Discovery",
+      "categoryLabel": "Event Ticketing & Check-In",
       "image": "assets/portfolio/eventhub.jpg",
-      "description": "Modern event discovery and digital ticketing web application with dynamic category filtering, automated QR code attendee verification, and real-time organizer registration telemetry.",
-      "metric": "<500ms Ticket Generation & QR Check-in",
+      "description": "An event discovery and ticketing website where attendees find conferences, workshops, and concerts, buy digital passes, and check in quickly at the gate with QR codes.",
+      "metric": "Instant QR Ticket & Fast Check-In",
       "techStack": [
         "TypeScript",
         "Next.js",
@@ -273,53 +273,53 @@
         "Express",
         "Vercel"
       ],
-      "challenge": "Event organizers face ticket counterfeiting, slow manual gate check-in lines, and high service fees from legacy ticketing vendors.",
-      "solution": "Developed a fast full-stack discovery engine with instant digital ticket passes, encrypted QR codes, and streamlined attendee self-registration.",
-      "outcome": "Delivered sub-second ticket rendering, streamlined gate check-in throughput, and simplified event discovery.",
+      "challenge": "Printed tickets are easy to fake, gate lines move slowly, and organizers struggle to track real-time attendance numbers.",
+      "solution": "Engineered a clean ticketing website that sends digital tickets with secure QR codes directly to attendees' phones for 2-second gate scanning.",
+      "outcome": "Eliminated long ticket queues, reduced fake ticket fraud to zero, and simplified event management for organizers.",
       "liveUrl": "https://event-hub-eight-nu.vercel.app",
       "caseStudy": {
-        "problem": "Event organizers face ticket counterfeiting, slow manual gate check-in lines, and high service fees from legacy ticketing vendors.",
-        "solution": "Developed a fast full-stack discovery engine with instant digital ticket passes, encrypted QR codes, and streamlined attendee self-registration.",
-        "outcome": "Delivered sub-second ticket rendering, streamlined gate check-in throughput, and simplified event discovery."
+        "problem": "Printed tickets are easy to fake, gate lines move slowly, and organizers struggle to track real-time attendance numbers.",
+        "solution": "Engineered a clean ticketing website that sends digital tickets with secure QR codes directly to attendees' phones for 2-second gate scanning.",
+        "outcome": "Eliminated long ticket queues, reduced fake ticket fraud to zero, and simplified event management for organizers."
       },
       "featured": true,
       "createdAt": "2026-08-21T11:00:00.000Z"
     },
     {
       "id": "port-5",
-      "title": "NIPMA BPMS — Enterprise Business Process Management System",
+      "title": "NIPMA BPMS — Business Process & Approval Management",
       "category": "it",
-      "categoryLabel": "Enterprise Architecture",
+      "categoryLabel": "Business Workflow Automation",
       "image": "assets/portfolio/nipma_bpms.jpg",
-      "description": "Enterprise-grade Business Process Management System (BPMS) designed to automate corporate workflows, hierarchical document approvals, role-based departmental pipelines, and audit trails.",
-      "metric": "75% Reduction in Approval Latency",
+      "description": "An internal management system built for corporate offices to replace physical paper forms with digital requisition, leave requests, and manager approval workflows.",
+      "metric": "75% Faster Internal Approvals",
       "techStack": [
         "JavaScript",
         "React",
         "Node.js",
         "REST APIs",
-        "RBAC Security"
+        "Role-Based Security"
       ],
-      "challenge": "Institutional approval bottlenecks and paper-based routing causing weeks of delay in critical operational approvals.",
-      "solution": "Constructed a multi-role digital pipeline with automated sign-off stages, encrypted document attachments, and full compliance activity logs.",
-      "outcome": "Eliminated physical paperwork bottlenecks and provided real-time tracking of institutional decisions across all management levels.",
+      "challenge": "Internal purchase approvals and paperwork were getting stuck on desks for days, causing costly operational delays.",
+      "solution": "Designed a clean web-based approval portal where staff submit requests, managers approve with one click, and every action is automatically logged.",
+      "outcome": "Cut internal approval wait times from weeks to hours, eliminating lost paper files across departments.",
       "liveUrl": "https://nipma-bpms.vercel.app",
       "caseStudy": {
-        "problem": "Institutional approval bottlenecks and paper-based routing causing weeks of delay in critical operational approvals.",
-        "solution": "Constructed a multi-role digital pipeline with automated sign-off stages, encrypted document attachments, and full compliance activity logs.",
-        "outcome": "Eliminated physical paperwork bottlenecks and provided real-time tracking of institutional decisions across all management levels."
+        "problem": "Internal purchase approvals and paperwork were getting stuck on desks for days, causing costly operational delays.",
+        "solution": "Designed a clean web-based approval portal where staff submit requests, managers approve with one click, and every action is automatically logged.",
+        "outcome": "Cut internal approval wait times from weeks to hours, eliminating lost paper files across departments."
       },
       "featured": true,
       "createdAt": "2026-08-21T12:00:00.000Z"
     },
     {
       "id": "port-6",
-      "title": "Coratech Global — Full-Stack Enterprise IT & Digital Platform",
+      "title": "Coratech Global — Official Company Web Platform",
       "category": "cloud",
-      "categoryLabel": "Full-Stack Enterprise IT",
+      "categoryLabel": "Company Web Platform",
       "image": "assets/portfolio/coratech_global.png",
-      "description": "Flagship full-stack technology ecosystem combining an e-commerce hardware store, on-demand PDF proposal compiler, dual IPv4 SMTP notification engine, Paystack MoMo gateway, and Neon PostgreSQL database.",
-      "metric": "Sub-Second Global Edge Latency",
+      "description": "The complete official web platform for Coratech Global, featuring an interactive service cost estimator, instant PDF quotation download, verified laptop store, and IT support ticketing.",
+      "metric": "Instant MoMo Checkout & Live Helpdesk",
       "techStack": [
         "Node.js",
         "Express",
@@ -328,14 +328,14 @@
         "PDFKit",
         "Render"
       ],
-      "challenge": "Modern IT service firms struggle with disconnected platforms for client quotes, hardware inventory, and manual payment confirmations.",
-      "solution": "Engineered a unified platform with automated MoMo payment verification, custom domain SSL, secret admin CMS (/manage-coratech), and resilient serverless PostgreSQL pooling.",
-      "outcome": "Delivered 100% automated client lifecycle management with instant payments, automated PDF quotes, and cloud-scale reliability.",
+      "challenge": "Clients often had to wait days for simple quotes and had no easy way to pay for hardware or track IT support tickets online.",
+      "solution": "Built a responsive, all-in-one website with an instant project cost calculator, Mobile Money and card checkout, and automated email proposals.",
+      "outcome": "Enables customers in Ghana to get instant price estimates, order certified laptops, and submit IT support requests in minutes.",
       "liveUrl": "https://www.coratechglobal.com",
       "caseStudy": {
-        "problem": "Modern IT service firms struggle with disconnected platforms for client quotes, hardware inventory, and manual payment confirmations.",
-        "solution": "Engineered a unified platform with automated MoMo payment verification, custom domain SSL, secret admin CMS (/manage-coratech), and resilient serverless PostgreSQL pooling.",
-        "outcome": "Delivered 100% automated client lifecycle management with instant payments, automated PDF quotes, and cloud-scale reliability."
+        "problem": "Clients often had to wait days for simple quotes and had no easy way to pay for hardware or track IT support tickets online.",
+        "solution": "Built a responsive, all-in-one website with an instant project cost calculator, Mobile Money and card checkout, and automated email proposals.",
+        "outcome": "Enables customers in Ghana to get instant price estimates, order certified laptops, and submit IT support requests in minutes."
       },
       "featured": true,
       "createdAt": "2026-08-21T13:00:00.000Z"
@@ -346,21 +346,21 @@
       "id": "cloud_hosting",
       "title": "Website Hosting & Maintenance",
       "icon": "fa-solid fa-cloud-arrow-up",
-      "summary": "Enterprise 99.9% uptime cloud hosting, managed SSL setups, domain lifecycle management, and automated daily backups.",
+      "summary": "Secure, high-speed website hosting with 99.9% uptime, free SSL certificates, automated daily backups, and domain management.",
       "features": [
-        "99.9% Uptime SLA Guarantee",
-        "Free Wildcard SSL & DDoS Protection",
-        "Automated Off-Site Daily Backups",
-        "Continuous Core & Security Updates"
+        "99.9% Verified Website Uptime",
+        "Free SSL Security Certificate",
+        "Automatic Daily Backups",
+        "Domain Registration & Email Setup"
       ],
       "fullDetails": {
-        "scope": "Never worry about server crashes, expired domains, or security vulnerabilities again. We provide fully managed, blazing-fast cloud hosting backed by enterprise CDNs, automated daily snapshots, and 24/7 uptime monitoring.",
-        "techStack": "AWS Cloud, DigitalOcean, Cloudflare Enterprise, Docker, Nginx, Redis Caching, UptimeRobot",
+        "scope": "Reliable web hosting that keeps your website fast and online 24/7. We take care of server security, automated backups, and software updates so you never have to worry about website downtime.",
+        "techStack": "Cloudflare, Nginx, Docker, Automated Backups, 24/7 Monitoring",
         "deliverables": [
-          "Isolated high-speed cloud hosting environment with HTTP/3 & NVMe storage",
-          "Enterprise Cloudflare DDoS mitigation and Web Application Firewall (WAF)",
-          "Daily automated multi-region encrypted backups with 1-click restore",
-          "Routine plugin, database, and security patch maintenance"
+          "High-speed cloud hosting with NVMe SSD storage",
+          "Free SSL padlock certificate for HTTPS security",
+          "Daily automated backups with fast restore capability",
+          "Professional business email setup (e.g. info@yourcompany.com)"
         ]
       }
     },
@@ -368,21 +368,21 @@
       "id": "google_business",
       "title": "Google Business Profile & SEO",
       "icon": "fa-brands fa-google",
-      "summary": "Google Business Profile verification, top-3 local Map pack ranking, review reputation management, and local search indexing.",
+      "summary": "Official Google Business Profile setup, Google Maps verification, and local search optimization to attract nearby customers.",
       "features": [
-        "Official Google Profile Verification",
-        "Local Map Pack Ranking Optimization",
-        "Automated Review & Reputation System",
-        "High-Intent Keyword & Geo-Tag Indexing"
+        "Google Maps Listing Verification",
+        "Accurate Business Category & Hours Setup",
+        "Customer Review Setup & Direct QR Code",
+        "High-Quality Photos & Product Showcase"
       ],
       "fullDetails": {
-        "scope": "Maximize your physical and digital discoverability. We handle official Google Business Profile verification, optimize your local categories, implement local SEO schema, and setup customer review acquisition funnels to rank in the top 3 on Google Maps.",
-        "techStack": "Google Business Suite, Google Maps API, Schema.org LocalSEO, Semrush, BrightLocal",
+        "scope": "Make sure local customers find your business when searching on Google or Google Maps. We handle complete verification, optimize your profile with photos and services, and set you up to collect authentic 5-star customer reviews.",
+        "techStack": "Google Business Profile, Google Maps, Local SEO Schema, Search Console",
         "deliverables": [
           "100% verified and optimized Google Business listing",
-          "Geotagged high-resolution photo assets and catalog uploads",
-          "Local citation building across top business directories",
-          "QR code review generation kit for instant 5-star customer reviews"
+          "Business photos, contact info, working hours, and services added",
+          "Direct review link and printable QR code for customer reviews",
+          "Guidance on how to maintain top local search visibility"
         ]
       }
     },
@@ -390,21 +390,21 @@
       "id": "hardware_sales",
       "title": "Laptop Sales & Accessories",
       "icon": "fa-solid fa-laptop-code",
-      "summary": "Certified brand-new and Grade-A business laptops, high-performance developer workstations, monitors, and components.",
+      "summary": "Tested business laptops from HP, Dell, and Lenovo with clean batteries, genuine Windows, and warranty.",
       "features": [
-        "35-Point Hardware Quality Certified",
-        "6 to 12-Month Official Warranty",
-        "RAM & NVMe SSD Upgrade Options",
-        "Same-Day Delivery & Pre-Configured"
+        "Thoroughly Tested Hardware & Battery",
+        "6 to 12-Month Warranty Included",
+        "RAM & SSD Storage Upgrades",
+        "Same-Day Delivery & Setup Available"
       ],
       "fullDetails": {
-        "scope": "We supply thoroughly tested, high-grade laptops and enterprise hardware. From ultra-portable Dell XPS and Lenovo ThinkPads for executives to high-powered MacBook Pros and developer workstations, every device is rigorously inspected.",
-        "techStack": "Dell Latitude / XPS, Lenovo ThinkPad, Apple MacBook Pro, HP EliteBook, Samsung NVMe, Crucial RAM",
+        "scope": "We supply reliable, enterprise-grade laptops and accessories for professionals, students, and businesses. Each machine is inspected, tested for battery endurance, and ready for work out of the box.",
+        "techStack": "Dell Latitude / XPS, Lenovo ThinkPad, HP EliteBook, Apple MacBook Pro",
         "deliverables": [
-          "Certified Grade-A device with clean battery health report (>85%)",
-          "Free pre-installed Windows 11 Pro / macOS + productivity suite",
-          "Original high-wattage power adapter and brand packaging",
-          "Official warranty certificate and free technical support"
+          "Carefully tested business laptop with healthy battery life (>85%)",
+          "Pre-installed Windows and essential workplace apps",
+          "Original charger and power cable",
+          "Written warranty and direct technical support"
         ]
       }
     },
@@ -412,21 +412,21 @@
       "id": "it_support",
       "title": "IT Support & Troubleshooting",
       "icon": "fa-solid fa-screwdriver-wrench",
-      "summary": "Proactive managed IT support, emergency on-site & remote troubleshooting, workstation optimization, and network maintenance.",
+      "summary": "Reliable office IT support, on-site and remote computer repairs, Wi-Fi and network setups, and routine maintenance.",
       "features": [
-        "24/7 Rapid Incident Remediations",
-        "Network & Wi-Fi Router Configurations",
-        "Malware Removal & Endpoint Security",
+        "Fast Remote & On-Site Assistance",
+        "Office Wi-Fi & Router Setup",
+        "Virus Removal & System Cleanup",
         "Hardware Diagnostics & Component Repairs"
       ],
       "fullDetails": {
-        "scope": "Our Managed IT Support service acts as your dedicated enterprise IT department. We maintain your systems, monitor server health, troubleshoot connectivity issues, configure printers, and ensure zero operational downtime.",
-        "techStack": "Remote Management (RMM), Cisco / Ubiquiti UniFi, Wireshark, Active Directory, BitLocker, Windows Server",
+        "scope": "We act as your dedicated IT support team. We keep your office computers running, resolve network and printer issues quickly, and ensure your staff works without frustrating technical downtime.",
+        "techStack": "Remote Desktop Support, Cisco / UniFi Networks, Windows Server, Active Directory, BitLocker",
         "deliverables": [
-          "SLA-backed 15-minute response time guarantee",
-          "Monthly proactive system health check & patch audits",
-          "Remote desktop troubleshooting and on-demand field visits",
-          "Comprehensive asset management & inventory documentation"
+          "Prompt response time for urgent office issues",
+          "Monthly proactive system checkups and software updates",
+          "Remote desktop troubleshooting and on-site technician visits in Accra",
+          "Clear inventory tracking for all office laptops and equipment"
         ]
       }
     },
@@ -434,21 +434,21 @@
       "id": "web_dev",
       "title": "Website Design & Development",
       "icon": "fa-solid fa-code",
-      "summary": "Custom full-stack web applications, ultra-fast modern websites, responsive UI/UX design, and robust API integrations.",
+      "summary": "Custom websites, web apps, and online stores built for speed, security, and easy customer payments.",
       "features": [
-        "Custom Full-Stack Architecture",
-        "High-Converting Responsive UI/UX",
-        "Secure Payment Gateway Integrations",
-        "Sub-Second Load Speed & SEO Core Vitals"
+        "Custom Website & Web App Development",
+        "Clean, Mobile-Friendly Design",
+        "Mobile Money & Card Checkout",
+        "Fast Page Load Speeds & Local SEO"
       ],
       "fullDetails": {
-        "scope": "We build bespoke, modern web applications engineered for scalability and conversion. From custom enterprise SaaS platforms to dynamic corporate websites and e-commerce portals, our code is clean, secure, and blazing fast.",
-        "techStack": "React, Next.js, Node.js, TypeScript, Python / Django, PostgreSQL, TailwindCSS, AWS / Vercel",
+        "scope": "We design and build clean, responsive websites and web applications tailored to your business needs. Every site is optimized for speed, works smoothly across smartphones and desktops, and comes with secure payment options.",
+        "techStack": "React, Next.js, Node.js, TypeScript, Python, PostgreSQL, TailwindCSS, Vercel",
         "deliverables": [
-          "Full-stack web application with responsive UI/UX",
-          "Custom REST / GraphQL API development & third-party integrations",
-          "Payment gateway (Stripe, Paystack, Flutterwave, PayPal) integration",
-          "Technical SEO optimization, SSL security, and CI/CD automated deployment"
+          "Modern, fully custom website or web portal",
+          "Paystack Mobile Money (MTN, Telecel) and card payment integration",
+          "Contact forms, WhatsApp inquiry buttons, and lead capture",
+          "Domain connection, SSL security certificate, and hosting setup"
         ]
       }
     },
@@ -456,21 +456,21 @@
       "id": "windows_os",
       "title": "Windows OS Installation & Setup",
       "icon": "fa-brands fa-windows",
-      "summary": "Clean Windows 11/10 Pro installations, OS migration, driver optimization, enterprise domain joining, and software packages.",
+      "summary": "Clean Windows 11 and 10 installations, system upgrades, driver setup, data backup, and essential software configuration.",
       "features": [
-        "Genuine Windows 11/10 Pro Deployment",
-        "Complete Driver & Performance Tuning",
-        "Essential Software & Antivirus Suite",
-        "Data Backup & Lossless Migration"
+        "Genuine Windows 11 & 10 Installation",
+        "Complete Driver Setup & Speed Tuning",
+        "Microsoft Office & Productivity Apps",
+        "Safe Data Backup & Transfer"
       ],
       "fullDetails": {
-        "scope": "Whether you bought a new workstation, need an OS upgrade, or are recovering from a corrupt system, we provide professional clean Windows installations with guaranteed data integrity, licensed activations, and fine-tuned system performance.",
-        "techStack": "Windows 11 / 10 Pro, Windows PE, Sysprep, BitLocker Drive Encryption, Microsoft 365, Acronis",
+        "scope": "Whether you have a new computer, need an upgrade from Windows 10 to 11, or want to fix a slow machine, we provide clean, licensed Windows installations with all drivers installed and your personal files preserved.",
+        "techStack": "Windows 11 / 10 Pro, Driver Optimization, BitLocker, Microsoft 365",
         "deliverables": [
-          "Clean installation of Windows 11/10 Pro with genuine digital license",
-          "Installation of all motherboard, GPU, and chipset drivers",
-          "Enterprise productivity suite setup (MS Office, Chrome, PDF reader, Developer tools)",
-          "Full backup and lossless transfer of user files and configurations"
+          "Fresh installation of genuine Windows 11 or 10 Pro",
+          "All essential drivers installed for graphics, audio, and Wi-Fi",
+          "Installation of Microsoft Office, PDF tools, and web browsers",
+          "Safe backup and transfer of your documents and files"
         ]
       }
     }

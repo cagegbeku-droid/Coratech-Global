@@ -405,6 +405,14 @@ app.options("*", cors());
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 
+// Health Check & Keep-Alive Ping Endpoints (Used by uptime monitors to prevent free-tier spin down)
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "healthy", uptime: Math.floor(process.uptime()), timestamp: new Date().toISOString() });
+});
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 // Static Asset Delivery
 app.use("/uploads", express.static(UPLOADS_DIR));
 app.use("/admin", express.static(path.join(__dirname, "admin")));

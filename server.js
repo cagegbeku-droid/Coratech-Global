@@ -356,8 +356,12 @@ const HARDWARE_DIR = path.join(UPLOADS_DIR, "hardware");
 const PORTFOLIO_DIR = path.join(UPLOADS_DIR, "portfolio");
 
 [DATA_DIR, UPLOADS_DIR, PROPOSALS_DIR, HARDWARE_DIR, PORTFOLIO_DIR].forEach((dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  } catch (e) {
+    // Read-only filesystem on serverless platforms
   }
 });
 
@@ -1921,24 +1925,48 @@ app.get("/api/db/status", (req, res) => {
   });
 });
 
-// Server Initialization
-app.listen(PORT, async () => {
-  console.log(`====================================================`);
-  console.log(` CORATECH GLOBAL FULL-STACK PLATFORM RUNNING`);
-  console.log(` Web Portal:  http://localhost:${PORT}`);
-  console.log(` Admin Panel: http://localhost:${PORT}${ADMIN_ROUTE}`);
-  console.log(` REST API:    http://localhost:${PORT}/api/hardware`);
-  console.log(`====================================================`);
-
-  // Initialize Neon PostgreSQL Database & Table Migrations if configured
-  try {
-    await dbEngine.initPostgresSchema();
-    if (dbEngine.isPostgresConnected()) {
-      console.log(`✓ Neon PostgreSQL Cloud Database is ACTIVE and SYNCHRONIZED.`);
-    } else {
-      console.log(`ℹ Local JSON Database active. Set DATABASE_URL to connect Neon PostgreSQL.`);
-    }
-  } catch (e) {
-    console.error(`Postgres init warning: ${e.message}`);
+// Lazy DB initialization for serverless environments (e.g. Vercel)
+let dbInitPromise = null;
+function ensureDbInitialized() {
+  if (!dbInitPromise) {
+    dbInitPromise = dbEngine.initPostgresSchema().catch((e) => {
+      console.warn(`Postgres init warning: ${e.message}`);
+    });
   }
+  return dbInitPromise;
+}
+
+// Middleware to ensure DB schema is ready on incoming API calls
+app.use(async (req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    await ensureDbInitialized();
+  }
+  next();
 });
+
+// Export Express app for Vercel Serverless Functions
+module.exports = app;
+
+// Server Initialization (Runs on persistent servers like Render or Local)
+if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`====================================================`);
+    console.log(` CORATECH GLOBAL FULL-STACK PLATFORM RUNNING`);
+    console.log(` Web Portal:  http://localhost:${PORT}`);
+    console.log(` Admin Panel: http://localhost:${PORT}${ADMIN_ROUTE}`);
+    console.log(` REST API:    http://localhost:${PORT}/api/hardware`);
+    console.log(`====================================================`);
+
+    // Initialize Neon PostgreSQL Database & Table Migrations if configured
+    try {
+      await ensureDbInitialized();
+      if (dbEngine.isPostgresConnected()) {
+        console.log(`✓ Neon PostgreSQL Cloud Database is ACTIVE and SYNCHRONIZED.`);
+      } else {
+        console.log(`ℹ Local JSON Database active. Set DATABASE_URL to connect Neon PostgreSQL.`);
+      }
+    } catch (e) {
+      console.error(`Postgres init warning: ${e.message}`);
+    }
+  });
+}

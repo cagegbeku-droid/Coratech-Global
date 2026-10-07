@@ -417,15 +417,24 @@ app.get("/api/ping", (req, res) => {
   res.status(200).send("pong");
 });
 
+// Resolve project root across standard and serverless environments
+const ROOT_DIR = fs.existsSync(path.join(__dirname, "styles.css")) ? __dirname : process.cwd();
+
 // Static Asset Delivery
 app.use("/uploads", express.static(UPLOADS_DIR));
-app.use("/admin", express.static(path.join(__dirname, "admin")));
-app.use("/assets", express.static(path.join(__dirname, "assets")));
-app.use(express.static(__dirname));
+app.use("/admin", express.static(path.join(ROOT_DIR, "admin")));
+app.use("/assets", express.static(path.join(ROOT_DIR, "assets")));
+app.use(express.static(ROOT_DIR));
 
-// Explicit Root Route (Guarantees index.html is served immediately on Vercel serverless)
+// Explicit Routes for Core Frontend Assets
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.type("text/html").sendFile(path.join(ROOT_DIR, "index.html"));
+});
+app.get("/styles.css", (req, res) => {
+  res.type("text/css").sendFile(path.join(ROOT_DIR, "styles.css"));
+});
+app.get("/app.js", (req, res) => {
+  res.type("application/javascript").sendFile(path.join(ROOT_DIR, "app.js"));
 });
 
 // Multer Storage Configuration for File & Image Uploads
@@ -1908,12 +1917,12 @@ app.get("*", (req, res, next) => {
   }
   const cleanPath = req.path.replace(/^\/+/, "");
   if (cleanPath) {
-    const filePath = path.join(__dirname, cleanPath);
+    const filePath = path.join(ROOT_DIR, cleanPath);
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       return res.sendFile(filePath);
     }
   }
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.type("text/html").sendFile(path.join(ROOT_DIR, "index.html"));
 });
 
 // Global Error Handling Middleware (Ensures JSON is always returned, not raw HTML)

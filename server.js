@@ -420,7 +420,13 @@ app.get("/api/ping", (req, res) => {
 // Static Asset Delivery
 app.use("/uploads", express.static(UPLOADS_DIR));
 app.use("/admin", express.static(path.join(__dirname, "admin")));
+app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use(express.static(__dirname));
+
+// Explicit Root Route (Guarantees index.html is served immediately on Vercel serverless)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // Multer Storage Configuration for File & Image Uploads
 const storage = multer.diskStorage({
@@ -1893,6 +1899,21 @@ if (ADMIN_ROUTE !== "/admin") {
 app.use(ADMIN_ROUTE, express.static(path.join(__dirname, "admin")));
 app.get(`${ADMIN_ROUTE}*`, (req, res) => {
   res.sendFile(path.join(__dirname, "admin", "index.html"));
+});
+
+// Static Files & Single Page App Fallback (Serves CSS, JS, Assets, and HTML)
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api") || req.path.startsWith("/uploads") || (typeof ADMIN_ROUTE !== "undefined" && req.path.startsWith(ADMIN_ROUTE))) {
+    return next();
+  }
+  const cleanPath = req.path.replace(/^\/+/, "");
+  if (cleanPath) {
+    const filePath = path.join(__dirname, cleanPath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      return res.sendFile(filePath);
+    }
+  }
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Global Error Handling Middleware (Ensures JSON is always returned, not raw HTML)
